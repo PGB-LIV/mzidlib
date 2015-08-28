@@ -43,8 +43,8 @@ public class ProteoAnnotator {
     private String peptideThreshValue = "0.01";
     private String proteinThreshValue = "0.01";
 
-    private boolean enablePercolator = true;
-    private boolean enableMsgf = true;
+    private boolean enablePercolator = false;
+    private boolean enableMsgf = false;
 
     //private boolean deleteFiles = false;
     long startTime, stopTime, elapsedTime;
@@ -126,14 +126,13 @@ public class ProteoAnnotator {
 
             String outputGenericFastaFile = null;
 
-            if (inputGFF_A == null || inputGFF_A.equals("")) {
-                throw new RuntimeException("The GFF file is missing.");
-            } else {
-                out.println("The canonical GFF file: " + inputGFF_A);
-                out.println("");
-
-            }
-
+//            if (inputGFF_A == null || inputGFF_A.equals("")) {
+//                throw new RuntimeException("The GFF file is missing.");
+//            } else {
+//                out.println("The canonical GFF file: " + inputGFF_A);
+//                out.println("");
+//
+//            }
             if (spectrum_files == null || spectrum_files.equals("")) {
                 throw new RuntimeException("The MGF file is missing.");
             }
@@ -145,48 +144,66 @@ public class ProteoAnnotator {
             // Check if the GFF contains FASTA and create a generic fasta file from the GFF.
             out.println("Check if the canonical GFF contains FASTA and create a generic fasta file from the GFF.");
             out.println("The input FASTA file will be ignored if the GFF contains FASTA.");
-            if (inputGFF_A != null && !inputGFF_A.equals("")) {
-                Path p = Paths.get(inputGFF_A);
-                String file = p.getFileName().toString();
-                outputGenericFastaFile = prefix + file.substring(0, file.lastIndexOf(".")) + "_generic.fasta";
-                outputGenericFastaFile = outputFolder + File.separator + outputGenericFastaFile;
-                String accession_regex = "\\S+";
-                if (inputFasta_A == null) {
-                    inputFasta_A = "";
-                }
-                String[] genericFastaInput = {"GenericFasta", inputFasta_A, outputGenericFastaFile, "-accession_regex", accession_regex, "-inputGff", inputGFF_A, "-compress", "false"};
-                print(out, genericFastaInput);
-                mzidLib.init(genericFastaInput);
-                fastaFilesList.add(outputGenericFastaFile);
+//            if (inputGFF_A != null && !inputGFF_A.equals("")) {
+//                Path p = Paths.get(inputGFF_A);
+//                String file = p.getFileName().toString();
+            outputGenericFastaFile = prefix + "_A_generic.fasta";
+            outputGenericFastaFile = outputFolder + File.separator + outputGenericFastaFile;
+            String accession_regex = "\\S+";
+            if (inputFasta_A == null) {
+                inputFasta_A = "";
             }
+            if (inputGFF_A == null) {
+                inputGFF_A = "";
+            }
+            String[] genericFastaInput = {"GenericFasta", inputFasta_A, outputGenericFastaFile, "-accession_regex", accession_regex, "-inputGff", inputGFF_A, "-compress", "false"};
+            print(out, genericFastaInput);
+            mzidLib.init(genericFastaInput);
+            fastaFilesList.add(outputGenericFastaFile);
+//            }
 
             if (inputPredicted != null && !inputPredicted.equals("")) {
                 out.println("Handling non-canonical gene files");
                 String[] predictedSets = inputPredicted.split("##");
+                String[] altModels = {"B", "C", "D", "E", "F"};
+                int countAlt = 0;
                 for (String predictedSet : predictedSets) {
                     String[] pairs = predictedSet.split(";");
+                    String inpuPredictedGff = null;
+                    String inpuPredictedFasta = null;
                     if (pairs != null) {
-                        String inpuPredictedGff = null;
-                        String inpuPredictedFasta = null;
-                        inpuPredictedGff = pairs[0];
+
                         if (pairs.length == 2) {
                             inpuPredictedFasta = pairs[1];
-                        }
-                        // Check if the GFF contains FASTA and create a generic fasta file from the GFF.
-                        if (inpuPredictedGff != null && !inpuPredictedGff.equals("")) {
-                            Path p = Paths.get(inpuPredictedGff);
-                            String file = p.getFileName().toString();
-                            outputGenericFastaFile = prefix + file.substring(0, file.lastIndexOf(".")) + "_generic.fasta";
-                            outputGenericFastaFile = outputFolder + File.separator + outputGenericFastaFile;
-                            String accession_regex = "\\S+";
-                            if (inpuPredictedFasta == null) {
-                                inpuPredictedFasta = "";
+                            inpuPredictedGff = pairs[0];
+                        } else if (pairs.length == 1) {
+                            if (pairs[0].endsWith("fa") || pairs[0].endsWith("fasta")) {
+                                inpuPredictedFasta = pairs[0];
                             }
-                            String[] genericFastaInput = {"GenericFasta", inpuPredictedFasta, outputGenericFastaFile, "-accession_regex", accession_regex, "-inputGff", inpuPredictedGff, "-compress", "false"};
-                            print(out, genericFastaInput);
-                            mzidLib.init(genericFastaInput);
-                            fastaFilesList.add(outputGenericFastaFile);
+                            if (pairs[0].endsWith("gff") || pairs[0].endsWith("gff3")) {
+                                inpuPredictedGff = pairs[0];
+                            }
                         }
+
+                        // Check if the GFF contains FASTA and create a generic fasta file from the GFF.
+//                        if (inpuPredictedGff != null && !inpuPredictedGff.equals("")) {
+//                            Path p = Paths.get(inpuPredictedGff);
+//                            String file = p.getFileName().toString();
+                        outputGenericFastaFile = prefix + altModels[countAlt] + "_generic.fasta";
+                        countAlt = countAlt + 1;
+                        outputGenericFastaFile = outputFolder + File.separator + outputGenericFastaFile;
+                        String accession_regex1 = "\\S+";
+                        if (inpuPredictedFasta == null) {
+                            inpuPredictedFasta = "";
+                        }
+                         if (inpuPredictedGff == null) {
+                            inpuPredictedGff = "";
+                        }
+                        String[] genericFastaInput1 = {"GenericFasta", inpuPredictedFasta, outputGenericFastaFile, "-accession_regex", accession_regex1, "-inputGff", inpuPredictedGff, "-compress", "false"};
+                        print(out, genericFastaInput1);
+                        mzidLib.init(genericFastaInput1);
+                        fastaFilesList.add(outputGenericFastaFile);
+//                        }
 
                     }
                 }
@@ -596,25 +613,30 @@ public class ProteoAnnotator {
             if (verbose) {
                 bf.append("\n\nThreshold time " + elapsedTime / 1000 + " Seconds");
             }
-            // AddGenomeCoordinatesForPeptides
-            out.println("Add genome Coordinates for peptides");
 
             String addGenomeCoordinatesForPeptidesOutputFile1 = outputFolder + File.separator + prefix + "combined_fdr_peptide_threshold_mappedGff.mzid";
-            Path p1 = Paths.get(inputGFF_A);
-            String file1 = p1.getFileName().toString();
-            String gffOutputFile1 = prefix + file1.substring(0, file1.lastIndexOf(".")) + "_annotated.gff";
-            gffOutputFile1 = outputFolder + File.separator + gffOutputFile1;
-            String[] addGenomeCoordinatesForPeptidesInput = {"AddGenomeCoordinatesForPeptides", thresholdOutputFile, addGenomeCoordinatesForPeptidesOutputFile1, "-inputGff", inputGFF_A, "-outputGff", gffOutputFile1, "-compress", "false"};
-            print(out, addGenomeCoordinatesForPeptidesInput);
-            startTime = System.currentTimeMillis();
-            mzidLib.init(addGenomeCoordinatesForPeptidesInput);
-            stopTime = System.currentTimeMillis();
-            elapsedTime = stopTime - startTime;
-            if (verbose) {
-                bf.append("\n\nAddGenomeCoordinatesForPeptides time " + elapsedTime / 1000 + " Seconds");
+            if (inputGFF_A != null && !inputGFF_A.equals("")) {
+                // AddGenomeCoordinatesForPeptides
+                out.println("Add genome Coordinates for peptides");
+
+                Path p1 = Paths.get(inputGFF_A);
+                String file1 = p1.getFileName().toString();
+                String gffOutputFile1 = prefix + file1.substring(0, file1.lastIndexOf(".")) + "_annotated.gff";
+                gffOutputFile1 = outputFolder + File.separator + gffOutputFile1;
+                String[] addGenomeCoordinatesForPeptidesInput = {"AddGenomeCoordinatesForPeptides", thresholdOutputFile, addGenomeCoordinatesForPeptidesOutputFile1, "-inputGff", inputGFF_A, "-outputGff", gffOutputFile1, "-compress", "false"};
+                print(out, addGenomeCoordinatesForPeptidesInput);
+                startTime = System.currentTimeMillis();
+                mzidLib.init(addGenomeCoordinatesForPeptidesInput);
+                stopTime = System.currentTimeMillis();
+                elapsedTime = stopTime - startTime;
+                if (verbose) {
+                    bf.append("\n\nAddGenomeCoordinatesForPeptides time " + elapsedTime / 1000 + " Seconds");
+                }
+                // AddGenomeCoordinatesForPeptides
+                out.println("Add genome Coordinates for peptides");
+            } else {
+                addGenomeCoordinatesForPeptidesOutputFile1 = thresholdOutputFile;
             }
-            // AddGenomeCoordinatesForPeptides
-            out.println("Add genome Coordinates for peptides");
 
             String addGenomeCoordinatesForPeptidesOutputFile = null;
             if (inputPredicted != null && !inputPredicted.equals("")) {
@@ -622,20 +644,22 @@ public class ProteoAnnotator {
                 int i = 2;
                 for (String predictedSet : predictedSets) {
                     String[] pairs = predictedSet.split(";");
-                    addGenomeCoordinatesForPeptidesOutputFile = outputFolder + File.separator + "combined_fdr_peptide_threshold_mappedGff_" + i + "_.mzid";
-                    i = i + 1;
-                    Path p2 = Paths.get(pairs[0]);
-                    String file2 = p2.getFileName().toString();
-                    String gffOutputFile2 = prefix + file2.substring(0, file2.lastIndexOf(".")) + "_annotated.gff";
-                    gffOutputFile2 = outputFolder + File.separator + gffOutputFile2;
-                    String[] addGenomeCoordinatesForPeptidesInputPredicted = {"AddGenomeCoordinatesForPeptides", addGenomeCoordinatesForPeptidesOutputFile1, addGenomeCoordinatesForPeptidesOutputFile, "-inputGff", pairs[0], "-outputGff", gffOutputFile2, "-compress", "false"};
-                    print(out, addGenomeCoordinatesForPeptidesInputPredicted);
-                    startTime = System.currentTimeMillis();
-                    mzidLib.init(addGenomeCoordinatesForPeptidesInputPredicted);
-                    stopTime = System.currentTimeMillis();
-                    elapsedTime = stopTime - startTime;
-                    if (verbose) {
-                        bf.append("\n\nAddGenomeCoordinatesForPeptides time " + elapsedTime / 1000 + " Seconds");
+                    if ((pairs != null && pairs.length == 2) || (pairs != null && pairs.length == 1 && pairs[0].endsWith("gff")) || (pairs != null && pairs.length == 1 && pairs[0].endsWith("gff3"))) {
+                        addGenomeCoordinatesForPeptidesOutputFile = outputFolder + File.separator + "combined_fdr_peptide_threshold_mappedGff_" + i + "_.mzid";
+                        i = i + 1;
+                        Path p2 = Paths.get(pairs[0]);
+                        String file2 = p2.getFileName().toString();
+                        String gffOutputFile2 = prefix + file2.substring(0, file2.lastIndexOf(".")) + "_annotated.gff";
+                        gffOutputFile2 = outputFolder + File.separator + gffOutputFile2;
+                        String[] addGenomeCoordinatesForPeptidesInputPredicted = {"AddGenomeCoordinatesForPeptides", addGenomeCoordinatesForPeptidesOutputFile1, addGenomeCoordinatesForPeptidesOutputFile, "-inputGff", pairs[0], "-outputGff", gffOutputFile2, "-compress", "false"};
+                        print(out, addGenomeCoordinatesForPeptidesInputPredicted);
+                        startTime = System.currentTimeMillis();
+                        mzidLib.init(addGenomeCoordinatesForPeptidesInputPredicted);
+                        stopTime = System.currentTimeMillis();
+                        elapsedTime = stopTime - startTime;
+                        if (verbose) {
+                            bf.append("\n\nAddGenomeCoordinatesForPeptides time " + elapsedTime / 1000 + " Seconds");
+                        }
                     }
                 }
             }

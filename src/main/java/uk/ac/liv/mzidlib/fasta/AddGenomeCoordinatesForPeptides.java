@@ -166,7 +166,7 @@ public class AddGenomeCoordinatesForPeptides {
             // for (int i = 0; i < proteinHits.size(); i++) {
             Iterator it = proteinHits.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
+                Map.Entry pair = (Map.Entry) it.next();
                 ProteinResults pr = (ProteinResults) pair.getValue();
                 String[] co_ords = new String[2];
                 long start_map, end_map;
@@ -190,13 +190,13 @@ public class AddGenomeCoordinatesForPeptides {
                     String mappedStartLocation = Long.toString(start_map);
                     String mappedEndLocation = Long.toString(end_map);
 
-                    String attr = "ID=pep_" + accession + "_" +  ";description=peptide_seq:" + pr.getPeptideSeq() + "_fdr_score:" + pr.getfdrScore() + "_peptide_start: " + pr.getstart() + "_peptide_end: " + pr.getEnd() + ";Derives_from=" + accession;
+                    String attr = "ID=pep_" + accession + "_" + ";description=peptide_seq:" + pr.getPeptideSeq() + "_fdr_score:" + pr.getfdrScore() + "_peptide_start: " + pr.getstart() + "_peptide_end: " + pr.getEnd() + ";Derives_from=" + accession;
                     // Just use the information from the first CDS entry with mapped start and end locations
                     String gffEntry = cdsColl.get(0).getSeqID() + "\t" + cdsColl.get(0).getSource() + "\t" + feature + "\t" + mappedStartLocation
                             + "\t" + mappedEndLocation + "\t" + score + "\t" + cdsColl.get(0).getStrand() + "\t" + cdsColl.get(0).getSePhase() + "\t" + attr + "\n";
                     out.write(gffEntry);
                 }
-                 
+
             }
             out.close();
 
@@ -354,8 +354,62 @@ public class AddGenomeCoordinatesForPeptides {
                             start_map = end_map;
                             end_map = tmp;
                         }
-                        peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(start_map)));
-                        peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(end_map)));
+                        // Added by Fawaz Ghali 13/8/2015
+                        // Update the code to cover the case where a peptide covers multiple exons
+                        List<CDS_Information> sortedCDS = sortCDSAccordingToStartPosition(gffData);
+                        List<CDS_Information> outputCDS = new ArrayList();
+                        int countCDS = 0;
+                        boolean sorted = false;
+                        for (int j = 0; j < sortedCDS.size(); j++) {
+                            CDS_Information object = sortedCDS.get(j);
+                            long s = object.getStart();
+                            long e = object.getEnd();
+                            long newStart, newEnd;
+                            countCDS = j;
+                            if (start_map > e) {
+                                continue;
+                            } else {
+                                newStart = start_map;
+                                if (end_map <= e) {
+                                    newEnd = end_map;
+                                    sorted = true;
+                                } else {
+                                    newEnd = e;
+                                }
+
+                                CDS_Information temp = new CDS_Information("", "", newStart, newEnd, "", "", "");
+                                outputCDS.add(temp);
+                                break;
+                            }
+                        }
+                        if (!sorted) {
+                            for (int j = countCDS; j < sortedCDS.size(); j++) {
+                                CDS_Information object = sortedCDS.get(j);
+                                long s = object.getStart();
+                                long e = object.getEnd();
+                                long newStart, newEnd;
+
+                                if (end_map > e) {
+                                    CDS_Information temp = new CDS_Information("", "", s, e, "", "", "");
+                                    outputCDS.add(temp);
+                                } else {
+                                    newStart = s;
+                                    newEnd = end_map;
+
+                                    CDS_Information temp = new CDS_Information("", "", newStart, newEnd, "", "", "");
+                                    outputCDS.add(temp);
+                                    break;
+                                }
+                            }
+                        }
+
+                        for (int j = 0; j < outputCDS.size(); j++) {
+                            CDS_Information cDS_Information = outputCDS.get(j);
+                            peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
+                            peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(cDS_Information.getEnd())));
+
+                        }
+
                         peptideEvidence.getUserParam().add(makeUserParam("chr", gffData.get(0).getSeqID()));
                         peptideEvidence.getUserParam().add(makeUserParam("strand", gffData.get(0).getStrand()));
                     }

@@ -685,7 +685,7 @@ public class MzIdentMLLib {
                     }
                 } else if (args[0].equals("ProteoAnnotator")) {
                     //Calling ProteoAnnotator
-                    String inputGFF = Utils.getCmdParameter(args, "inputGFF", true);
+                    String inputGFF = Utils.getCmdParameter(args, "inputGFF", false);
                     String inputFasta = Utils.getCmdParameter(args, "inputFasta", false);
                     String spectrum_files = Utils.getCmdParameter(args, "spectrum_files", true);
                     String outputFolder = Utils.getCmdParameter(args, "outputFolder", true);
