@@ -67,7 +67,6 @@ public class JMzIdentMLPerformance {
         for (int i = 0; i < tandemFiles.size(); i++) {
             try {
                 String tandemFile = tandemFiles.get(i);
-                
 
                 String tandemoutputFile = tandemFile.substring(0, tandemFile.lastIndexOf(".")) + "_tandem.mzid";
                 String[] tandemInput = {"Tandem2mzid", tandemFile, tandemoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-databaseFileFormatID", "MS:1001348", "-massSpecFileFormatID", "MS:1001062", "-idsStartAtZero", "false", "-proteinCodeRegex", "\\S+", "-compress", "false"};
@@ -186,10 +185,17 @@ public class JMzIdentMLPerformance {
     public static void main(String args[]) throws InterruptedException {
 
         JMzIdentMLPerformance jMzIdentML = new JMzIdentMLPerformance(args[0], args[1]);
-
+        Runtime runtime = Runtime.getRuntime();
+        long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used Memory before: " + usedMemoryBefore);
+       
         String s = jMzIdentML.runXtandem() + jMzIdentML.runOmssa();
+
+        long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Memory increased: " + (usedMemoryAfter - usedMemoryBefore));
 
         System.out.println(s);
     }
 
 }
+    
