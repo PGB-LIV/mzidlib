@@ -29,8 +29,8 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
  */
 public class ThresholdMzid {
 
-    private static String inputFile = "resources/55merge_omssa.mzid";
-    private static String outputFile = "test_out.mzid";
+    private String inputFile = "resources/55merge_omssa.mzid";
+    private String outputFile = "test_out.mzid";
     private boolean psmThreshold = true;
     private String cvAccessionScoreThreshold = "MS:1001328";
     private double thresholdValue = 1.0;

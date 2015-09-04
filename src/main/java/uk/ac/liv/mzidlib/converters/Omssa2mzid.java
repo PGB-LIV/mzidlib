@@ -55,8 +55,8 @@ public class Omssa2mzid {
     AnalysisProtocolCollection analysisProtocolCollection;
     Inputs inputs;
     //Some IDs to be used throughout;
-    static String inputOmssaFile = "example_files/55merge_omssa.omx";
-    static String modsFile = "build/classes/resources/mods.xml";
+    String inputOmssaFile = "example_files/55merge_omssa.omx";
+    String modsFile = "build/classes/resources/mods.xml";
     //private String modsFile = getClass().getClassLoader().getResource("lib/mods.xml").getPath();
     //URL modsFileURL = getClass().getClassLoader().getResource("resources/mods.xml");
     //URL userModsFileURL = getClass().getClassLoader().getResource("resources/mods.xml");
@@ -99,7 +99,7 @@ public class Omssa2mzid {
     int sirCounter = 1; //Counter used to create unique ID for SpectrumIdentificationResult
     ReadUnimod unimodDoc;
     double unimodMassError = 0.1;
-    static Boolean outputFragmentation = false;
+    Boolean outputFragmentation = false;
     int response_scale = 100;           // This is the scale to get correct MZ values out - get reset from the omx
     private String defline_regex = " "; //TODO  - current grabs protein accessions from the defline, by space - need to implement other options
 
@@ -218,12 +218,7 @@ public class Omssa2mzid {
             System.out.println(message);
         }
 
-    }
-
-    public static void main(String[] args) {
-        new Omssa2mzid(inputOmssaFile);
-
-    }
+    }    
 
     public void parseFile(OmssaOmxFile omxFile) {
 
