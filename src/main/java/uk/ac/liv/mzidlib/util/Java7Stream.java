@@ -20,6 +20,23 @@ public class Java7Stream<T> {
             this.collection = collection;           
         }
         
+        public Java7Stream<T> filterReverse(Java7Predicate predicate) {
+            if (used) {
+                throw new RuntimeException("This stream has already been used.");
+            }
+            
+            used = true;
+            List<T> newList = new ArrayList<>();
+            for (T object : collection) {
+                if (!predicate.test(object)) {
+                    newList.add(object);
+                }
+            }
+            
+                       
+            return new Java7Stream<>(newList);
+        }
+        
         public Java7Stream<T> filter(Java7Predicate predicate) {
             if (used) {
                 throw new RuntimeException("This stream has already been used.");
