@@ -357,6 +357,24 @@ public class AddGenomeCoordinatesForPeptides {
                         // Added by Fawaz Ghali 13/8/2015
                         // Update the code to cover the case where a peptide covers multiple exons
                         List<CDS_Information> sortedCDS = sortCDSAccordingToStartPosition(gffData);
+//                        if (peptideEvidence.getId().equals("VTASDPLDTLGSEGALSPGGVASLLR_generic|A_ENSP00000420212|_980_1005")||
+//                              peptideEvidence.getId().equals("KFDGPCDPCQGALPDPSR_generic|A_ENSP00000368678|_312_329")  ||
+//                                peptideEvidence.getId().equals("HQGPCDQAPSPCLGVQCAFGATCAVK_generic|A_ENSP00000484607|_319_344") ||
+//                                peptideEvidence.getId().equals("QTQVSVLPEGGETPLFK_generic|A_ENSP00000362924|_374_390") ||
+//                                peptideEvidence.getId().equals("EELVYELNPLDHR_generic|A_ENSP00000449828|_942_954") ||
+//                                peptideEvidence.getId().equals("EIAEDELVAAEALLK_generic|A_ENSP00000480802|_1738_1752") ||
+//                                peptideEvidence.getId().equals("FIDFLAIEMR_generic|A_ENSP00000480802|_2190_2199")   ) {
+//                            System.out.println("Start");
+//                            System.out.println("PE ID: " + peptideEvidence.getId());
+//                            System.out.println("PE Start: " + start_map + " PE End: " + end_map);
+//                            for (int j = 0; j < sortedCDS.size(); j++) {
+//                                CDS_Information object = sortedCDS.get(j);
+//                                long s = object.getStart();
+//                                long e = object.getEnd();
+//                                System.out.println("Start: " + s + " End: " + e);
+//                            }
+//
+//                        }
                         List<CDS_Information> outputCDS = new ArrayList();
                         int countCDS = 0;
                         boolean sorted = false;
@@ -383,7 +401,7 @@ public class AddGenomeCoordinatesForPeptides {
                             }
                         }
                         if (!sorted) {
-                            for (int j = countCDS; j < sortedCDS.size(); j++) {
+                            for (int j = countCDS + 1; j < sortedCDS.size(); j++) {
                                 CDS_Information object = sortedCDS.get(j);
                                 long s = object.getStart();
                                 long e = object.getEnd();
@@ -403,6 +421,24 @@ public class AddGenomeCoordinatesForPeptides {
                             }
                         }
 
+//                       if (peptideEvidence.getId().equals("VTASDPLDTLGSEGALSPGGVASLLR_generic|A_ENSP00000420212|_980_1005")||
+//                              peptideEvidence.getId().equals("KFDGPCDPCQGALPDPSR_generic|A_ENSP00000368678|_312_329")  ||
+//                                peptideEvidence.getId().equals("HQGPCDQAPSPCLGVQCAFGATCAVK_generic|A_ENSP00000484607|_319_344") ||
+//                                peptideEvidence.getId().equals("QTQVSVLPEGGETPLFK_generic|A_ENSP00000362924|_374_390") ||
+//                                peptideEvidence.getId().equals("EELVYELNPLDHR_generic|A_ENSP00000449828|_942_954") ||
+//                                peptideEvidence.getId().equals("EIAEDELVAAEALLK_generic|A_ENSP00000480802|_1738_1752") ||
+//                                peptideEvidence.getId().equals("FIDFLAIEMR_generic|A_ENSP00000480802|_2190_2199")   ) {
+//                            System.out.println("============================");
+//                            System.out.println("AFTER");
+//                            for (int j = 0; j < outputCDS.size(); j++) {
+//                                CDS_Information cDS_Information = outputCDS.get(j);
+//                                //peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
+//                                System.out.println("Start: " + String.valueOf(cDS_Information.getStart()) + " End: " + String.valueOf(cDS_Information.getEnd()));
+//
+//                            }
+//                        }
+
+                        System.out.println("END");
                         for (int j = 0; j < outputCDS.size(); j++) {
                             CDS_Information cDS_Information = outputCDS.get(j);
                             peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
