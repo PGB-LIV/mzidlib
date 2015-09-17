@@ -1,4 +1,3 @@
-//hello world
 package uk.ac.liv.mzidlib;
 
 import uk.ac.liv.mzidlib.fasta.InsertMetaDataFromFasta;
