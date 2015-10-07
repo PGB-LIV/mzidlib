@@ -50,7 +50,7 @@ public class MzIdentMLToCSV {
     private String pScoreHeader = "";     //Protein score header will be set only after reading the file
     private String scoreHeader = "";     //This will be set only after reading the file
     // Added by Fawaz Ghali 13/05/2014 exportProteoAnnotator
-    private String exportProteoAnnotatorHeader = "countNonA" + sep + "scoreNonA" + sep + "nonAPeptide" + sep + "A genes"+sep + "protein group-level q-value";
+    private String exportProteoAnnotatorHeader = "countNonA" + sep + "scoreNonA" + sep + "nonAPeptide" + sep + "A genes" + sep + "protein group-level q-value";
     private String endPsmHeader = sep + "proteinacc_start_stop_pre_post_;" + sep + "Is decoy";
     private String representativeProteinAcc = "MS:1001591";     //Used to identify the representative of each group - only used for the one line export of PAGS
     private boolean isVerbose = true;
@@ -221,6 +221,77 @@ public class MzIdentMLToCSV {
                     for (SpectrumIdentificationItem sii : listSII) {
                         out.write(sirLine + sep + siiToString(sii) + "\n");
                     }
+                }
+
+            } // Added by Fawaz Ghali 23/9/2015 to export peptides
+            else if (exportOption.equals("exportPeptides")) {
+
+                out.write(psmHeader + scoreHeader);
+                out.write(endPsmHeader + "\n");
+
+                Iterator<ProteinAmbiguityGroup> iterPAG = unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.ProteinAmbiguityGroup);
+                List<String> pepRefGroupIDList = new ArrayList();
+                while (iterPAG.hasNext()) {
+                    ProteinAmbiguityGroup pag = iterPAG.next();
+                    List<CvParam> cvParamList = pag.getCvParam();
+                    double qValue = 0;
+                    for (int i = 0; i < cvParamList.size(); i++) {
+                        CvParam cvParam = cvParamList.get(i);
+                        if (cvParam.getAccession().equals("MS:1002373")) {
+                            qValue = Double.valueOf(cvParam.getValue()).doubleValue();
+                            break;
+                        }
+
+                    }
+                    List<SpectrumIdentificationItem> siiList = new ArrayList();
+                    if (qValue < 0.01) {
+                        ProteinDetectionHypothesis repPdh = getRepresentativePDH(pag, representativeProteinAcc);
+                        List<PeptideHypothesis> peptideHypothesisList = repPdh.getPeptideHypothesis();
+                        for (int i = 0; i < peptideHypothesisList.size(); i++) {
+                            PeptideHypothesis peptideHypothesis = peptideHypothesisList.get(i);
+                            List<SpectrumIdentificationItemRef> siiRefList = peptideHypothesis.getSpectrumIdentificationItemRef();
+                            for (int j = 0; j < siiRefList.size(); j++) {
+                                SpectrumIdentificationItemRef spectrumIdentificationItemRef = siiRefList.get(j);
+                                SpectrumIdentificationItem sii = siiIdHashMap.get(spectrumIdentificationItemRef.getSpectrumIdentificationItemRef());
+                                siiList.add(sii);
+
+                            }
+                        }
+                        double bestScore = 0;
+                        double siiqValue = 0;
+                        String peptideRefGroupID = "";
+                        SpectrumIdentificationItem bestSII;
+
+                        for (int i = 0; i < siiList.size(); i++) {
+                            SpectrumIdentificationItem sii = siiList.get(i);
+                            double combinedFDR = 0;
+                            List<CvParam> cvParamList1 = sii.getCvParam();
+                            for (CvParam cvParam : cvParamList1) {
+                                String accession = cvParam.getAccession();
+                                if (accession.equals("MS:1002356")) {
+                                    combinedFDR = Double.valueOf(cvParam.getValue()).doubleValue();
+                                }
+                                if (accession.equals("MS:1001868")) {
+                                    siiqValue = Double.valueOf(cvParam.getValue()).doubleValue();
+                                }
+                                if (accession.equals("MS:1002520")) {
+                                    peptideRefGroupID = cvParam.getValue();
+                                }
+
+                            }
+                            if (combinedFDR < bestScore) {
+                                bestScore = combinedFDR;
+                                bestSII = sii;
+                            }
+                            if (siiqValue < 0.01 && !pepRefGroupIDList.contains(peptideRefGroupID)) {
+                                pepRefGroupIDList.add(peptideRefGroupID);
+                                out.write(siiToString(sii) + "\n");
+                            }
+
+                        }
+
+                    }
+
                 }
 
             } else if (exportOption.equals("exportProteinGroups")) {
@@ -596,7 +667,7 @@ public class MzIdentMLToCSV {
         String scoreNonA = "";
         String nonAPeptide = "";
         String aGenes = "";
-        String qValue="";
+        String qValue = "";
         for (int i = 0; i < userParams.size(); i++) {
             UserParam userParam = userParams.get(i);
 
@@ -617,19 +688,18 @@ public class MzIdentMLToCSV {
             if (cvParam.getAccession().equals("MS:1002373")) {
                 qValue = cvParam.getValue();
             }
-         
 
         }
-        
-        List<ProteinDetectionHypothesis> proteinDetectionHypothesisList=pag.getProteinDetectionHypothesis();
+
+        List<ProteinDetectionHypothesis> proteinDetectionHypothesisList = pag.getProteinDetectionHypothesis();
         for (int i = 0; i < proteinDetectionHypothesisList.size(); i++) {
             ProteinDetectionHypothesis proteinDetectionHypothesis = proteinDetectionHypothesisList.get(i);
-            if(proteinDetectionHypothesis.getDBSequenceRef().startsWith("dbseq_generic|A_"))
-                aGenes = aGenes + proteinDetectionHypothesis.getDBSequenceRef()+";";
+            if (proteinDetectionHypothesis.getDBSequenceRef().startsWith("dbseq_generic|A_")) {
+                aGenes = aGenes + proteinDetectionHypothesis.getDBSequenceRef() + ";";
+            }
         }
 
-        
-        line = countNonA + sep + scoreNonA + sep + nonAPeptide + sep + aGenes+ sep + qValue;
+        line = countNonA + sep + scoreNonA + sep + nonAPeptide + sep + aGenes + sep + qValue;
         return line;
     }
 }

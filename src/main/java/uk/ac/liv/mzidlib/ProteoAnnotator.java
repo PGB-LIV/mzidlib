@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import uk.ac.ebi.pride.tools.mgf_parser.MgfFile;
 import uk.ac.liv.mzidlib.Callable.MzidCallable;
+import uk.ac.liv.mzidlib.util.Utils;
 
 /**
  *
@@ -258,6 +259,7 @@ public class ProteoAnnotator {
                         out.println("");
                         // Check MGF file size and spectra count
                         MgfFile dataFile = new MgfFile(new File(spectrum_files + File.separator + string));
+                        
                         long fileSize = (new File(spectrum_files + File.separator + string)).length();
                         if (dataFile.getSpectraCount() > 25000 || fileSize > Math.pow(1024, 3)) {
                             throw new RuntimeException("The MGF file is bigger than 1GB or the Spectra Count > 25000.");

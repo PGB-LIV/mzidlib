@@ -69,7 +69,7 @@ public class MzIdentMLLib {
     public static String csv2mzidUsageExample = " -paramsFile example_files/toxo_omssa_params.csv -cvAccessionForPSMOrdering \"MS:1001328\" -decoyRegex Rev_ -compress true";
     
     
-    public static String mzid2CsvParams = "-exportType exportProteinGroups|exportPSMs|exportProteinsOnly|exportRepProteinPerPAGOnly|exportProteoAnnotator [-verboseOutput true|false] [-compress true|false]";
+    public static String mzid2CsvParams = "-exportType exportProteinGroups|exportPSMs|exportProteinsOnly|exportRepProteinPerPAGOnly|exportProteoAnnotator|exportPeptides [-verboseOutput true|false] [-compress true|false]";
     public static String mzid2CsvToolDescription = "This tool can export from an mzid file into CSV, according to one of the four types of export specified as parameters.";
     public static String mzid2CsvUsage = "Mzid2Csv input.mzid output.csv " + mzid2CsvParams + " \n\nDescription:\n" + mzid2CsvToolDescription;
     public static String mzid2CsvUsageExample = " -exportType exportPSMs -verboseOutput false -compress true ";
