@@ -820,6 +820,17 @@ public class ProteoAnnotator {
             if (verbose) {
                 bf.append("\n\nMzid2Csv time " + elapsedTime / 1000 + " Seconds");
             }
+            // Add exportPeptides option
+            String mzid2CsvOutputFile5 = outputFolder + File.separator + prefix + "combined_fdr_peptide_threshold_mappedGff_ProteoGrouper_exportPeptides.csv";
+            String[] mzid2CsvInput5 = {"Mzid2Csv", proteoGrouperFDRThresholdOutputFile, mzid2CsvOutputFile5, "-exportType", "exportPeptides", "-compress", "false"};
+            print(out, mzid2CsvInput5);
+            startTime = System.currentTimeMillis();
+            mzidLib.init(mzid2CsvInput5);
+            stopTime = System.currentTimeMillis();
+            elapsedTime = stopTime - startTime;
+            if (verbose) {
+                bf.append("\n\nMzid2Csv time " + elapsedTime / 1000 + " Seconds");
+            }
             out.println("");
             out.println("");
             out.println("ProteoAnnotator finished on " + date.toString());
