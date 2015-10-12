@@ -403,7 +403,7 @@ public class AddGenomeCoordinatesForPeptides {
                             }
                         }
 
-                        System.out.println("END");
+                        //System.out.println("END");
                         for (int j = 0; j < outputCDS.size(); j++) {
                             CDS_Information cDS_Information = outputCDS.get(j);
                             peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
