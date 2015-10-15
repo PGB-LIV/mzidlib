@@ -12,6 +12,7 @@
             <properties>
                 <exec.args>-Xmx10G -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib Mzid2Csv C:\Users\fghali\Desktop\emanuele\pilot_emanuele_combined_fdr_peptide_threshold_mappedGff2_proteoGrouper_nonA_Threshold_FDR_Threshold.mzid C:\Users\fghali\Desktop\emanuele\peptides.csv -exportType exportPeptides</exec.args>
                 <exec.executable>java</exec.executable>
+                <skipTests>true</skipTests>
             </properties>
         </action>
         <action>
@@ -41,6 +42,56 @@
             <properties>
                 <exec.args>-Xmx10G -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib Mzid2Csv C:\Users\fghali\Desktop\emanuele\pilot_emanuele_combined_fdr_peptide_threshold_mappedGff2_proteoGrouper_nonA_Threshold_FDR_Threshold.mzid C:\Users\fghali\Desktop\emanuele\peptides.csv -exportType exportPeptides</exec.args>
                 <exec.executable>java</exec.executable>
+            </properties>
+        </action>
+        <action>
+            <actionName>build</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </action>
+        <action>
+            <actionName>clean</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>clean</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </action>
+        <action>
+            <actionName>rebuild</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>clean</goal>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </action>
+        <action>
+            <actionName>build-with-dependencies</actionName>
+            <reactor>also-make</reactor>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
             </properties>
         </action>
     </actions>
