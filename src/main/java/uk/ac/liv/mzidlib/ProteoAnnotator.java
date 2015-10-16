@@ -1128,6 +1128,7 @@ public class ProteoAnnotator {
             if (verbose) {
                 bf.append("\n\nCombinePSMMzidFiles time " + elapsedTime / 1000 + " Seconds");
                 System.out.println("\n\nCombinePSMMzidFiles time " + elapsedTime / 1000 + " Seconds");
+                
             }
         }
 
