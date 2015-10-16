@@ -17,9 +17,7 @@
         </developer>
     </developers>
     
-    <scm>
-        <developerConnection>scm:svn:https://mzidentml-lib.googlecode.com/svn/trunk</developerConnection>
-    </scm>
+   
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -268,14 +266,7 @@
           
             
         </plugins>
-        
-        <extensions>
-            <extension>
-                <groupId>org.jvnet.wagon-svn</groupId>
-                <artifactId>wagon-svn</artifactId>
-                <version>1.12</version>
-            </extension>
-        </extensions>
+   
     </build>
     
     
@@ -317,18 +308,6 @@
             <url>http://download.java.net/maven/2/</url>        
         </repository>
     </repositories>
-    <distributionManagement>
-        <repository>
-            <id>mzidentml-lib-maven-repo</id>
-            <name>Maven Repository for mzidentml-lib release</name>
-            <url>svn:https://mzidentml-lib.googlecode.com/svn/maven/repo</url>
-        </repository>
-        <snapshotRepository>
-            <id>mzidentml-lib-maven-snapshot-repo</id>
-            <name>Maven Repository for mzidentml-lib (snapshot)</name>
-            <url>svn:https://mzidentml-lib.googlecode.com/svn/maven/snapshot-repo</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
+ 
     
 </project>
