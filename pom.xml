@@ -6,8 +6,18 @@
     <version>1.6.12-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>MzidLib</name>
-    <url>https://code.google.com/p/mzidentml-lib/</url>
+    <name>mzidlib</name>
+    <url>https://github.com/fghali/mzidlib/</url>
+     <description>MzidLib - A library of routines for manipulating data in the PSI's mzIdentML standard. ProteoAnnotator is a completely automated software pipeline for integration of mass spectrometry (MS) based proteomic evidence into genome databases. http://www.proteoannotator.org/  </description>
+  
+    
+    <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  
     <developers>
         <developer>
             <name>Fawaz Ghali</name>
