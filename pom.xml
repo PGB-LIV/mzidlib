@@ -28,9 +28,9 @@
     </developers>
     
     <scm>
-        <connection>scm:git:git://github.com/fghali/mzidlib.git</connection>
+        <connection>scm:git:git://github.com:fghali/mzidlib.git</connection>
         <developerConnection>scm:git:git@github.com:fghali/mzidlib.git</developerConnection>
-        <url>https://github.com/fghali/mzidlib</url>
+        <url>https://github.com:fghali/mzidlib</url>
         <tag>mzidlib-1.7</tag>
     </scm>
 

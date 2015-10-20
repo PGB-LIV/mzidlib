@@ -47,7 +47,7 @@ public class ProteoAnnotator {
     private boolean useProteoGrouper = true;
     private String peptideThreshValue = "0.01";
     private String proteinThreshValue = "0.01";
-
+    // Percolator and MSGF+
     private boolean enablePercolator = false;
     private boolean enableMsgf = false;
 
