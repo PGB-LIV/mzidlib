@@ -123,7 +123,7 @@ public class ProteoAnnotator {
             debugFile = outputFolder + File.separator + debugFile;
             new File(debugFile).delete();
 
-            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(debugFile, true)));
+            out = new PrintWriter(new BufferedWriter(new FileWriter(debugFile, true)));
 
             performanceFile = outputFolder + File.separator + performanceFile;
             new File(performanceFile).delete();
