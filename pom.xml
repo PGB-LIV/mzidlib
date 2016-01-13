@@ -4,7 +4,7 @@
     <groupId>uk.ac.liv</groupId>
     <artifactId>mzidlib</artifactId>
     <version>1.7</version>
-    <packaging>jar</packaging>
+    <packaging>jar</packaging>  
 
     <name>mzidlib</name>
     <url>https://github.com/fghali/mzidlib/</url>
@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:git://github.com:fghali/mzidlib.git</connection>
         <developerConnection>scm:git:git@github.com:fghali/mzidlib.git</developerConnection>
-        <url>https://github.com:fghali/mzidlib</url>
+        <url>https://github.com/dser4fghali/mzidlib</url>
         <tag>mzidlib-1.7</tag>
     </scm>
 

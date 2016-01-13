@@ -694,8 +694,9 @@ public class MzIdentMLLib {
                     String prefix = Utils.getCmdParameter(args, "prefix", false);
                     String peptideThreshValue = Utils.getCmdParameter(args, "peptideThreshValue", true);
                     String proteinThreshValue = Utils.getCmdParameter(args, "proteinThreshValue", true);
-
-                    ProteoAnnotator proteoAnnotator = new ProteoAnnotator(inputGFF, inputFasta, spectrum_files, outputFolder, inputPredicted, searchParameters, prefix, peptideThreshValue, proteinThreshValue);
+                    String enableMsgf = Utils.getCmdParameter(args, "enableMsgf", false);
+                    
+                    ProteoAnnotator proteoAnnotator = new ProteoAnnotator(inputGFF, inputFasta, spectrum_files, outputFolder, inputPredicted, searchParameters, prefix, peptideThreshValue, proteinThreshValue, Boolean.valueOf(enableMsgf));
                     proteoAnnotator.runProteoAnnotator();
 
                 } else if (args[0].equals("GenericSearch")) {
@@ -721,7 +722,7 @@ public class MzIdentMLLib {
                     Double rareModWeight = Double.parseDouble(Utils.getCmdParameter(args, "rareModificationWeight", true));
                     Double generalModWeight = Double.parseDouble(Utils.getCmdParameter(args, "generalModificationWeight", true));
                     Double pairedModWeight = Double.parseDouble(Utils.getCmdParameter(args, "pairedModificationAndUnmodWeight", true));
-                    Double multipleModWeight = Double.parseDouble(Utils.getCmdParameter(args, "multipleVariableModWeight", true));
+                     Double multipleModWeight = Double.parseDouble(Utils.getCmdParameter(args, "multipleVariableModWeight", true));
 
                     if (inputFileName != null && outputFileName != null) {
                         System.out.println("Input:" + inputFile.getAbsolutePath());

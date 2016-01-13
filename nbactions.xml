@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xmx10G -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib Mzid2Csv C:\Users\fghali\Desktop\emanuele\pilot_emanuele_combined_fdr_peptide_threshold_mappedGff2_proteoGrouper_nonA_Threshold_FDR_Threshold.mzid C:\Users\fghali\Desktop\emanuele\peptides.csv -exportType exportPeptides</exec.args>
+                <exec.args>-Xmx10G -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib ProteoAnnotator -inputGFF Homo_sapiens.GRCh38.77.gff3 -inputFasta Homo_sapiens.GRCh38.pep.all.fa -spectrum_files /home/fawaz/pilot/green/PXD000561/Adult_Adrenalgland_Gel_Velos_2_f13.mgf -outputFolder /home/fawaz/pilot/green/PXD000561/withoutmsgf -prefix PXD000561_withoutmsgf_ -compress false -searchParameters green_nomods.txt -peptideThreshValue 0.01 -proteinThreshValue 0.01 -inputPredicted "Homo_sapiens.GRCh38.77.abinitio.gff3;Homo_sapiens.GRCh38.pep.abinitio.fa" -enableMsgf true</exec.args>
                 <exec.executable>java</exec.executable>
                 <skipTests>true</skipTests>
             </properties>
@@ -25,7 +25,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Xmx10G -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib Mzid2Csv C:\Users\fghali\Desktop\emanuele\pilot_emanuele_combined_fdr_peptide_threshold_mappedGff2_proteoGrouper_nonA_Threshold_FDR_Threshold.mzid C:\Users\fghali\Desktop\emanuele\peptides.csv -exportType exportPeptides</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -Xmx10G -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib ProteoAnnotator -inputGFF Homo_sapiens.GRCh38.77.gff3 -inputFasta Homo_sapiens.GRCh38.pep.all.fa -spectrum_files /home/fawaz/pilot/green/PXD000561/Adult_Adrenalgland_Gel_Velos_2_f13.mgf -outputFolder /home/fawaz/pilot/green/PXD000561/withoutmsgf -prefix PXD000561_withoutmsgf_ -compress false -searchParameters green_nomods.txt -peptideThreshValue 0.01 -proteinThreshValue 0.01 -inputPredicted "Homo_sapiens.GRCh38.77.abinitio.gff3;Homo_sapiens.GRCh38.pep.abinitio.fa" -enableMsgf true</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
@@ -40,7 +40,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xmx10G -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib Mzid2Csv C:\Users\fghali\Desktop\emanuele\pilot_emanuele_combined_fdr_peptide_threshold_mappedGff2_proteoGrouper_nonA_Threshold_FDR_Threshold.mzid C:\Users\fghali\Desktop\emanuele\peptides.csv -exportType exportPeptides</exec.args>
+                <exec.args>-Xmx10G -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib ProteoAnnotator -inputGFF Homo_sapiens.GRCh38.77.gff3 -inputFasta Homo_sapiens.GRCh38.pep.all.fa -spectrum_files /home/fawaz/pilot/green/PXD000561/Adult_Adrenalgland_Gel_Velos_2_f13.mgf -outputFolder /home/fawaz/pilot/green/PXD000561/withoutmsgf -prefix PXD000561_withoutmsgf_ -compress false -searchParameters green_nomods.txt -peptideThreshValue 0.01 -proteinThreshValue 0.01 -inputPredicted "Homo_sapiens.GRCh38.77.abinitio.gff3;Homo_sapiens.GRCh38.pep.abinitio.fa" -enableMsgf true</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>

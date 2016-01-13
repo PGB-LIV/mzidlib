@@ -48,15 +48,15 @@ public class ProteoAnnotator {
     private String peptideThreshValue = "0.01";
     private String proteinThreshValue = "0.01";
     // Percolator and MSGF+
-    private boolean enablePercolator = false;
+    //private boolean enablePercolator = false;
     private boolean enableMsgf = false;
 
     //private boolean deleteFiles = false;
     long startTime, stopTime, elapsedTime;
 
-    private boolean verbose = true;
-
-    private String outputParameterFile = "";
+    private boolean verbose = true; 
+ 
+   private String outputParameterFile = "";
     private SearchGUICLI searchGUICLI;
     private StringBuffer bf;
     private String[] listFiles;
@@ -76,7 +76,7 @@ public class ProteoAnnotator {
     }
 
     // Constructor 
-    public ProteoAnnotator(String inputGFF, String inputFasta, String spectrum_files, String outputFolder, String inpuPredicted, String searchParameters, String prefix, String peptideThreshValue, String proteinThreshValue) {
+    public ProteoAnnotator(String inputGFF, String inputFasta, String spectrum_files, String outputFolder, String inpuPredicted, String searchParameters, String prefix, String peptideThreshValue, String proteinThreshValue, boolean enableMsgf) {
 
         mzidLib = new MzIdentMLLib();
         this.outputFolder = outputFolder;
@@ -88,6 +88,7 @@ public class ProteoAnnotator {
         this.prefix = prefix;
         this.peptideThreshValue = peptideThreshValue;
         this.proteinThreshValue = proteinThreshValue;
+        this.enableMsgf=enableMsgf;
         int cores = Runtime.getRuntime().availableProcessors();
         System.out.println("========================================");
         System.out.println("No. of availableProcessors: " + cores);
@@ -260,8 +261,8 @@ public class ProteoAnnotator {
             // Test if spectrum_files is a single MGF file or a folder containing multiple MGF files
             boolean testDir = new File(spectrum_files).isDirectory();
 
-            if (testDir) {
-
+//            if (testDir) {
+//
                 runMultipleSearches();
 //                File dirMGF = new File(spectrum_files);
 //
@@ -512,10 +513,10 @@ public class ProteoAnnotator {
 //                    }
 //                }
 
-            } else {
-                runSingleSearch();
-
-            }
+//            } else {
+//                runSingleSearch();
+//
+//            }
             // Combine search engines
             out.println("Combine search engines.");
 
@@ -524,20 +525,20 @@ public class ProteoAnnotator {
             String combineSearchEnginesOutputdebugFile = outputFolder + File.separator + prefix + "combined_search_debug.txt";
             String[] combineSearchEnginesInput;
 
-            if (enablePercolator) {
-                // User MS:1001493 percolator:PEP
-                if (enableMsgf) {
-                    combineSearchEnginesInput = new String[]{"CombineSearchEngines", "-firstFile", omssaoutputFile, "-firstcvTerm", "MS:1001493", "-firstbetterScoresAreLower", "true", "-secondFile", tandemoutputFile, "-secondcvTerm", "MS:1001493", "-secondbetterScoresAreLower", "true", "-thirdFile", msgfoutputFile, "-thirdcvTerm", "MS:1002053", "-thirdbetterScoresAreLower", "true", "-decoyRatio", "1", "-rank", "3", "-outputFile", combineSearchEnginesOutputFile, "-debugFile", combineSearchEnginesOutputdebugFile, "-decoyRegex", "REVERSED", "-compress", "false"};
-                } else {
-                    combineSearchEnginesInput = new String[]{"CombineSearchEngines", "-firstFile", omssaoutputFile, "-firstcvTerm", "MS:1001493", "-firstbetterScoresAreLower", "true", "-secondFile", tandemoutputFile, "-secondcvTerm", "MS:1001493", "-secondbetterScoresAreLower", "true", "-decoyRatio", "1", "-rank", "3", "-outputFile", combineSearchEnginesOutputFile, "-debugFile", combineSearchEnginesOutputdebugFile, "-decoyRegex", "REVERSED", "-compress", "false"};
-                }
-            } else {
+//            if (enablePercolator) {
+//                // User MS:1001493 percolator:PEP
+//                if (enableMsgf) {
+//                    combineSearchEnginesInput = new String[]{"CombineSearchEngines", "-firstFile", omssaoutputFile, "-firstcvTerm", "MS:1001493", "-firstbetterScoresAreLower", "true", "-secondFile", tandemoutputFile, "-secondcvTerm", "MS:1001493", "-secondbetterScoresAreLower", "true", "-thirdFile", msgfoutputFile, "-thirdcvTerm", "MS:1002053", "-thirdbetterScoresAreLower", "true", "-decoyRatio", "1", "-rank", "3", "-outputFile", combineSearchEnginesOutputFile, "-debugFile", combineSearchEnginesOutputdebugFile, "-decoyRegex", "REVERSED", "-compress", "false"};
+//                } else {
+//                    combineSearchEnginesInput = new String[]{"CombineSearchEngines", "-firstFile", omssaoutputFile, "-firstcvTerm", "MS:1001493", "-firstbetterScoresAreLower", "true", "-secondFile", tandemoutputFile, "-secondcvTerm", "MS:1001493", "-secondbetterScoresAreLower", "true", "-decoyRatio", "1", "-rank", "3", "-outputFile", combineSearchEnginesOutputFile, "-debugFile", combineSearchEnginesOutputdebugFile, "-decoyRegex", "REVERSED", "-compress", "false"};
+//                }
+//            } else {
                 if (enableMsgf) {
                     combineSearchEnginesInput = new String[]{"CombineSearchEngines", "-firstFile", omssaoutputFile, "-firstcvTerm", "MS:1001328", "-firstbetterScoresAreLower", "true", "-secondFile", tandemoutputFile, "-secondcvTerm", "MS:1001330", "-secondbetterScoresAreLower", "true", "-thirdFile", msgfoutputFile, "-thirdcvTerm", "MS:1002053", "-thirdbetterScoresAreLower", "true", "-decoyRatio", "1", "-rank", "3", "-outputFile", combineSearchEnginesOutputFile, "-debugFile", combineSearchEnginesOutputdebugFile, "-decoyRegex", "REVERSED", "-compress", "false"};
                 } else {
                     combineSearchEnginesInput = new String[]{"CombineSearchEngines", "-firstFile", omssaoutputFile, "-firstcvTerm", "MS:1001328", "-firstbetterScoresAreLower", "true", "-secondFile", tandemoutputFile, "-secondcvTerm", "MS:1001330", "-secondbetterScoresAreLower", "true", "-decoyRatio", "1", "-rank", "3", "-outputFile", combineSearchEnginesOutputFile, "-debugFile", combineSearchEnginesOutputdebugFile, "-decoyRegex", "REVERSED", "-compress", "false"};
                 }
-            }
+           // }
 
             print(out, combineSearchEnginesInput);
             startTime = System.currentTimeMillis();
@@ -650,7 +651,7 @@ public class ProteoAnnotator {
             mzidLib.init(proteoGrouperFDRInput);
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
-            if (verbose) {
+            if (verbose) {  
                 bf.append("\n\nFalseDiscoveryRateGlobal time " + elapsedTime / 1000 + " Seconds");
             }
             //  Threshold 1% Protein FDR - delete under Threshold
@@ -825,70 +826,70 @@ public class ProteoAnnotator {
         out.println("");
     }
 
-    private void runSingleSearch() throws IOException, Exception {
-        try {
-            out.println("Run SearchGUI search.");
-            out.println("");
-            // Check MGF file size and spectra count
-            MgfFile dataFile = new MgfFile(new File(spectrum_files));
-            long fileSize = (new File(spectrum_files)).length();
-            if (dataFile.getSpectraCount() > 25000 || fileSize > Math.pow(1024, 3)) {
-                throw new RuntimeException("The MGF file is bigger than 1GB or the Spectra Count > 25000.");
-
-            }
-            startTime = System.currentTimeMillis();
-            String[] searchParamters = {"-spectrum_files", spectrum_files, "-output_folder", outputFolder, "-id_params", outputParameterFile, "-comet", "0", "-tide", "0", "-msgf", "0", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0"};
-            searchGUICLI.runSearchGUICLI(searchParamters);
-            stopTime = System.currentTimeMillis();
-            elapsedTime = stopTime - startTime;
-            if (verbose) {
-                bf.append("\n\nSearch time " + elapsedTime / 1000 + " Seconds");
-            }
-            out = new PrintWriter(new BufferedWriter(new FileWriter(debugFile, true)));
-
-            // Convert Omssa and Xtadem to Mzid files
-            out.println("Convert Omssa and Xtadem to Mzid files.");
-
-            String omssaFile = null;
-            String tandemFile = null;
-            listFiles = dir.list();
-            for (String string : listFiles) {
-                if (string.endsWith(".omx")) {
-                    omssaFile = outputFolder + File.separator + string;
-                }
-                if (string.endsWith(".t.xml")) {
-                    tandemFile = outputFolder + File.separator + string;
-                }
-
-            }
-
-            if (omssaFile == null || tandemFile == null) {
-                throw new RuntimeException("Omssa or XTandem files do not exist");
-            }
-            startTime = System.currentTimeMillis();
-            omssaoutputFile = omssaFile.substring(0, omssaFile.lastIndexOf(".")) + "_omssa.mzid";
-            String[] omssaInput = {"Omssa2mzid", omssaFile, omssaoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-compress", "false"};
-            print(out, omssaInput);
-            mzidLib.init(omssaInput);
-            stopTime = System.currentTimeMillis();
-            elapsedTime = stopTime - startTime;
-            if (verbose) {
-                bf.append("\n\nOmssa2mzid time " + elapsedTime / 1000 + " Seconds");
-            }
-            tandemoutputFile = tandemFile.substring(0, tandemFile.lastIndexOf(".")) + "_tandem.mzid";
-            String[] tandemInput = {"Tandem2mzid", tandemFile, tandemoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-databaseFileFormatID", "MS:1001348", "-massSpecFileFormatID", "MS:1001062", "-idsStartAtZero", "false", "-proteinCodeRegex", "\\S+", "-compress", "false"};
-            print(out, tandemInput);
-            startTime = System.currentTimeMillis();
-            mzidLib.init(tandemInput);
-            stopTime = System.currentTimeMillis();
-            elapsedTime = stopTime - startTime;
-            if (verbose) {
-                bf.append("\n\nTandem2mzid time " + elapsedTime / 1000 + " Seconds");
-            }
-        } catch (JMzReaderException ex) {
-            ex.printStackTrace();
-        }
-    }
+//    private void runSingleSearch() throws IOException, Exception {
+//        try {
+//            out.println("Run SearchGUI search.");
+//            out.println("");
+//            // Check MGF file size and spectra count
+//            MgfFile dataFile = new MgfFile(new File(spectrum_files));
+//            long fileSize = (new File(spectrum_files)).length();
+//            if (dataFile.getSpectraCount() > 25000 || fileSize > Math.pow(1024, 3)) {
+//                throw new RuntimeException("The MGF file is bigger than 1GB or the Spectra Count > 25000.");
+//
+//            }
+//            startTime = System.currentTimeMillis();
+//            String[] searchParamters = {"-spectrum_files", spectrum_files, "-output_folder", outputFolder, "-id_params", outputParameterFile, "-comet", "0", "-tide", "0", "-msgf", "0", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0"};
+//            searchGUICLI.runSearchGUICLI(searchParamters);
+//            stopTime = System.currentTimeMillis();
+//            elapsedTime = stopTime - startTime;
+//            if (verbose) {
+//                bf.append("\n\nSearch time " + elapsedTime / 1000 + " Seconds");
+//            }
+//            out = new PrintWriter(new BufferedWriter(new FileWriter(debugFile, true)));
+//
+//            // Convert Omssa and Xtadem to Mzid files
+//            out.println("Convert Omssa and Xtadem to Mzid files.");
+//
+//            String omssaFile = null;
+//            String tandemFile = null;
+//            listFiles = dir.list();
+//            for (String string : listFiles) {
+//                if (string.endsWith(".omx")) {
+//                    omssaFile = outputFolder + File.separator + string;
+//                }
+//                if (string.endsWith(".t.xml")) {
+//                    tandemFile = outputFolder + File.separator + string;
+//                }
+//
+//            }
+//
+//            if (omssaFile == null || tandemFile == null) {
+//                throw new RuntimeException("Omssa or XTandem files do not exist");
+//            }
+//            startTime = System.currentTimeMillis();
+//            omssaoutputFile = omssaFile.substring(0, omssaFile.lastIndexOf(".")) + "_omssa.mzid";
+//            String[] omssaInput = {"Omssa2mzid", omssaFile, omssaoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-compress", "false"};
+//            print(out, omssaInput);
+//            mzidLib.init(omssaInput);
+//            stopTime = System.currentTimeMillis();
+//            elapsedTime = stopTime - startTime;
+//            if (verbose) {
+//                bf.append("\n\nOmssa2mzid time " + elapsedTime / 1000 + " Seconds");
+//            }
+//            tandemoutputFile = tandemFile.substring(0, tandemFile.lastIndexOf(".")) + "_tandem.mzid";
+//            String[] tandemInput = {"Tandem2mzid", tandemFile, tandemoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-databaseFileFormatID", "MS:1001348", "-massSpecFileFormatID", "MS:1001062", "-idsStartAtZero", "false", "-proteinCodeRegex", "\\S+", "-compress", "false"};
+//            print(out, tandemInput);
+//            startTime = System.currentTimeMillis();
+//            mzidLib.init(tandemInput);
+//            stopTime = System.currentTimeMillis();
+//            elapsedTime = stopTime - startTime;
+//            if (verbose) {
+//                bf.append("\n\nTandem2mzid time " + elapsedTime / 1000 + " Seconds");
+//            }
+//        } catch (JMzReaderException ex) {
+//            ex.printStackTrace();
+//        }
+//    }
 
     private void runMultipleSearches() throws JMzReaderException, IOException, Exception {
         File dirMGF = new File(spectrum_files);
@@ -921,7 +922,6 @@ public class ProteoAnnotator {
                     if (enableMsgf) {
                         searchParamters = new String[]{"-spectrum_files", spectrum_files + File.separator + string, "-output_folder", outputFolder, "-id_params", outputParameterFile, "-comet", "0", "-tide", "0", "-msgf", "1", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0"};
                     } else {
-
                         searchParamters = new String[]{"-spectrum_files", spectrum_files + File.separator + string, "-output_folder", outputFolder, "-id_params", outputParameterFile, "-comet", "0", "-tide", "0", "-msgf", "0", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0"};
                     }
                     searchGUICLI.runSearchGUICLI(searchParamters);
@@ -964,30 +964,30 @@ public class ProteoAnnotator {
         for (int i = 0; i < tandemFiles.size(); i++) {
             String tandemFile = tandemFiles.get(i);
 
-            if (enablePercolator) {
-                tandemoutputFile = tandemFile.substring(0, tandemFile.lastIndexOf(".")) + "AddP.mzid";
-                String[] tandemInput = {"XtandemPercolator", tandemFile, outputFolder, "-decoyRegex", "REVERSED", "-proteinCodeRegex", "\\S+"};
-                print(out, tandemInput);
-                mzidLib.init(tandemInput);
-                File tandem_file = new File(tandemFile);
-                String name = tandem_file.getName().substring(0, tandem_file.getName().lastIndexOf("."));
-                String mzidfile = outputFolder + name + ".mzid";
-                File oldfile = new File(mzidfile);
-                File newfile = new File(tandemoutputFile);
-
-                if (oldfile.renameTo(newfile)) {
-                    System.out.println("Rename succesful");
-                } else {
-                    System.out.println("Rename failed");
-                }
-                tandemFDRThresholdoutputFiles.add(tandemoutputFile);
-            } else {
+//            if (enablePercolator) {
+//                tandemoutputFile = tandemFile.substring(0, tandemFile.lastIndexOf(".")) + "AddP.mzid";
+//                String[] tandemInput = {"XtandemPercolator", tandemFile, outputFolder, "-decoyRegex", "REVERSED", "-proteinCodeRegex", "\\S+"};
+//                print(out, tandemInput);
+//                mzidLib.init(tandemInput);
+//                File tandem_file = new File(tandemFile);
+//                String name = tandem_file.getName().substring(0, tandem_file.getName().lastIndexOf("."));
+//                String mzidfile = outputFolder + name + ".mzid";
+//                File oldfile = new File(mzidfile);
+//                File newfile = new File(tandemoutputFile);
+//
+//                if (oldfile.renameTo(newfile)) {
+//                    System.out.println("Rename succesful");
+//                } else {
+//                    System.out.println("Rename failed");
+//                }
+//                tandemFDRThresholdoutputFiles.add(tandemoutputFile);
+//            } else {
                 tandemoutputFile = tandemFile.substring(0, tandemFile.lastIndexOf(".")) + "_tandem.mzid";
                 String[] tandemInput = {"Tandem2mzid", tandemFile, tandemoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-databaseFileFormatID", "MS:1001348", "-massSpecFileFormatID", "MS:1001062", "-idsStartAtZero", "false", "-proteinCodeRegex", "\\S+", "-compress", "false"};
                 print(out, tandemInput);
                 tandemFDRThresholdoutputFiles.add(tandemoutputFile);
                 mzidLib.init(tandemInput);
-            }
+           // }
             //MzidCallable task = new MzidCallable(mzidLib, tandemInput);
             //collection.add(task);
 
@@ -1014,30 +1014,30 @@ public class ProteoAnnotator {
         for (int i = 0; i < omssaFiles.size(); i++) {
             String omssaFile = omssaFiles.get(i);
 
-            if (enablePercolator) {
-                omssaoutputFile = omssaFile.substring(0, omssaFile.lastIndexOf(".")) + "AddP.mzid";
-                String[] omssaInput = {"OmssaPercolator", omssaFile, outputFolder, "-database", decoyFasta, "-decoyRegex", "REVERSED"};
-                print(out, omssaInput);
-                mzidLib.init(omssaInput);
-                File omssa_file = new File(omssaFile);
-                String name = omssa_file.getName().substring(0, omssa_file.getName().lastIndexOf("."));
-                String mzidfile = outputFolder + name + ".mzid";
-                File oldfile = new File(mzidfile);
-                File newfile = new File(omssaoutputFile);
-
-                if (oldfile.renameTo(newfile)) {
-                    System.out.println("Rename succesful");
-                } else {
-                    System.out.println("Rename failed");
-                }
-                omssaFDRThresholdoutputFiles.add(omssaoutputFile);
-            } else {
+//            if (enablePercolator) {
+//                omssaoutputFile = omssaFile.substring(0, omssaFile.lastIndexOf(".")) + "AddP.mzid";
+//                String[] omssaInput = {"OmssaPercolator", omssaFile, outputFolder, "-database", decoyFasta, "-decoyRegex", "REVERSED"};
+//                print(out, omssaInput);
+//                mzidLib.init(omssaInput);
+//                File omssa_file = new File(omssaFile);
+//                String name = omssa_file.getName().substring(0, omssa_file.getName().lastIndexOf("."));
+//                String mzidfile = outputFolder + name + ".mzid";
+//                File oldfile = new File(mzidfile);
+//                File newfile = new File(omssaoutputFile);
+//
+//                if (oldfile.renameTo(newfile)) {
+//                    System.out.println("Rename succesful");
+//                } else {
+//                    System.out.println("Rename failed");
+//                }
+//                omssaFDRThresholdoutputFiles.add(omssaoutputFile);
+//            } else {
                 omssaoutputFile = omssaFile.substring(0, omssaFile.lastIndexOf(".")) + "_omssa.mzid";
                 String[] omssaInput = {"Omssa2mzid", omssaFile, omssaoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-compress", "false"};
                 print(out, omssaInput);
                 omssaFDRThresholdoutputFiles.add(omssaoutputFile);
                 mzidLib.init(omssaInput);
-            }
+//            }
             //MzidCallable task = new MzidCallable(mzidLib, omssaInput);
             //collection.add(task);
 
