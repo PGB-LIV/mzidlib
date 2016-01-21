@@ -694,9 +694,9 @@ public class MzIdentMLLib {
                     String prefix = Utils.getCmdParameter(args, "prefix", false);
                     String peptideThreshValue = Utils.getCmdParameter(args, "peptideThreshValue", true);
                     String proteinThreshValue = Utils.getCmdParameter(args, "proteinThreshValue", true);
-                    String enableMsgf = Utils.getCmdParameter(args, "enableMsgf", false);
+                    String enableMsgf = Utils.getCmdParameter(args, "enableMsgf", true);
                     
-                    ProteoAnnotator proteoAnnotator = new ProteoAnnotator(inputGFF, inputFasta, spectrum_files, outputFolder, inputPredicted, searchParameters, prefix, peptideThreshValue, proteinThreshValue, Boolean.valueOf(enableMsgf));
+                    ProteoAnnotator proteoAnnotator = new ProteoAnnotator(inputGFF, inputFasta, spectrum_files, outputFolder, inputPredicted, searchParameters, prefix, peptideThreshValue, proteinThreshValue, enableMsgf);
                     proteoAnnotator.runProteoAnnotator();
 
                 } else if (args[0].equals("GenericSearch")) {

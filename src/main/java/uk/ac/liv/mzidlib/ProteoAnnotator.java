@@ -49,7 +49,7 @@ public class ProteoAnnotator {
     private String proteinThreshValue = "0.01";
     // Percolator and MSGF+
     //private boolean enablePercolator = false;
-    private boolean enableMsgf = false;
+    private boolean enableMsgf = true;
 
     //private boolean deleteFiles = false;
     long startTime, stopTime, elapsedTime;
@@ -76,7 +76,7 @@ public class ProteoAnnotator {
     }
 
     // Constructor 
-    public ProteoAnnotator(String inputGFF, String inputFasta, String spectrum_files, String outputFolder, String inpuPredicted, String searchParameters, String prefix, String peptideThreshValue, String proteinThreshValue, boolean enableMsgf) {
+    public ProteoAnnotator(String inputGFF, String inputFasta, String spectrum_files, String outputFolder, String inpuPredicted, String searchParameters, String prefix, String peptideThreshValue, String proteinThreshValue, String enableMsgf) {
 
         mzidLib = new MzIdentMLLib();
         this.outputFolder = outputFolder;
@@ -88,7 +88,8 @@ public class ProteoAnnotator {
         this.prefix = prefix;
         this.peptideThreshValue = peptideThreshValue;
         this.proteinThreshValue = proteinThreshValue;
-        this.enableMsgf=enableMsgf;
+        if(enableMsgf.equals("0"))
+            this.enableMsgf=false;
         int cores = Runtime.getRuntime().availableProcessors();
         System.out.println("========================================");
         System.out.println("No. of availableProcessors: " + cores);
@@ -898,13 +899,13 @@ public class ProteoAnnotator {
         // Loop on all MGF files and for each MGF file call SearchGUI
         startTime = System.currentTimeMillis();
         for (String string : listMGFFiles) {
-            if (string.endsWith(".mgf")) {
+            if (string.toLowerCase().endsWith(".mgf")) {
 
                 File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
                 if (mgfFileOrLocation.isDirectory()) {
                     String[] listMGFFiles1 = mgfFileOrLocation.list();
                     for (String string1 : listMGFFiles1) {
-                        if (string1.endsWith(".mgf")) {
+                        if (string1.toLowerCase().endsWith(".mgf")) {
 
                             String[] searchParamters;
                             if (enableMsgf) {
