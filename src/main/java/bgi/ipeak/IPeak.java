@@ -127,10 +127,7 @@ public class IPeak {
     private File[] xtandem_list;
     private File[] omssa_list;
 
-    /**
-     * @param args
-     * @throws Exception
-     */
+    
     public static void main(String[] args) throws Exception {
         IPeak ip = new IPeak();
         CmdLineParser parser = new CmdLineParser(ip);

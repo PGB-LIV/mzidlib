@@ -360,6 +360,9 @@ public class AddGenomeCoordinatesForPeptides {
                         List<CDS_Information> outputCDS = new ArrayList();
                         int countCDS = 0;
                         boolean sorted = false;
+                        if (gffData.get(0).getStrand().equals("-")){
+                            sortedCDS = sortCDSAccordingToStartPositionTemp(sortedCDS);
+                        }
                         for (int j = 0; j < sortedCDS.size(); j++) {
                             CDS_Information object = sortedCDS.get(j);
                             long s = object.getStart();
@@ -406,8 +409,14 @@ public class AddGenomeCoordinatesForPeptides {
                         //System.out.println("END");
                         for (int j = 0; j < outputCDS.size(); j++) {
                             CDS_Information cDS_Information = outputCDS.get(j);
-                            peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
-                            peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(cDS_Information.getEnd())));
+                            // Added by Fawaz based on Tobias email 29/01/2016
+                            if (j==0){
+                                peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
+                                peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(cDS_Information.getEnd()+3)));
+                            }else{
+                                peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
+                                peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(cDS_Information.getEnd()+1)));
+                            }
 
                         }
 
@@ -522,10 +531,10 @@ public class AddGenomeCoordinatesForPeptides {
         // Get locations from the protein object
         long start = pr.getstart();
         long end = pr.getEnd();
-
+        
         // sort the CDS collection according to the strand
         List<CDS_Information> sortedCDS = sortCDSAccordingToStartPosition(cdsColl);
-
+       
         long mapped_start = getMappedCordinates(start, sortedCDS, pr);
         long mapped_end = getMappedCordinates(end, sortedCDS, pr);
         if (mapped_start == -1) {
@@ -619,6 +628,27 @@ public class AddGenomeCoordinatesForPeptides {
                 }
             }
         }
+
+        return cdsColl;
+
+    }
+    
+    List<CDS_Information> sortCDSAccordingToStartPositionTemp(List<CDS_Information> cdsCollection) {
+
+        List<CDS_Information> cdsColl = new ArrayList<CDS_Information>(cdsCollection);
+
+        
+
+      
+            for (int i = cdsColl.size() - 1; i >= 0; i--) {
+                int j = cdsColl.size() - 1 - i;
+                if (j < i) {
+                    CDS_Information temp = cdsColl.get(i);
+                    cdsColl.set(i, cdsColl.get(j));
+                    cdsColl.set(j, temp);
+                }
+            }
+        
 
         return cdsColl;
 
