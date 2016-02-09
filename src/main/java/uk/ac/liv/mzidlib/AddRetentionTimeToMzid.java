@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.commons.lang.StringUtils;
 
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
@@ -301,7 +302,7 @@ public class AddRetentionTimeToMzid {
                             System.out.println("Warning: No match to " + ms2Query.getPrecursorMZ()
                                     + " within 0.1 m/z for spectrum with index: "
                                     + spectrumIndexAsInteger + ". Within 2 m/z: "
-                                    + String.join(" ", mzs));
+                                    + StringUtils.join(mzs, " "));
                             srNoMatch++;
                         }
                     }

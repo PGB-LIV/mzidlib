@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -138,10 +139,10 @@ public class Utils {
         Set<BufferedWriter> writers = new HashSet<>();
         for (int i = 0; i < filesToSplitInto; i++) {
             Path newMgfPath = temporaryMgfFolderPath.resolve("peaks_" + i + ".mgf");
-            writers.add(Files.newBufferedWriter(newMgfPath));
+            writers.add(Files.newBufferedWriter(newMgfPath, StandardCharsets.UTF_8));
         }
 
-        BufferedReader reader = Files.newBufferedReader(Paths.get(masterMgf.getAbsolutePath()));
+        BufferedReader reader = Files.newBufferedReader(Paths.get(masterMgf.getAbsolutePath()), StandardCharsets.UTF_8);
         String line = null;
 
         Iterator<BufferedWriter> writerIterator = writers.iterator();
@@ -176,7 +177,7 @@ public class Utils {
     }
         
     private static int countMgfEntries(File mgf) throws IOException {
-        BufferedReader reader = Files.newBufferedReader(Paths.get(mgf.getAbsolutePath()));
+        BufferedReader reader = Files.newBufferedReader(Paths.get(mgf.getAbsolutePath()), StandardCharsets.UTF_8);
         String line = null;
         int ionCount = 0;
         while ((line = reader.readLine()) != null) {
