@@ -66,6 +66,15 @@ public class AddRetentionTimeToMzid {
     public static void main(String args[]) {
         new AddRetentionTimeToMzid(args[0], args[1], args[2]);
     }
+    /**
+     * Creates a new mzIdentML file from the given mzIdentML file, with retention times extracted from the given raw file.
+     * @param mzidIn Input mzIdentML file.
+     * @param rawIn Input raw file.
+     * @param mzidOut Output mzIdentML file.
+     */
+    public static void add(String mzidIn, String rawIn, String mzidOut) {
+        AddRetentionTimeToMzid addRetentionTimeToMzid = new AddRetentionTimeToMzid(mzidIn, rawIn, mzidOut);
+    }
 
     public AddRetentionTimeToMzid(String mzidIn, List<String> inputSpectraFiles, String mzidOut) {
         this.inputMzid = mzidIn;
