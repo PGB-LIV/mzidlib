@@ -182,7 +182,7 @@ public class PeptideInfor {
 		this.peptideSequence = peptideSequence;
 	}
 	/**
-	 * @param theoriticalMass the theoriticalMass to set
+	 * @param theoreticalMass the theoriticalMass to set
 	 */
 	public void setTheoriticalMass(double theoreticalMass) {
 		this.theoreticalMass = theoreticalMass;

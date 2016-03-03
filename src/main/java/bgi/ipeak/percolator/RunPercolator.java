@@ -34,11 +34,12 @@ public class RunPercolator {
 	
 	/**
 	 * Constructors for RunPercolator.
-	 * @param features
-	 * @param out
-	 * @param useU
-	 * @throws IOException
-	 * @throws InterruptedException
+	 * @param features Features file.
+	 * @param out Output file.
+         * @param tempXML Temp XML file.
+	 * @param useU Use 'U' switch.
+	 * @throws IOException IOException thrown my constructor.
+	 * @throws InterruptedException InterruptedException thrown by constructor.
 	 */
 
 	public RunPercolator(String features, String out, String tempXML, boolean useU) throws IOException, InterruptedException{

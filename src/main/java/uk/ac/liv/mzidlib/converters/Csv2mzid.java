@@ -401,9 +401,9 @@ public class Csv2mzid {
     /**
      *
      * Aim is to write out set up the analysisSoftwareList following this
-     * structure: <AnalysisSoftware id="ID_software" name="xtandem"
-     * version="2008.12.1.1" > <SoftwareName> <cvParam accession="MS:1001476"
-     * name="xtandem" cvRef="PSI-MS" /> </SoftwareName>
+     * structure: &lt;AnalysisSoftware id="ID_software" name="xtandem"
+     * version="2008.12.1.1" &gt; &lt;SoftwareName&gt; &lt;cvParam accession="MS:1001476"
+     * name="xtandem" cvRef="PSI-MS" /&gt; &lt;/SoftwareName&gt;
      *
      */
     public void handleAnalysisSoftware() {
@@ -455,9 +455,9 @@ public class Csv2mzid {
     }
 
     /**
-     * Setup Provider element as follows <Provider id="PROVIDER"> <ContactRole
-     * Contact_ref="PERSON_DOC_OWNER"> <role> <cvParam accession="MS:1001271"
-     * name="researcher" cvRef="PSI-MS"/> </role> </ContactRole> </Provider>
+     * Setup Provider element as follows &lt;Provider id="PROVIDER"&gt; &lt;ContactRole
+     * Contact_ref="PERSON_DOC_OWNER"&gt; &lt;role&gt; &lt;cvParam accession="MS:1001271"
+     * name="researcher" cvRef="PSI-MS"/&gt; &lt;/role&gt; &lt;/ContactRole&gt; &lt;/Provider&gt;
      *
      */
     public void handleProvider() {
@@ -477,12 +477,12 @@ public class Csv2mzid {
     }
 
     /**
-     * TO DO Capture name and email of the user <AuditCollection> <Person
+     * TO DO Capture name and email of the user &lt;AuditCollection&gt; &lt;Person
      * id="PERSON_DOC_OWNER" firstName="Andy" lastName="Jones"
-     * email="someone@someuniversity.com"> <affiliations
-     * Organization_ref="ORG_DOC_OWNER"/> </Person> <Organization
-     * id="ORG_DOC_OWNER" address="Some address" name="Some place" />
-     * </AuditCollection>
+     * email="someone@someuniversity.com"&gt; &lt;affiliations
+     * Organization_ref="ORG_DOC_OWNER"/&gt; &lt;/Person> <Organization
+     * id="ORG_DOC_OWNER" address="Some address" name="Some place" /&gt;
+     * &lt;/AuditCollection&gt;
      *
      *
      */
@@ -527,13 +527,13 @@ public class Csv2mzid {
     }
 
     /**
-     * <AnalysisCollection> <SpectrumIdentification id="SI_1"
+     * &lt;AnalysisCollection&gt; &lt;SpectrumIdentification id="SI_1"
      * SpectrumIdentificationProtocol_ref="SearchProtocol"
      * SpectrumIdentificationList_ref="siiListID"
-     * activityDate="2008-02-27T08:22:12"> <InputSpectra
-     * SpectraData_ref="SD_1"/> <SearchDatabase
-     * SearchDatabase_ref="search_database"/> </SpectrumIdentification>
-     * </AnalysisCollection>
+     * activityDate="2008-02-27T08:22:12"&gt; &lt;InputSpectra
+     * SpectraData_ref="SD_1"/&gt; &lt;SearchDatabase
+     * SearchDatabase_ref="search_database"/&gt; &lt;/SpectrumIdentification&gt;
+     * &lt;/AnalysisCollection&gt;
      *
      */
     public void handleAnalysisCollection() {
@@ -561,36 +561,36 @@ public class Csv2mzid {
     }
 
     /**
-     * <AnalysisProtocolCollection> <SpectrumIdentificationProtocol
-     * id="SearchProtocol" AnalysisSoftware_ref="ID_software"> <SearchType>
-     * <cvParam accession="MS:1001083" name="ms-ms search" cvRef="PSI-MS"/>
-     * </SearchType> <AdditionalSearchParams> <cvParam accession="MS:1001211"
-     * name="parent mass type mono" cvRef="PSI-MS"/> <cvParam
-     * accession="MS:1001256" name="fragment mass type mono" cvRef="PSI-MS"/>
-     * </AdditionalSearchParams> <ModificationParams> <SearchModification
-     * fixedMod="true"> <ModParam massDelta="57.021464" residues="C"> <cvParam
-     * accession="UNIMOD:4" name="Carbamidomethyl" cvRef="UNIMOD" /> </ModParam>
-     * </SearchModification> <SearchModification fixedMod="false"> <ModParam
-     * massDelta="15.994919" residues="M"> <cvParam accession="UNIMOD:35"
-     * name="Oxidation" cvRef="UNIMOD" /> </ModParam> </SearchModification>
-     * </ModificationParams> <Enzymes independent="0"> <Enzyme id="ENZ_1"
-     * CTermGain="OH" NTermGain="H" missedCleavages="1" semiSpecific="0">
-     * <EnzymeName> <cvParam accession="MS:1001251" name="Trypsin"
-     * cvRef="PSI-MS" /> </EnzymeName> </Enzyme> </Enzymes> <MassTable id="0"
-     * msLevel="2"> </MassTable> <FragmentTolerance> <cvParam
+     * &lt;AnalysisProtocolCollection&gt; &lt;SpectrumIdentificationProtocol
+     * id="SearchProtocol" AnalysisSoftware_ref="ID_software"&gt; &lt;SearchType&gt;
+     * &lt;cvParam accession="MS:1001083" name="ms-ms search" cvRef="PSI-MS"/&gt;
+     * &lt;/SearchType&gt; &lt;AdditionalSearchParams&gt; &lt;cvParam accession="MS:1001211"
+     * name="parent mass type mono" cvRef="PSI-MS"/&gt; &lt;cvParam
+     * accession="MS:1001256" name="fragment mass type mono" cvRef="PSI-MS"/&gt;
+     * &lt;/AdditionalSearchParams&gt; &lt;ModificationParams&gt; &lt;SearchModification
+     * fixedMod="true"&gt; &lt;ModParam massDelta="57.021464" residues="C"&gt; &lt;cvParam
+     * accession="UNIMOD:4" name="Carbamidomethyl" cvRef="UNIMOD" /&gt; &lt;/ModParam&gt;
+     * &lt;/SearchModification&gt; &lt;SearchModification fixedMod="false"&gt; &lt;ModParam
+     * massDelta="15.994919" residues="M"&gt; &lt;cvParam accession="UNIMOD:35"
+     * name="Oxidation" cvRef="UNIMOD" /&gt; &lt;/ModParam&gt; &lt;/SearchModification&gt;
+     * &lt;/ModificationParams&gt; &lt;Enzymes independent="0"&gt; &lt;Enzyme id="ENZ_1"
+     * CTermGain="OH" NTermGain="H" missedCleavages="1" semiSpecific="0"&gt;
+     * &lt;EnzymeName&gt; &lt;cvParam accession="MS:1001251" name="Trypsin"
+     * cvRef="PSI-MS" /&gt; &lt;/EnzymeName&gt; &lt;/Enzyme&gt; &lt;/Enzymes&gt; &lt;MassTable id="0"
+     * msLevel="2"&gt; &lt;/MassTable&gt; &lt;FragmentTolerance&gt; &lt;cvParam
      * accession="MS:1001412" name="search tolerance plus value" value="0.5"
      * cvRef="PSI-MS" unitAccession="UO:0000221" unitName="dalton"
-     * unitCvRef="UO" /> <cvParam accession="MS:1001413" name="search tolerance
+     * unitCvRef="UO" /&gt; &lt;cvParam accession="MS:1001413" name="search tolerance
      * minus value" value="0.5" cvRef="PSI-MS" unitAccession="UO:0000221"
-     * unitName="dalton" unitCvRef="UO" /> </FragmentTolerance>
-     * <ParentTolerance> <cvParam accession="MS:1001412" name="search tolerance
+     * unitName="dalton" unitCvRef="UO" /&gt; &lt;/FragmentTolerance&gt;
+     * &lt;ParentTolerance&gt; &lt;cvParam accession="MS:1001412" name="search tolerance
      * plus value" value="0.5" cvRef="PSI-MS" unitAccession="UO:0000221"
-     * unitName="dalton" unitCvRef="UO" /> <cvParam accession="MS:1001413"
+     * unitName="dalton" unitCvRef="UO" /&gt; &lt;cvParam accession="MS:1001413"
      * name="search tolerance minus value" value="0.5" cvRef="PSI-MS"
-     * unitAccession="UO:0000221" unitName="dalton" unitCvRef="UO" />
-     * </ParentTolerance> <Threshold> <cvParam accession="MS:1001494" name="no
-     * threshold" cvRef="PSI-MS" /> </Threshold>
-     * </SpectrumIdentificationProtocol> </AnalysisProtocolCollection>
+     * unitAccession="UO:0000221" unitName="dalton" unitCvRef="UO" /&gt;
+     * &lt;/ParentTolerance&gt; &lt;Threshold&gt; &lt;cvParam accession="MS:1001494" name="no
+     * threshold" cvRef="PSI-MS" /&gt; &lt;/Threshold&gt;
+     * &lt;/SpectrumIdentificationProtocol&gt; &lt;/AnalysisProtocolCollection&gt;
      *
      *
      */
@@ -1237,7 +1237,10 @@ public class Csv2mzid {
     /**
      * Helper method to create and return a CvParam from accession, name and CV
      *
-     * @return CvParam
+     * @param accession Accession.
+     * @param name Name.
+     * @param cv CV.
+     * @return CvParam The generated CvParam.
      */
     public CvParam makeCvParam(String accession, String name, Cv cv) {
         CvParam cvParam = new CvParam();
@@ -1250,7 +1253,11 @@ public class Csv2mzid {
     /**
      * Helper method to create and return a CvParam from accession, name and CV
      *
-     * @return CvParam
+     * @param accession Accession.
+     * @param name Name.
+     * @param cv CV.
+     * @param value Value.
+     * @return CvParam The generated CvParam.
      */
     public CvParam makeCvParam(String accession, String name, Cv cv, String value) {
         CvParam cvParam = new CvParam();
@@ -1265,7 +1272,12 @@ public class Csv2mzid {
      * Helper method to create and return a CvParam from accession, name, CV,
      * unitAccession and unitName (unitCV is automatically provided)
      *
-     * @return CvParam
+     * @param accession Accession.
+     * @param name Name.
+     * @param cv CV.
+     * @param unitAccession Unit accession.
+     * @param unitName Unit name.
+     * @return CvParam The generated CvParam.
      */
     public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName) {
         CvParam cvParam = new CvParam();
@@ -1282,7 +1294,13 @@ public class Csv2mzid {
      * Helper method to create and return a CvParam from accession, name, CV,
      * unitAccession, unitName and unitCV
      *
-     * @return CvParam
+     * @param accession Accession.
+     * @param name Name.
+     * @param cv CV.
+     * @param unitAccession Unit accession.
+     * @param unitName Unit name.
+     * @param alternateUnitCV Alternate unit CV.
+     * @return CvParam The generated CvParam.
      */
     public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName, Cv alternateUnitCV) {
         CvParam cvParam = new CvParam();
@@ -1437,6 +1455,8 @@ public class Csv2mzid {
      * Helper method to setup a CvParam with CVRef, with either Daltons or ppm
      * as units
      *
+     * @param isDaltonUnit Whether the unit is Da.
+     * @return CvParam
      */
     public CvParam getCvParamWithMassUnits(Boolean isDaltonUnit) {
         CvParam cvParam = new CvParam();

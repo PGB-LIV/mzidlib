@@ -282,7 +282,7 @@ public class SpectraFeature extends SpectraBaseInfo{
 	}
 	/**
 	 * calculate the total intensity of the spectrum. bin size=100Da, the 20 most intense peak.
-	 * @return
+	 * @return Log total intensity.
 	 */
 	public double calLogTotInt(){
 		HashMap<Double, Double> mzToIntensity=new HashMap<Double, Double>();

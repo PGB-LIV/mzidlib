@@ -69,10 +69,10 @@ public class CallExportAsMzid {
 
     /**
      *
-     * @param aFile
-     * @param out_mzid_file
-     * @param usermod
-     * @param reg
+     * @param aFile Input result file.
+     * @param out_mzid_file Output mzid file.
+     * @param usermod User mod.
+     * @param reg Decoy regex.
      */
     public CallExportAsMzid(String aFile, String out_mzid_file, String usermod, String reg) {
         this.input_result_file = aFile;
@@ -86,13 +86,13 @@ public class CallExportAsMzid {
 
     /**
      *
-     * @param aFile
-     * @param out_mzid_file
-     * @param reg
-     * @param df
-     * @param accessionSplitRegex
-     * @param mf
-     * @param b0
+     * @param aFile Input result file.
+     * @param out_mzid_file Output mzid file.
+     * @param reg Decoy regex.
+     * @param df Database format.
+     * @param accessionSplitRegex Accession Split regex.
+     * @param mf Spectrum file format.
+     * @param b0 Spectra coordinates.
      */
     public CallExportAsMzid(String aFile, String out_mzid_file, String reg, String df, String accessionSplitRegex, String mf, boolean b0) {
         this.input_result_file = aFile;
@@ -108,7 +108,7 @@ public class CallExportAsMzid {
 
     /**
      *
-     * @throws Exception
+     * @throws Exception Exception thrown by method.
      */
     public void convert() throws Exception {
         if (search_engineID == 1) {

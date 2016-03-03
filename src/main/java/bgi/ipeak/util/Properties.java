@@ -99,7 +99,7 @@ public class Properties {
     /**
      * Auto get the path of percolator
      *
-     * @return
+     * @return Percolator path.
      */
     public String getPercolator() {
         

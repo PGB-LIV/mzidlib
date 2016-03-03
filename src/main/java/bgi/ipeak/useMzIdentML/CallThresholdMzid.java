@@ -17,13 +17,13 @@ public class CallThresholdMzid {
 	}
 	/**
 	 * 
-	 * @param mzid2threshold
-	 * @param output_mzid
-	 * @param cvAccessionForScoreThreshold
-	 * @param threshValue
-	 * @param isPSMThreshold
-	 * @param betterScoreAreLower
-	 * @param deleteUnderThreshold
+	 * @param mzid2threshold Mzid File
+	 * @param output_mzid Output mzid file.
+	 * @param cvAccessionForScoreThreshold CV accession for score threshold.
+	 * @param threshValue Threshold value.
+	 * @param isPSMThreshold Whether to use PSM threshold.
+	 * @param betterScoreAreLower Whether better scores are lower.
+	 * @param deleteUnderThreshold Whether to delete under threshold.
 	 */
 	public CallThresholdMzid(String mzid2threshold,String output_mzid,String cvAccessionForScoreThreshold,Double threshValue,
 			Boolean isPSMThreshold,Boolean betterScoreAreLower,Boolean deleteUnderThreshold) {

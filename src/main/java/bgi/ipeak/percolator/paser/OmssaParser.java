@@ -73,16 +73,7 @@ public class OmssaParser {
 	}
 
 	/**
-	 * parse the omx file and extract the features.
-	 * @param srcFile
-	 * @param modsFile
-	 * @param usermod
-	 * @param outFile
-	 * @param rank
-	 * @param decoyRegex
-	 * @param dmppm 
-	 * @param dm 
-	 * @return
+	 * parse the omx file and extract the features. 
 	 * @throws Exception
 	 */
 	public void parseOmssaXML() throws Exception {
@@ -442,11 +433,6 @@ public class OmssaParser {
 
 	/**
 	 * Count the number of modifiable sites in a peptide sequence. 
-	 * @param varMod
-	 * @param pepSeq
-	 * @param postAA 
-	 * @param preAA 
-	 * @return
 	 * @throws IOException 
 	 */
 	public void  print_features() throws IOException {

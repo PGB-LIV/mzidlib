@@ -51,8 +51,8 @@ public class PSMImpl implements PSMInf {
 	public PSMImpl(){}
 	/**
 	 * Constructor for PSMImpl from a PeptideInfor instance and a FragmentIon instance array.
-	 * @param aPeptide
-	 * @param aFragmentIons
+	 * @param aPeptide Peptide.
+	 * @param aFragmentIons Fragment ions.
 	 */
 	public PSMImpl(PeptideInfor aPeptide, FragmentIon[] aFragmentIons) {
 		setPeptide(aPeptide);

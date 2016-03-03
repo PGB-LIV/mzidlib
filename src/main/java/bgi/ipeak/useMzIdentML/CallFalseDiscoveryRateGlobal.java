@@ -17,14 +17,14 @@ public class CallFalseDiscoveryRateGlobal {
 	}
 	/**
 	 * 
-	 * @param mzid
-	 * @param output_mzid
-	 * @param decoyRatio
-	 * @param decoy
-	 * @param cvTerm
-	 * @param betterScoresAreLower
-	 * @param fdrLevel
-	 * @param proteinLevel
+	 * @param mzid Mzid file.
+	 * @param output_mzid Output mzid.
+	 * @param decoyRatio Decoy ratio.
+	 * @param decoy Decoy regex.
+	 * @param cvTerm CV term.
+	 * @param betterScoresAreLower Whether better scores are lower.
+	 * @param fdrLevel FDR level.
+	 * @param proteinLevel Protein level.
 	 */
 	public CallFalseDiscoveryRateGlobal(String mzid, String output_mzid, String decoyRatio, String decoy,
 			String cvTerm, boolean betterScoresAreLower, String fdrLevel, String proteinLevel ) {

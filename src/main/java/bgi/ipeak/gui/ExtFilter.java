@@ -17,7 +17,7 @@ public class ExtFilter extends FileFilter {
 	private String ext=null;
 	/**
 	 * Constructor for ExtFilter
-	 * @param extension
+	 * @param str The extension.
 	 */
 	public ExtFilter(String str){
 		setExt(str);
