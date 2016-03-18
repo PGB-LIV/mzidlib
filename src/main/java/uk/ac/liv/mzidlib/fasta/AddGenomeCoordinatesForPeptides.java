@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import static java.lang.Math.toIntExact;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +37,8 @@ public class AddGenomeCoordinatesForPeptides {
     private String inputGff;
     private String outputGff;
     private Cv psiCV;
+    
+    private List unmmappedAccessions= new ArrayList();
 
     private Map<String, List<CDS_Information>> cdsRecords = new HashMap<>();
 
@@ -346,7 +349,7 @@ public class AddGenomeCoordinatesForPeptides {
                     long start_map, end_map;
 
                     co_ords = mapToGff(pr);
-                    if (co_ords != null) {
+                    if (co_ords != null&&!unmmappedAccessions.contains(pr.getAccession())) {
                         start_map = Long.parseLong(co_ords[0]);
                         end_map = Long.parseLong(co_ords[1]);
                         if (end_map < start_map) {
@@ -360,7 +363,7 @@ public class AddGenomeCoordinatesForPeptides {
                         List<CDS_Information> outputCDS = new ArrayList();
                         int countCDS = 0;
                         boolean sorted = false;
-                        if (gffData.get(0).getStrand().equals("-")){
+                        if (gffData.get(0).getStrand().equals("-")) {
                             sortedCDS = sortCDSAccordingToStartPositionTemp(sortedCDS);
                         }
                         for (int j = 0; j < sortedCDS.size(); j++) {
@@ -405,20 +408,39 @@ public class AddGenomeCoordinatesForPeptides {
                                 }
                             }
                         }
-
+                        int pepLen = 3 * (peptideEvidence.getEnd().intValue() - peptideEvidence.getStart().intValue() + 1);
+                        int coordLen = 0;
+//                        for (int j = 0; j < outputCDS.size(); j++) {
+//                            CDS_Information cDS_Information = outputCDS.get(j);
+//                            cDS_Information.getStart();
+//                            cDS_Information.getEnd();
+//                            coordLen = coordLen + toIntExact(cDS_Information.getEnd() - cDS_Information.getStart());
+//                        }
+                        long s,e=0;
+                        
                         //System.out.println("END");
+                         System.out.println("pepLen "+ pepLen);
+                         System.out.println("outputCDS.size() "+ outputCDS.size());
                         for (int j = 0; j < outputCDS.size(); j++) {
                             CDS_Information cDS_Information = outputCDS.get(j);
-                            // Added by Fawaz based on Tobias email 29/01/2016
+                            s = cDS_Information.getStart()-1;
+                           peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(s)));
                             if (j==0){
-                                peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
-                                peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(cDS_Information.getEnd()+3)));
+                                 e = cDS_Information.getEnd()+2;
                             }else{
-                                peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
-                                peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(cDS_Information.getEnd()+1)));
+                                 e = cDS_Information.getEnd();
                             }
-
+                            peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(e)));
+                            coordLen =coordLen + toIntExact(e -s);
+                            System.out.println("toIntExact(e -s) "+ toIntExact(e -s));
                         }
+                            System.out.println("coordLen "+ coordLen);
+                        if (pepLen==coordLen){
+                            System.out.println("PASS "+ peptideEvidence.getPeptideRef() +" pepLen "+pepLen +" coordLen "+ coordLen);
+                        }else{
+                            System.out.println("FAILED "+ peptideEvidence.getPeptideRef()+" pepLen "+pepLen +" coordLen "+ coordLen);
+                        }
+                        System.out.println("");
 
                         peptideEvidence.getUserParam().add(makeUserParam("chr", gffData.get(0).getSeqID()));
                         peptideEvidence.getUserParam().add(makeUserParam("strand", gffData.get(0).getStrand()));
@@ -531,19 +553,21 @@ public class AddGenomeCoordinatesForPeptides {
         // Get locations from the protein object
         long start = pr.getstart();
         long end = pr.getEnd();
-        
+
         // sort the CDS collection according to the strand
         List<CDS_Information> sortedCDS = sortCDSAccordingToStartPosition(cdsColl);
-       
+
         long mapped_start = getMappedCordinates(start, sortedCDS, pr);
         long mapped_end = getMappedCordinates(end, sortedCDS, pr);
         if (mapped_start == -1) {
             System.out.println("For accession: " + pr.getAccession() + " and a peptide eveidence: " + pr.getPeptideEvidenceID() + " start coordinates couldn't be mapped.");
+            unmmappedAccessions.add(pr.getAccession());
         }
         if (mapped_end == -1) {
             System.out.println("For accession: " + pr.getAccession() + " and a peptide eveidence: " + pr.getPeptideEvidenceID() + " the end coordinates couldn't be mapped.");
             mapped_end = mapped_start + ((end - start) * 3);
             System.out.println("mapped_end modified value= " + mapped_end);
+            unmmappedAccessions.add(pr.getAccession());
 
         }
 
@@ -632,23 +656,19 @@ public class AddGenomeCoordinatesForPeptides {
         return cdsColl;
 
     }
-    
+
     List<CDS_Information> sortCDSAccordingToStartPositionTemp(List<CDS_Information> cdsCollection) {
 
         List<CDS_Information> cdsColl = new ArrayList<CDS_Information>(cdsCollection);
 
-        
-
-      
-            for (int i = cdsColl.size() - 1; i >= 0; i--) {
-                int j = cdsColl.size() - 1 - i;
-                if (j < i) {
-                    CDS_Information temp = cdsColl.get(i);
-                    cdsColl.set(i, cdsColl.get(j));
-                    cdsColl.set(j, temp);
-                }
+        for (int i = cdsColl.size() - 1; i >= 0; i--) {
+            int j = cdsColl.size() - 1 - i;
+            if (j < i) {
+                CDS_Information temp = cdsColl.get(i);
+                cdsColl.set(i, cdsColl.get(j));
+                cdsColl.set(j, temp);
             }
-        
+        }
 
         return cdsColl;
 
