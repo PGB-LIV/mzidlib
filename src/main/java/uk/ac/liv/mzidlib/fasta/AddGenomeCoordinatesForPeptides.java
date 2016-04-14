@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import static java.lang.Math.toIntExact;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +25,7 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 import uk.ac.liv.mzidlib.gff.CDS_Information;
 import uk.ac.liv.mzidlib.gff.ProteinResults;
+import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
 /**
  *
@@ -419,8 +420,8 @@ public class AddGenomeCoordinatesForPeptides {
                         long s,e=0;
                         
                         //System.out.println("END");
-                         System.out.println("pepLen "+ pepLen);
-                         System.out.println("outputCDS.size() "+ outputCDS.size());
+                        // System.out.println("pepLen "+ pepLen);
+                         //System.out.println("outputCDS.size() "+ outputCDS.size());
                         for (int j = 0; j < outputCDS.size(); j++) {
                             CDS_Information cDS_Information = outputCDS.get(j);
                             s = cDS_Information.getStart()-1;
@@ -431,16 +432,16 @@ public class AddGenomeCoordinatesForPeptides {
                                  e = cDS_Information.getEnd();
                             }
                             peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(e)));
-                            coordLen =coordLen + toIntExact(e -s);
-                            System.out.println("toIntExact(e -s) "+ toIntExact(e -s));
+                            coordLen =coordLen + MzidLibUtils.safeLongToInt(e -s);
+//                            System.out.println("toIntExact(e -s) "+ toIntExact(e -s));
                         }
-                            System.out.println("coordLen "+ coordLen);
-                        if (pepLen==coordLen){
-                            System.out.println("PASS "+ peptideEvidence.getPeptideRef() +" pepLen "+pepLen +" coordLen "+ coordLen);
-                        }else{
-                            System.out.println("FAILED "+ peptideEvidence.getPeptideRef()+" pepLen "+pepLen +" coordLen "+ coordLen);
-                        }
-                        System.out.println("");
+//                            System.out.println("coordLen "+ coordLen);
+//                        if (pepLen==coordLen){
+//                            System.out.println("PASS "+ peptideEvidence.getPeptideRef() +" pepLen "+pepLen +" coordLen "+ coordLen);
+//                        }else{
+//                            System.out.println("FAILED "+ peptideEvidence.getPeptideRef()+" pepLen "+pepLen +" coordLen "+ coordLen);
+//                        }
+//                        System.out.println("");
 
                         peptideEvidence.getUserParam().add(makeUserParam("chr", gffData.get(0).getSeqID()));
                         peptideEvidence.getUserParam().add(makeUserParam("strand", gffData.get(0).getStrand()));

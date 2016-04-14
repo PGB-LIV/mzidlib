@@ -714,18 +714,18 @@ public class CombineSearchEngines {
             }
         }
         // Added by Fawaz Ghali 30/7/2015 Debug info
-        Set keys = sequenceMap.keySet();
-        for (Iterator i = keys.iterator(); i.hasNext();) {
-            String key = (String) i.next();
-            List value = (List) sequenceMap.get(key);
-            String s="";
-            for (int j = 0; j < value.size(); j++) {
-                Object object = value.get(j);
-                s= s+"; "+object;
-                
-            }
-            System.out.println( key + ", " + s);
-        }
+//        Set keys = sequenceMap.keySet();
+//        for (Iterator i = keys.iterator(); i.hasNext();) {
+//            String key = (String) i.next();
+//            List value = (List) sequenceMap.get(key);
+//            String s="";
+//            for (int j = 0; j < value.size(); j++) {
+//                Object object = value.get(j);
+//                s= s+"; "+object;
+//                
+//            }
+//            System.out.println( key + ", " + s);
+//        }
 
 
         return sequenceMap;

@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib ProteoAnnotator -inputGFF Homo_sapiens.GRCh38.77.gff3 -inputFasta Homo_sapiens.GRCh38.pep.all.fa -spectrum_files C:\Users\fghali\Desktop\2nd -outputFolder C:\Users\fghali\Desktop\2nd -prefix 2ndstage_1_ -compress false -searchParameters search_PXD000652.txt -peptideThreshValue 0.01 -proteinThreshValue 0.01 -inputPredicted "Homo_sapiens.GRCh38.77.abinitio.gff3;Homo_sapiens.GRCh38.pep.abinitio.fa" -enableMsgf 0 -enableTwoStageSearch 1</exec.args>
+                <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib Threshold C:\Users\fghali\Desktop\combined_fdr_peptide.mzid C:\Users\fghali\Desktop\combined_fdr_peptide_oo.mzid -isPSMThreshold true -cvAccessionForScoreThreshold MS:1002360 -threshValue 0.01 -betterScoresAreLower true -deleteUnderThreshold true -compress false</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -24,7 +24,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib ProteoAnnotator -inputGFF Homo_sapiens.GRCh38.77.gff3 -inputFasta Homo_sapiens.GRCh38.pep.all.fa -spectrum_files C:\Users\fghali\Desktop\2nd -outputFolder C:\Users\fghali\Desktop\2nd -prefix 2ndstage_1_ -compress false -searchParameters search_PXD000652.txt -peptideThreshValue 0.01 -proteinThreshValue 0.01 -inputPredicted "Homo_sapiens.GRCh38.77.abinitio.gff3;Homo_sapiens.GRCh38.pep.abinitio.fa" -enableMsgf 0 -enableTwoStageSearch 1</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib Threshold C:\Users\fghali\Desktop\combined_fdr_peptide.mzid C:\Users\fghali\Desktop\combined_fdr_peptide_oo.mzid -isPSMThreshold true -cvAccessionForScoreThreshold MS:1002360 -threshValue 0.01 -betterScoresAreLower true -deleteUnderThreshold true -compress false</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
@@ -39,7 +39,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib ProteoAnnotator -inputGFF Homo_sapiens.GRCh38.77.gff3 -inputFasta Homo_sapiens.GRCh38.pep.all.fa -spectrum_files C:\Users\fghali\Desktop\2nd -outputFolder C:\Users\fghali\Desktop\2nd -prefix 2ndstage_1_ -compress false -searchParameters search_PXD000652.txt -peptideThreshValue 0.01 -proteinThreshValue 0.01 -inputPredicted "Homo_sapiens.GRCh38.77.abinitio.gff3;Homo_sapiens.GRCh38.pep.abinitio.fa" -enableMsgf 0 -enableTwoStageSearch 1</exec.args>
+                <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib Threshold C:\Users\fghali\Desktop\combined_fdr_peptide.mzid C:\Users\fghali\Desktop\combined_fdr_peptide_oo.mzid -isPSMThreshold true -cvAccessionForScoreThreshold MS:1002360 -threshValue 0.01 -betterScoresAreLower true -deleteUnderThreshold true -compress false</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>

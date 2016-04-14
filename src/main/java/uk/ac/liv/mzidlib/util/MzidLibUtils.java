@@ -55,7 +55,7 @@ public class MzidLibUtils {
     }
 
     /**
-     * Added by Fawaz Ghali return psiCV 
+     * Added by Fawaz Ghali return psiCV
      */
     public Cv getpsiCV(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
@@ -70,9 +70,9 @@ public class MzidLibUtils {
         }
         return cv1;
     }
-    
+
     /**
-     * Added by Fawaz Ghali return unimod CV 
+     * Added by Fawaz Ghali return unimod CV
      */
     public Cv getUnimod(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
@@ -88,9 +88,8 @@ public class MzidLibUtils {
         return cv1;
     }
 
-    
     /**
-     * Added by Fawaz Ghali return unit CV 
+     * Added by Fawaz Ghali return unit CV
      */
     public Cv getUnit(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
@@ -106,5 +105,11 @@ public class MzidLibUtils {
         return cv1;
     }
 
+    public static int safeLongToInt(long l) {
+        if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException(l + " cannot be cast to int without changing its value.");
+        }
+        return (int) l;
+    }
 
 }

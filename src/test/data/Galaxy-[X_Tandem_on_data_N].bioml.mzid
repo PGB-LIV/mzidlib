@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MzIdentML id="12345" version="1.1.0" xmlns="http://psidev.info/psi/pi/mzIdentML/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd" creationDate="2016-03-15T14:44:00" >
+<MzIdentML id="12345" version="1.1.0" xmlns="http://psidev.info/psi/pi/mzIdentML/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd" creationDate="2016-04-14T13:46:55" >
 <cvList xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
   <cv fullName="PSI-MS" version="2.25.0" uri="http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo" id="PSI-MS"></cv>
   <cv fullName="UNIMOD" uri="http://www.unimod.org/obo/unimod.obo" id="UNIMOD"></cv>
@@ -11,7 +11,7 @@
       <cvParam cvRef="PSI-MS" accession="MS:1001476" name="X\!Tandem"></cvParam>
     </SoftwareName>
   </AnalysisSoftware>
-  <AnalysisSoftware id="Tandem2mzid_2016-03-15 14-44-00" name="Tandem2mzid_2016-03-15 14-44-00">
+  <AnalysisSoftware id="Tandem2mzid_2016-04-14 13-46-55" name="Tandem2mzid_2016-04-14 13-46-55">
     <SoftwareName>
       <cvParam cvRef="PSI-MS" accession="MS:1002237" name="mzidLib"></cvParam>
     </SoftwareName>
@@ -34,17 +34,17 @@
   </Organization>
 </AuditCollection>
 <SequenceCollection xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
-  <DBSequence length="238" searchDatabase_ref="SearchDB_1" accession="tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1" id="dbseq_tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1" name="tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1">
-    <Seq>MKWVVSIFLIVLLNFTESRTMHENAYGIASILDSSQCSAEMNLVDLATIFFAQFVQEATYKEVNQMVKDVLTVIEKSTGSEQPAGCLENQVSVFLEEICHEEEIPEKYGLSHCCSQSGEERHNCFLARKKAAPASIPPFQVPEPVTSCKAYEENRELFMTRYIYEIARRHPFLYAPTILSLAAQYDKIIPPCCKAENAVECFQTKAASITKELRESSLLNQHMCTVMRQFGARTFRAM</Seq>
-  </DBSequence>
-  <DBSequence length="610" searchDatabase_ref="SearchDB_1" accession="sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" id="dbseq_sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" name="sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1">
-    <Seq>MKWVVSIFLIVLLNFTESRTMHENAYGIASILDSSQCSAEMNLVDLATIFFAQFVQEATYKEVNQMVKDVLTVIEKSTGSEQPAGCLENQVSVFLEEICHEEEIPEKYGLSHCCSQSGEERHNCFLARKKAAPASIPPFQVPEPVTSCKAYEENRELFMTRYIYEIARRHPFLYAPTILSLAAQYDKIIPPCCKAENAVECFQTKAASITKELRESSLLNQHMCTVMRQFGARTFRAITVTKLSQKFPKANFTEIQKLVLDVAHIHEECCRGNVLECLQDAERVVSYVCSQQDTLSSKIAECCKLPTTLELGQCIIHAENDDKPEGLSPNLNRFLGERDFNQLSSREKDLSMARFTYEYSRRHPKLAVPVILRVAKGYQELLEKCSQSENPLECQDKGEEELEKYIQESQALAKRSCGLFQKLGEYYLQNAFLVAYTKKAPQLTPPELMALTRKMATTGAACCHLSEDRQLACGEGAADLIIGQLCIRHEEMPINPGVGQCCTSSYANRRPCFSSLVLDETYVPPPFSDDKFIFHKDLCQAQGVALQTMKQQFLINLVKQKPQITEEQLEAVIADFSGLLEKCCQGQEQEVCFAEEGPALISKTRASLGV</Seq>
-  </DBSequence>
   <DBSequence length="607" searchDatabase_ref="SearchDB_1" accession="tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" id="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" name="tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1">
     <Seq>MKWVTFISLLFLFSSAYSRGVFRRDTYKSEIAHRFKDLGEQYFKGLVLIAFSQHLQQCPYEEHVKLVREVTEFAKTCVADESAENCDKSIHTLFGDKLCAIPSLREHYGDLADCCEKEEPERNECFLQHKNDNPDIPKLKPDPVALCADFQEDEQKFWGKYLYEIARRHPYFYAPELLYYAIIYKDVFSECCQAADKAACLLPKIEHLREKVLTSAAKQRLKCASIQKFGERAFKAWSLARLSQRFPKADFTEISKIVTDLAKVHKECCHGDLLECADDRADLAKYICENQDTISTKLKECCDKPLLEKSHCIAEAKRDELPADLNPLEHDFVEDKEVCKNYKEAKDVFLGTFLYEYSRRHPDYSVSLLLRIAKIYEATLEDCCAKEDPPACYATVFDKFQPLVDEPKNLIKQNCELFEKLGEYGFQNALIVRYTKKVPQVSTPTLVEVARKLGLVGSRCCKRPEEERLSCAEDYLSLVLNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYKPKEFVEGTFTFHADLCTLPEDEKQIKKQTALVELLKHKPHATEEQLRTVLGNFAAFVQKCCAAPDHEACFAVEGPKFVIEIRGILA</Seq>
   </DBSequence>
   <DBSequence length="607" searchDatabase_ref="SearchDB_1" accession="sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" id="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" name="sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2">
     <Seq>MKWVTFISLLFLFSSAYSRGVFRRDTYKSEIAHRFKDLGEQYFKGLVLIAFSQHLQQCPYEEHVKLVREVTEFAKTCVADESAENCDKSIHTLFGDKLCAIPSLREHYGDLADCCEKEEPERNECFLQHKNDNPDIPKLKPDPVALCADFQEDEQKFWGKYLYEIARRHPYFYAPELLYYAIIYKDVFSECCQAADKAACLLPKIEHLREKVLTSAAKQRLKCASIQKFGERAFKAWSLARLSQRFPKADFTEISKIVTDLAKVHKECCHGDLLECADDRADLAKYICENQDTISTKLKECCDKPLLEKSHCIAEAKRDELPADLNPLEHDFVEDKEVCKNYKEAKHVFLGTFLYEYSRRHPDYSVSLLLRIAKIYEATLEDCCAKEDPPACYATVFDKFQPLVDEPKNLIKQNCELFEKLGEYGFQNALIVRYTKKVPQVSTPTLVEVARKLGLVGSRCCKRPEEERLSCAEDYLSLVLNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYKPKEFVEGTFTFHADLCTLPEDEKQIKKQTALVELLKHKPHATEEQLRTVLGNFAAFVQKCCAAPDHEACFAVEGPKFVIEIRGILA</Seq>
+  </DBSequence>
+  <DBSequence length="238" searchDatabase_ref="SearchDB_1" accession="tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1" id="dbseq_tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1" name="tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1">
+    <Seq>MKWVVSIFLIVLLNFTESRTMHENAYGIASILDSSQCSAEMNLVDLATIFFAQFVQEATYKEVNQMVKDVLTVIEKSTGSEQPAGCLENQVSVFLEEICHEEEIPEKYGLSHCCSQSGEERHNCFLARKKAAPASIPPFQVPEPVTSCKAYEENRELFMTRYIYEIARRHPFLYAPTILSLAAQYDKIIPPCCKAENAVECFQTKAASITKELRESSLLNQHMCTVMRQFGARTFRAM</Seq>
+  </DBSequence>
+  <DBSequence length="610" searchDatabase_ref="SearchDB_1" accession="sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" id="dbseq_sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" name="sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1">
+    <Seq>MKWVVSIFLIVLLNFTESRTMHENAYGIASILDSSQCSAEMNLVDLATIFFAQFVQEATYKEVNQMVKDVLTVIEKSTGSEQPAGCLENQVSVFLEEICHEEEIPEKYGLSHCCSQSGEERHNCFLARKKAAPASIPPFQVPEPVTSCKAYEENRELFMTRYIYEIARRHPFLYAPTILSLAAQYDKIIPPCCKAENAVECFQTKAASITKELRESSLLNQHMCTVMRQFGARTFRAITVTKLSQKFPKANFTEIQKLVLDVAHIHEECCRGNVLECLQDAERVVSYVCSQQDTLSSKIAECCKLPTTLELGQCIIHAENDDKPEGLSPNLNRFLGERDFNQLSSREKDLSMARFTYEYSRRHPKLAVPVILRVAKGYQELLEKCSQSENPLECQDKGEEELEKYIQESQALAKRSCGLFQKLGEYYLQNAFLVAYTKKAPQLTPPELMALTRKMATTGAACCHLSEDRQLACGEGAADLIIGQLCIRHEEMPINPGVGQCCTSSYANRRPCFSSLVLDETYVPPPFSDDKFIFHKDLCQAQGVALQTMKQQFLINLVKQKPQITEEQLEAVIADFSGLLEKCCQGQEQEVCFAEEGPALISKTRASLGV</Seq>
   </DBSequence>
   <DBSequence length="231" searchDatabase_ref="SearchDB_1" accession="sp|P00761|TRYP_PIG Trypsin OS=Sus scrofa PE=1 SV=1" id="dbseq_sp|P00761|TRYP_PIG Trypsin OS=Sus scrofa PE=1 SV=1" name="sp|P00761|TRYP_PIG Trypsin OS=Sus scrofa PE=1 SV=1">
     <Seq>FPTDDDDKIVGGYTCAANSIPYQVSLNSGSHFCGGSLINSQWVVSAAHCYKSRIQVRLGEHNIDVLEGNEQFINAAKIITHPNFNGNTLDNDIMLIKLSSPATLNSRVATVSLPRSCAAAGTECLISGWGNTKSSGSSYPSLLQCLKAPVLSDSSCKSSYPGQITGNMICVGFLEGGKDSCQGDSGGPVVCNGQLQGIVSWGYGCAQKNKPGVYTKVCNYVNWIQQTIAAN</Seq>
@@ -58,11 +58,11 @@
   <DBSequence length="696" searchDatabase_ref="SearchDB_1" accession="sp|P09571|TRFE_PIG Serotransferrin OS=Sus scrofa GN=TF PE=1 SV=2" id="dbseq_sp|P09571|TRFE_PIG Serotransferrin OS=Sus scrofa GN=TF PE=1 SV=2" name="sp|P09571|TRFE_PIG Serotransferrin OS=Sus scrofa GN=TF PE=1 SV=2">
     <Seq>VAQKTVRWCTISNQEANKCSSFRENMSKAVKNGPLVSCVKKSSYLDCIKAIRDKEADAVTLDAGLVFEAGLAPYNLKPVVAEFYGQKDNPQTHYYAVAVVKKGSNFQWNQLQGKRSCHTGLGRSAGWIIPMGLLYDQLPEPRKPIEKAVASFFSSSCVPCADPVNFPKLCQQCAGKGAEKCACSNHEPYFGYAGAFNCLKEDAGDVAFVKHSTVLENLPDKADRDQYELLCRDNTRRPVDDYENCYLAQVPSHAVVARSVDGQEDSIWELLNQAQEHFGRDKSPDFQLFSSSHGKDLLFKDSANGFLKIPSKMDSSLYLGYQYVTALRNLREEISPDSSKNECKKVRWCAIGHEETQKCDAWSINSGGKIECVSAENTEDCIAKIVKGEADAMSLDGGYIYIAGKCGLVPVLAENYKTEGENCVNTPEKGYLAVAVVKKSSGPDLNWNNLKGKKSCHTAVDRTAGWNIPMGLLYNKINSCKFDQFFGEGCAPGSQRNSSLCALCIGSERAPGRECLANNHERYYGYTGAFRCLVEKGDVAFVKDQVVQQNTDGKNKDDWAKDLKQMDFELLCQNGAREPVDNAENCHLARAPNHAVVARDDKVTCVAEELLKQQAQFGRHVTDCSSSFCMFKSNTKDLLFRDDTQCLARVGKTTYESYLGADYITAVANLRKCSTSKLLEACTFHSAKNPRVETTT</Seq>
   </DBSequence>
-  <DBSequence length="147" searchDatabase_ref="SearchDB_1" accession="tr|F1RII7|F1RII7_PIG Uncharacterized protein OS=Sus scrofa GN=LOC100515788 PE=3 SV=1" id="dbseq_tr|F1RII7|F1RII7_PIG Uncharacterized protein OS=Sus scrofa GN=LOC100515788 PE=3 SV=1" name="tr|F1RII7|F1RII7_PIG Uncharacterized protein OS=Sus scrofa GN=LOC100515788 PE=3 SV=1">
-    <Seq>MVHLSAEEKEAVLGLWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSNADAVMGNPKVKAHGKKVLQSFSDGLKHLDNLKGTFAKLSELHCDQLHVDPENFRLLGNVIVVVLARRLGHDFNPDVQAAFQKVVAGVANALAHKYH</Seq>
-  </DBSequence>
   <DBSequence length="147" searchDatabase_ref="SearchDB_1" accession="sp|P02067|HBB_PIG Hemoglobin subunit beta OS=Sus scrofa GN=HBB PE=1 SV=3" id="dbseq_sp|P02067|HBB_PIG Hemoglobin subunit beta OS=Sus scrofa GN=HBB PE=1 SV=3" name="sp|P02067|HBB_PIG Hemoglobin subunit beta OS=Sus scrofa GN=HBB PE=1 SV=3">
     <Seq>MVHLSAEEKEAVLGLWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSNADAVMGNPKVKAHGKKVLQSFSDGLKHLDNLKGTFAKLSELHCDQLHVDPENFRLLGNVIVVVLARRLGHDFNPNVQAAFQKVVAGVANALAHKYH</Seq>
+  </DBSequence>
+  <DBSequence length="147" searchDatabase_ref="SearchDB_1" accession="tr|F1RII7|F1RII7_PIG Uncharacterized protein OS=Sus scrofa GN=LOC100515788 PE=3 SV=1" id="dbseq_tr|F1RII7|F1RII7_PIG Uncharacterized protein OS=Sus scrofa GN=LOC100515788 PE=3 SV=1" name="tr|F1RII7|F1RII7_PIG Uncharacterized protein OS=Sus scrofa GN=LOC100515788 PE=3 SV=1">
+    <Seq>MVHLSAEEKEAVLGLWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSNADAVMGNPKVKAHGKKVLQSFSDGLKHLDNLKGTFAKLSELHCDQLHVDPENFRLLGNVIVVVLARRLGHDFNPDVQAAFQKVVAGVANALAHKYH</Seq>
   </DBSequence>
   <DBSequence length="189" searchDatabase_ref="SearchDB_1" accession="sp|Q29095|PTGDS_PIG Prostaglandin-H2 D-isomerase OS=Sus scrofa GN=PTGDS PE=1 SV=1" id="dbseq_sp|Q29095|PTGDS_PIG Prostaglandin-H2 D-isomerase OS=Sus scrofa GN=PTGDS PE=1 SV=1" name="sp|Q29095|PTGDS_PIG Prostaglandin-H2 D-isomerase OS=Sus scrofa GN=PTGDS PE=1 SV=1">
     <Seq>MATPSSLWLGLALLGTLGVLQTPAQASLQPNFQEDKFLGRWFTSGLASNSSWFLEKKKVLSMCKSLVAPAPDGGFNLTSTFLRKDQCVTRTLMLRPAGPPGCYSYTSPHGGSNLEVSVVETDYKNYALLHTESGPSPGPAFRMATLYSRSQAPGAAVREKFTAFAKARGFTEDGIVFLPRNEKCLEEHE</Seq>
@@ -73,11 +73,11 @@
   <DBSequence length="2139" searchDatabase_ref="SearchDB_1" accession="tr|F1SUI5|F1SUI5_PIG Uncharacterized protein OS=Sus scrofa GN=TET1 PE=4 SV=1" id="dbseq_tr|F1SUI5|F1SUI5_PIG Uncharacterized protein OS=Sus scrofa GN=TET1 PE=4 SV=1" name="tr|F1SUI5|F1SUI5_PIG Uncharacterized protein OS=Sus scrofa GN=TET1 PE=4 SV=1">
     <Seq>MSRSRHARPSKLVRREDLNKKKNSQLKKGSKPANKNVASVKTVNPGKLKQLIQERDVKKKTELKPPLPVRSLLTRAGAARMNLDRTEVLFQNPESLTCNGFTMALRSTSLSRRLSQPPVVIAKPKKVPPPKNLGKQHECDYKVLTDMGVKHSENDSKQVPKQDPPIPPDAENLIGKQNTSLIKDEGQETTQSWPQSVEESEVNHSTHSGPVAEILSESLEGTCGGEGLFSKETLNDNSDSPGTFAQDTLCVPLLQRAALKVTSEGSPSIQLEDLGSRVESLKLSDSYLDPIKSEHDCCPTSSFNKVVPELDLRNCLSIGGSIYPTSLIKLLLAGSEQETLCAKPDYQEVLKATPDQQEIPDTTPVLGQVFSAIPHPWEVPGANPVHGEPLGETPNPPEIPGAIPVQGEVFGAILNQQVLGMGGGTASDPPIFLPAPPNQIATYYPLPEWPEPLSTVSSGLQVQGAMQILPLGSDHTPQPSSNSEISSVPPVMAINSIENEKQVHISFLPANTQGFTLAPESGHYHAPQGIAQLSQVSPSRLEGGSSQISTTSTLDANTTVVSRPVSFASTSSSPSYTTLLPTLEKKKRKRCGVCEPCQQKTNCGECTYCKNRKNSHQICKKRKCEELKKKPSIIVPLEVIKENKRPQREKKPKVLKADFDNKPVNGPKSESMEYSSCGHEEEQRLELSVFPFEHVTKNEESMTGIEVEKWTQNKKSNLSDHVKGEFNAIITEAENRKNSEDDRKKVLLTDLLEPQKLFAQTVRNGIKNVHYLPTETNLSFKKINIEELGKAFENNPYKFLKDTASHNNAMSSIATSASCDHLKGRNNILVFQKPGFNCKSFPDPANCNLNSRTSVHNESDQPKSLENITNREPKEGATLQPSLLSLMKDRRLTLEQVVAIEALTQLSEAPSENSSPSKSEKDEETEQRTASLLNSCKAILYSVRKDLQDPNLQGEPQSLHHCPSLEKQNSCNTIVFNGQNNISKSHSSSPSDQASTKAQEYSTVTNSISLFIPNSNSSKTDTNKNVAQGKVTLNSSKNLHQLTVTNKLENCNQSLDSSNKLDSKDNPSCQDTVHSKIEEDVATQLTQLASIIKFNYTKAEDKKVESTPNLTAYNVQQNYCQKATIQQKPPSSVQNNHGSSVTKQKNPTQKKTKSTPSRDRRKKKPAVISCQENDQKKQEQLSYEYSKLHDIWIASKFQRFGQFGPHNFPILLGKIPPLTKVWKPLTQKRSALEHKTLFPPLNQIKVDRYYPELAQDKMKVEPLDSFPIIQLKTESSGQAFTENAYPQVPPTVNVNQKVHPLLQPSSPTNQCANVMAGNDQTQFQQDVKDQHMHQRLPTLPGISHETPLPDPAQILRNLNVVCSGGITVVSTKSEEDVCLSSIGASEFSPIDNAQKSFNDYAMNFFTNPTKTLVSTTKDSELPTCNCLDRVIQKDKGPYYTHLGAGPSVAAVREIMENRYGQKGNAIRIEIVVYTGKEGKSSNGCPVAKWVLRRSSDEEKVLCLVRQRAGHHCPTAVMVVLIMVWDGIPLPLADRLYSELTESLKSYNGHPTDRRCTLNENRTCTCQGLDPETCGASFSFGCSWSMYFNGCKFGRSPSPRRFRIDPSSPLHEKNIEDNLQTLATELAPIYKQYAPVAYENQVAFEHVARECRLGKKEGRPFSGVTACLDFCAHPHRDIHNMNNGSTVVCTLTREDNRSFGVIPQDEQLHVLPLYKLSDTDEFGSREGIEAKIKSGAIKVLTPCSRRRTRFTQPIPRSGKKRAAMMTEVLAHKIRAVEKKFIPRIKRKNNSMMNNSKASSLPLLGNKIETMQPEIKSETEPHLIFKGSENTKTYSPTPSIPHPVKEANLAPGFSWSPKSASVTTPPFKNDATVSYGFSERSSNPHCTTPSAGHGGANAAAGEGTGIAQPGERFPLPTLSTPGTDSLGYPEPPTGPCEHLPSHQPNQQSPFVTFPHDPASSLVEEDEQHSEADEPLSDDPLSDDPLSPVEEKLPRIEEYWSDSEHIFLDANIGGVAIAPAHGSVLIECARRELHATTPVEHPNRNHPTRLSLVFYQHKNLNKPQHGFELNKIKFEAKEAKNKKIKASEQKDQAANEGPELSPEINEFSQIPSHKALTLTHDNVVTVSPYALTHVAGPYNHWV</Seq>
   </DBSequence>
-  <Peptide id="YIYEIAR___">
-    <PeptideSequence>YIYEIAR</PeptideSequence>
-  </Peptide>
   <Peptide id="YLYEIAR___">
     <PeptideSequence>YLYEIAR</PeptideSequence>
+  </Peptide>
+  <Peptide id="YIYEIAR___">
+    <PeptideSequence>YIYEIAR</PeptideSequence>
   </Peptide>
   <Peptide id="RDELPADLNPLEHDFVEDK___">
     <PeptideSequence>RDELPADLNPLEHDFVEDK</PeptideSequence>
@@ -127,34 +127,34 @@
   <Peptide id="QDPPIPPDAENLIGK___">
     <PeptideSequence>QDPPIPPDAENLIGK</PeptideSequence>
   </Peptide>
-  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1" peptide_ref="YIYEIAR___" start="162" end="168" pre="R" post="R" isDecoy="false" id="PE1_2_0"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" peptide_ref="YIYEIAR___" start="162" end="168" pre="R" post="R" isDecoy="false" id="PE1_2_1"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="YLYEIAR___" start="161" end="167" pre="K" post="R" isDecoy="false" id="PE1_3_2"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="YLYEIAR___" start="161" end="167" pre="K" post="R" isDecoy="false" id="PE1_3_3"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="YLYEIAR___" start="161" end="167" pre="K" post="R" isDecoy="false" id="PE1_2_0"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="YLYEIAR___" start="161" end="167" pre="K" post="R" isDecoy="false" id="PE1_2_1"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1" peptide_ref="YIYEIAR___" start="162" end="168" pre="R" post="R" isDecoy="false" id="PE1_3_2"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" peptide_ref="YIYEIAR___" start="162" end="168" pre="R" post="R" isDecoy="false" id="PE1_3_3"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="RDELPADLNPLEHDFVEDK___" start="318" end="336" pre="K" post="E" isDecoy="false" id="PE3_2_4"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="RDELPADLNPLEHDFVEDK___" start="318" end="336" pre="K" post="E" isDecoy="false" id="PE3_2_5"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="RHPDYSVSLLLR___" start="360" end="371" pre="R" post="I" isDecoy="false" id="PE5_2_6"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="RHPDYSVSLLLR___" start="360" end="371" pre="R" post="I" isDecoy="false" id="PE5_2_7"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="FQPLVDEPK___" start="400" end="408" pre="K" post="N" isDecoy="false" id="PE8_2_8"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="FQPLVDEPK___" start="400" end="408" pre="K" post="N" isDecoy="false" id="PE8_2_9"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="FQPLVDEPK___" start="400" end="408" pre="K" post="N" isDecoy="false" id="PE8_2_8"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="FQPLVDEPK___" start="400" end="408" pre="K" post="N" isDecoy="false" id="PE8_2_9"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="LGEYGFQNALIVR___" start="421" end="433" pre="K" post="Y" isDecoy="false" id="PE10_2_10"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="LGEYGFQNALIVR___" start="421" end="433" pre="K" post="Y" isDecoy="false" id="PE10_2_11"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="KVPQVSTPTLVEVAR___" start="437" end="451" pre="K" post="K" isDecoy="false" id="PE16_2_12"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="KVPQVSTPTLVEVAR___" start="437" end="451" pre="K" post="K" isDecoy="false" id="PE16_2_13"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="KVPQVSTPTLVEVAR___" start="437" end="451" pre="K" post="K" isDecoy="false" id="PE16_2_12"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="KVPQVSTPTLVEVAR___" start="437" end="451" pre="K" post="K" isDecoy="false" id="PE16_2_13"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="VPQVSTPTLVEVAR___" start="438" end="451" pre="K" post="K" isDecoy="false" id="PE20_2_14"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="VPQVSTPTLVEVAR___" start="438" end="451" pre="K" post="K" isDecoy="false" id="PE20_2_15"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="QTALVELLK___" start="549" end="557" pre="K" post="H" isDecoy="false" id="PE21_2_16"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="QTALVELLK___" start="549" end="557" pre="K" post="H" isDecoy="false" id="PE21_2_17"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="TVLGNFAAFVQK___" start="569" end="580" pre="R" post="C" isDecoy="false" id="PE22_2_18"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="TVLGNFAAFVQK___" start="569" end="580" pre="R" post="C" isDecoy="false" id="PE22_2_19"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="QTALVELLK___" start="549" end="557" pre="K" post="H" isDecoy="false" id="PE21_2_16"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="QTALVELLK___" start="549" end="557" pre="K" post="H" isDecoy="false" id="PE21_2_17"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="TVLGNFAAFVQK___" start="569" end="580" pre="R" post="C" isDecoy="false" id="PE22_2_18"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="TVLGNFAAFVQK___" start="569" end="580" pre="R" post="C" isDecoy="false" id="PE22_2_19"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_sp|P00761|TRYP_PIG Trypsin OS=Sus scrofa PE=1 SV=1" peptide_ref="LGEHNIDVLEGNEQFINAAK___" start="58" end="77" pre="R" post="I" isDecoy="false" id="PE25_2_20"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_tr|F1SRS2|F1SRS2_PIG Uncharacterized protein OS=Sus scrofa GN=Ssc.41697 PE=3 SV=1" peptide_ref="LGEHNIDVLEGNEQFINAAK___" start="73" end="92" pre="R" post="I" isDecoy="false" id="PE25_2_21"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_tr|F1SRS2|F1SRS2_PIG Uncharacterized protein OS=Sus scrofa GN=Ssc.41697 PE=3 SV=1" peptide_ref="VATVSLPR___" start="123" end="130" pre="R" post="S" isDecoy="false" id="PE27_2_22"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_sp|P00761|TRYP_PIG Trypsin OS=Sus scrofa PE=1 SV=1" peptide_ref="VATVSLPR___" start="108" end="115" pre="R" post="S" isDecoy="false" id="PE27_2_23"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_sp|Q29549|CLUS_PIG Clusterin OS=Sus scrofa GN=CLU PE=1 SV=1" peptide_ref="FMETVAEEALQQYR___" start="427" end="440" pre="K" post="Q" isDecoy="false" id="PE29_2_24"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_sp|P09571|TRFE_PIG Serotransferrin OS=Sus scrofa GN=TF PE=1 SV=2" peptide_ref="SVDGQEDSIWELLNQAQEHFGR___" start="259" end="280" pre="R" post="D" isDecoy="false" id="PE30_2_25"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RII7|F1RII7_PIG Uncharacterized protein OS=Sus scrofa GN=LOC100515788 PE=3 SV=1" peptide_ref="VNVDEVGGEALGR___" start="19" end="31" pre="K" post="L" isDecoy="false" id="PE32_2_26"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_sp|P02067|HBB_PIG Hemoglobin subunit beta OS=Sus scrofa GN=HBB PE=1 SV=3" peptide_ref="VNVDEVGGEALGR___" start="19" end="31" pre="K" post="L" isDecoy="false" id="PE32_2_27"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_sp|P02067|HBB_PIG Hemoglobin subunit beta OS=Sus scrofa GN=HBB PE=1 SV=3" peptide_ref="VNVDEVGGEALGR___" start="19" end="31" pre="K" post="L" isDecoy="false" id="PE32_2_26"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RII7|F1RII7_PIG Uncharacterized protein OS=Sus scrofa GN=LOC100515788 PE=3 SV=1" peptide_ref="VNVDEVGGEALGR___" start="19" end="31" pre="K" post="L" isDecoy="false" id="PE32_2_27"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_sp|Q29095|PTGDS_PIG Prostaglandin-H2 D-isomerase OS=Sus scrofa GN=PTGDS PE=1 SV=1" peptide_ref="GFTEDGIVFLPR___" start="169" end="180" pre="R" post="N" isDecoy="false" id="PE34_2_28"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_tr|F1SLB0|F1SLB0_PIG Uncharacterized protein OS=Sus scrofa GN=BFSP2 PE=3 SV=1" peptide_ref="ASFRGAQSPSSLEGLPASR___" start="25" end="43" pre="R" post="T" isDecoy="false" id="PE37_2_29"></PeptideEvidence>
   <PeptideEvidence dBSequence_ref="dbseq_tr|F1SUI5|F1SUI5_PIG Uncharacterized protein OS=Sus scrofa GN=TET1 PE=4 SV=1" peptide_ref="QDPPIPPDAENLIGK___" start="162" end="176" pre="K" post="Q" isDecoy="false" id="PE38_2_30"></PeptideEvidence>
@@ -228,7 +228,7 @@
     </Measure>
   </FragmentationTable>
   <SpectrumIdentificationResult spectrumID="index=5430" spectraData_ref="SID_1" id="SIR_1">
-    <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="464.285736" calculatedMassToCharge="464.250138" peptide_ref="YIYEIAR___" rank="1" passThreshold="true" id="SII_1_1">
+    <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="464.285736" calculatedMassToCharge="464.250138" peptide_ref="YLYEIAR___" rank="1" passThreshold="true" id="SII_1_1">
       <PeptideEvidenceRef peptideEvidence_ref="PE1_2_0"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE1_2_1"></PeptideEvidenceRef>
       <Fragmentation>
@@ -266,7 +266,7 @@
       <cvParam cvRef="PSI-MS" accession="MS:1001330" name="X\!Tandem:expect" value="0.03"></cvParam>
       <cvParam cvRef="PSI-MS" accession="MS:1001331" name="X\!Tandem:hyperscore" value="20.0"></cvParam>
     </SpectrumIdentificationItem>
-    <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="464.285736" calculatedMassToCharge="464.250138" peptide_ref="YLYEIAR___" rank="1" passThreshold="true" id="SII_1_2">
+    <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="464.285736" calculatedMassToCharge="464.250138" peptide_ref="YIYEIAR___" rank="1" passThreshold="true" id="SII_1_2">
       <PeptideEvidenceRef peptideEvidence_ref="PE1_3_2"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE1_3_3"></PeptideEvidenceRef>
       <Fragmentation>
@@ -308,8 +308,8 @@
   </SpectrumIdentificationResult>
   <SpectrumIdentificationResult spectrumID="index=5474" spectraData_ref="SID_1" id="SIR_2">
     <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="464.285736" calculatedMassToCharge="464.250138" peptide_ref="YIYEIAR___" rank="1" passThreshold="true" id="SII_2_1">
-      <PeptideEvidenceRef peptideEvidence_ref="PE1_2_1"></PeptideEvidenceRef>
-      <PeptideEvidenceRef peptideEvidence_ref="PE1_2_0"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE1_3_2"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE1_3_3"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="2" charge="1">
           <FragmentArray values="249.184" measure_ref="Measure_MZ"></FragmentArray>
@@ -346,8 +346,8 @@
       <cvParam cvRef="PSI-MS" accession="MS:1001331" name="X\!Tandem:hyperscore" value="23.8"></cvParam>
     </SpectrumIdentificationItem>
     <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="464.285736" calculatedMassToCharge="464.250138" peptide_ref="YLYEIAR___" rank="1" passThreshold="true" id="SII_2_2">
-      <PeptideEvidenceRef peptideEvidence_ref="PE1_3_2"></PeptideEvidenceRef>
-      <PeptideEvidenceRef peptideEvidence_ref="PE1_3_3"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE1_2_1"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE1_2_0"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="2" charge="1">
           <FragmentArray values="249.184" measure_ref="Measure_MZ"></FragmentArray>
@@ -720,8 +720,8 @@
   </SpectrumIdentificationResult>
   <SpectrumIdentificationResult spectrumID="index=6108" spectraData_ref="SID_1" id="SIR_6">
     <SpectrumIdentificationItem chargeState="3" experimentalMassToCharge="485.976461" calculatedMassToCharge="485.940517" peptide_ref="RHPDYSVSLLLR___" rank="1" passThreshold="true" id="SII_6_1">
-      <PeptideEvidenceRef peptideEvidence_ref="PE5_2_7"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE5_2_6"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE5_2_7"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="2 6" charge="1">
           <FragmentArray values="266.197 728.396" measure_ref="Measure_MZ"></FragmentArray>
@@ -869,8 +869,8 @@
   </SpectrumIdentificationResult>
   <SpectrumIdentificationResult spectrumID="index=6064" spectraData_ref="SID_1" id="SIR_7">
     <SpectrumIdentificationItem chargeState="3" experimentalMassToCharge="485.976461" calculatedMassToCharge="485.940517" peptide_ref="RHPDYSVSLLLR___" rank="1" passThreshold="true" id="SII_7_1">
-      <PeptideEvidenceRef peptideEvidence_ref="PE5_2_7"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE5_2_6"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE5_2_7"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="2 6" charge="1">
           <FragmentArray values="266.199 728.394" measure_ref="Measure_MZ"></FragmentArray>
@@ -1107,8 +1107,8 @@
   </SpectrumIdentificationResult>
   <SpectrumIdentificationResult spectrumID="index=5442" spectraData_ref="SID_1" id="SIR_9">
     <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="536.825318" calculatedMassToCharge="536.787138" peptide_ref="FQPLVDEPK___" rank="1" passThreshold="true" id="SII_9_1">
-      <PeptideEvidenceRef peptideEvidence_ref="PE8_2_8"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE8_2_9"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE8_2_8"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="2 6" charge="1">
           <FragmentArray values="276.16 700.426" measure_ref="Measure_MZ"></FragmentArray>
@@ -1255,8 +1255,8 @@
   </SpectrumIdentificationResult>
   <SpectrumIdentificationResult spectrumID="index=6611" spectraData_ref="SID_1" id="SIR_11">
     <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="740.446839" calculatedMassToCharge="740.401138" peptide_ref="LGEYGFQNALIVR___" rank="1" passThreshold="true" id="SII_11_1">
-      <PeptideEvidenceRef peptideEvidence_ref="PE10_2_10"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE10_2_11"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE10_2_10"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="2 3" charge="1">
           <FragmentArray values="171.134 300.179" measure_ref="Measure_MZ"></FragmentArray>
@@ -1391,8 +1391,8 @@
   </SpectrumIdentificationResult>
   <SpectrumIdentificationResult spectrumID="index=6607" spectraData_ref="SID_1" id="SIR_13">
     <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="740.446839" calculatedMassToCharge="740.401138" peptide_ref="LGEYGFQNALIVR___" rank="1" passThreshold="true" id="SII_13_1">
-      <PeptideEvidenceRef peptideEvidence_ref="PE10_2_11"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE10_2_10"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE10_2_11"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="4" charge="1">
           <FragmentArray values="435.254" measure_ref="Measure_MZ"></FragmentArray>
@@ -1450,8 +1450,8 @@
   </SpectrumIdentificationResult>
   <SpectrumIdentificationResult spectrumID="index=6564" spectraData_ref="SID_1" id="SIR_14">
     <SpectrumIdentificationItem chargeState="3" experimentalMassToCharge="493.972031" calculatedMassToCharge="493.936517" peptide_ref="LGEYGFQNALIVR___" rank="1" passThreshold="true" id="SII_14_1">
-      <PeptideEvidenceRef peptideEvidence_ref="PE10_2_11"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE10_2_10"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE10_2_11"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="4" charge="1">
           <FragmentArray values="418.229" measure_ref="Measure_MZ"></FragmentArray>
@@ -1545,8 +1545,8 @@
   </SpectrumIdentificationResult>
   <SpectrumIdentificationResult spectrumID="index=6561" spectraData_ref="SID_1" id="SIR_15">
     <SpectrumIdentificationItem chargeState="3" experimentalMassToCharge="493.972031" calculatedMassToCharge="493.936517" peptide_ref="LGEYGFQNALIVR___" rank="1" passThreshold="true" id="SII_15_1">
-      <PeptideEvidenceRef peptideEvidence_ref="PE10_2_11"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE10_2_10"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE10_2_11"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="2 3" charge="1">
           <FragmentArray values="171.132 300.18" measure_ref="Measure_MZ"></FragmentArray>
@@ -1759,8 +1759,8 @@
   </SpectrumIdentificationResult>
   <SpectrumIdentificationResult spectrumID="index=5880" spectraData_ref="SID_1" id="SIR_17">
     <SpectrumIdentificationItem chargeState="3" experimentalMassToCharge="542.024658" calculatedMassToCharge="541.985851" peptide_ref="KVPQVSTPTLVEVAR___" rank="1" passThreshold="true" id="SII_17_1">
-      <PeptideEvidenceRef peptideEvidence_ref="PE16_2_12"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE16_2_13"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE16_2_12"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="2" charge="1">
           <FragmentArray values="183.173" measure_ref="Measure_MZ"></FragmentArray>
@@ -3066,8 +3066,8 @@
   </SpectrumIdentificationResult>
   <SpectrumIdentificationResult spectrumID="index=5443" spectraData_ref="SID_1" id="SIR_33">
     <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="657.878937" calculatedMassToCharge="657.836138" peptide_ref="VNVDEVGGEALGR___" rank="1" passThreshold="true" id="SII_33_1">
-      <PeptideEvidenceRef peptideEvidence_ref="PE32_2_26"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE32_2_27"></PeptideEvidenceRef>
+      <PeptideEvidenceRef peptideEvidence_ref="PE32_2_26"></PeptideEvidenceRef>
       <Fragmentation>
         <IonType index="2" charge="1">
           <FragmentArray values="186.144" measure_ref="Measure_MZ"></FragmentArray>

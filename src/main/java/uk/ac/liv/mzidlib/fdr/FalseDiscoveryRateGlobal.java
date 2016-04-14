@@ -100,6 +100,8 @@ public class FalseDiscoveryRateGlobal {
     private String spectraData_ref;
     // Store all PSM related to a specific peptide
     Map<String, List<String>> peptidePSMMap = new HashMap<>();
+    // Store all PSM related to a specific peptide
+    Map<String, Integer> peptidePSMCount = new HashMap<>();
     // Store best scored PSM for a specific peptide
     Map<String, String> bestScorePSM = new HashMap<>();
 
@@ -210,8 +212,12 @@ public class FalseDiscoveryRateGlobal {
                         List<String> tmp = new ArrayList<>();
                         tmp.add(spectrumIdentItem.getId());
                         peptidePSMMap.put(peptideRef, tmp);
+                        peptidePSMCount.put(peptideRef, 1);
                     } else if (peptidePSMMap.containsKey(peptideRef) && !peptidePSMMap.get(peptideRef).contains(spectrumIdentItem.getId())) {
                         peptidePSMMap.get(peptideRef).add(spectrumIdentItem.getId());
+                        int oldCount = peptidePSMCount.get(peptideRef);
+                        oldCount = oldCount + 1;
+                        peptidePSMCount.put(peptideRef, oldCount);
                     }
 
                     if (!bestScorePSM.containsKey(peptideRef)) {
@@ -622,12 +628,24 @@ public class FalseDiscoveryRateGlobal {
             Iterator<Peptide> iterPeptide = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
             while (iterPeptide.hasNext()) {
                 Peptide pe = iterPeptide.next();
+
                 sequenceCollection.getPeptide().add(pe);
             }
 
             Iterator<PeptideEvidence> iterPeptideEvidence = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.PeptideEvidence);
             while (iterPeptideEvidence.hasNext()) {
                 PeptideEvidence pe = iterPeptideEvidence.next();
+
+                if (fdrLevel.equals("Peptide")) {
+                    String peptideRef = pe.getPeptideRef();
+                    int psmCount = 0;
+                    if (peptidePSMCount.get(peptideRef) != null) {
+                        psmCount = peptidePSMCount.get(peptideRef);
+                    }
+
+                    pe.getUserParam().add(makeUserParam("psm_count", String.valueOf(psmCount)));
+
+                }
                 sequenceCollection.getPeptideEvidence().add(pe);
             }
 
@@ -654,7 +672,7 @@ public class FalseDiscoveryRateGlobal {
                 groupPSMsBySequence.setName("group PSMs by sequence");
                 groupPSMsBySequence.setCv(cv);
                 analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams().getCvParam().add(groupPSMsBySequence);
-                 marshaller.marshal(analysisProtocolCollection, writer);
+                marshaller.marshal(analysisProtocolCollection, writer);
 
             }
             writer.write("\n");
@@ -703,7 +721,7 @@ public class FalseDiscoveryRateGlobal {
                 SpectrumIdentificationList sr = iterSpectrumIdentificationList.next();
                 siList.getCvParam().addAll(sr.getCvParam());
             }
-            
+
             Iterator<FragmentationTable> iterFragmentationTable = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.FragmentationTable);
             while (iterFragmentationTable.hasNext()) {
 
@@ -1279,4 +1297,10 @@ public class FalseDiscoveryRateGlobal {
         return spectraData_ref;
     }
 
+    public UserParam makeUserParam(String name, String value) {
+        UserParam userParam = new UserParam();
+        userParam.setName(name);
+        userParam.setValue(value);
+        return userParam;
+    }
 }
