@@ -54,6 +54,8 @@ public class CombineSearchEngines {
 
     private HashMap<String, SpectraData> spectraDataHashMap = new HashMap();
     private HashMap<String, String> spectraIDLocation = new HashMap();
+    
+    private AnalysisProtocolCollection analysisProtocolCollectionTandem;
 
     public CombineSearchEngines() {
     }
@@ -148,7 +150,7 @@ public class CombineSearchEngines {
      *
      * @throws Exception
      */
-    public void computeFDRForSingleSearchEngine(String xmlToRead,
+    public void computeFDRForSingleSearchEngine(int i ,String xmlToRead,
             String searchEngine, FdrAndMzIdentInformationContainer fdrObj, int decoyRatio, String decoyRegex, String cvterm, String betterScore) throws Exception {
 
         //fdr = new FalseDiscoveryRate(xmlToRead, searchEngine, String.valueOf(decoyRatio), decoyRegex, cvterm, Boolean.valueOf(betterScore).booleanValue());
@@ -220,6 +222,9 @@ public class CombineSearchEngines {
         fdrObj.populateData(xmlToRead, searchEngine, pepMod, pepSeq,
                 specInfo, sorted_spec, sorted_pepID, sorted_evalues,
                 sorted_scores, sorted_decoy, sortedFDR, sorted_qValues, sorted_estFDR);
+        if(i==0){
+          analysisProtocolCollectionTandem=  fdr.getAnalysisProtocolCollection();
+        }
     }
 
 
@@ -1190,7 +1195,7 @@ public class CombineSearchEngines {
         analysisSoftwareList = fdr.getAnalysisSoftwareList();
         auditCollection = fdr.getAuditCollection();
         provider = fdr.getProvider();
-        analysisProtocolCollection = fdr.getAnalysisProtocolCollection();
+        analysisProtocolCollection = analysisProtocolCollectionTandem;
         cvList = fdr.getCvList();
         analysisCollection = fdr.getAnalysisCollection();
         //analysisCollection.getSpectrumIdentification().get(0).getInputSpectra().clear();
@@ -1504,7 +1509,7 @@ public class CombineSearchEngines {
         // Perform algorithm 1 and fill all the values in FdrAndMzIdentInformationContainer of C
         for (int i = 0; i < searchEngine.length; i++) {
             startTime = System.currentTimeMillis();
-            C.computeFDRForSingleSearchEngine(inputFiles[i], searchEngine[i], C.singleFDRInformation[i], decoyRatio, decoyRegex, cvTerms[i], betterScoresAreLower[i]);
+            C.computeFDRForSingleSearchEngine(i, inputFiles[i], searchEngine[i], C.singleFDRInformation[i], decoyRatio, decoyRegex, cvTerms[i], betterScoresAreLower[i]);
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
@@ -1665,7 +1670,7 @@ public class CombineSearchEngines {
         for (int i = 0; i < searchEngine.length; i++) {
             startTime = System.currentTimeMillis();
 
-            C.computeFDRForSingleSearchEngine(inputFiles[i], searchEngine[i], C.singleFDRInformation[i], decoyRatio, decoyRegex, cvTerms[i], betterScoresAreLower[i]);
+            C.computeFDRForSingleSearchEngine(i, inputFiles[i], searchEngine[i], C.singleFDRInformation[i], decoyRatio, decoyRegex, cvTerms[i], betterScoresAreLower[i]);
 
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
