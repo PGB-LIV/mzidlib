@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MzIdentML id="12345" version="1.1.0" xmlns="http://psidev.info/psi/pi/mzIdentML/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd" creationDate="2016-04-14T13:46:56" >
+<MzIdentML id="12345" version="1.1.0" xmlns="http://psidev.info/psi/pi/mzIdentML/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd" creationDate="2016-04-18T14:11:57" >
 <cvList xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
-  <cv fullName="PSI-MS" version="2.25.0" uri="http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo" id="PSI-MS"></cv>
+  <cv fullName="PSI-MS" uri="https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo" id="PSI-MS"></cv>
   <cv fullName="UNIMOD" uri="http://www.unimod.org/obo/unimod.obo" id="UNIMOD"></cv>
   <cv fullName="UNIT-ONTOLOGY" uri="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo" id="UO"></cv>
 </cvList>
@@ -11,7 +11,7 @@
       <cvParam cvRef="PSI-MS" accession="MS:1001476" name="X\!Tandem"></cvParam>
     </SoftwareName>
   </AnalysisSoftware>
-  <AnalysisSoftware id="Tandem2mzid_2016-04-14 13-46-56" name="Tandem2mzid_2016-04-14 13-46-56">
+  <AnalysisSoftware id="Tandem2mzid_2016-04-18 14-11-57" name="Tandem2mzid_2016-04-18 14-11-57">
     <SoftwareName>
       <cvParam cvRef="PSI-MS" accession="MS:1002237" name="mzidLib"></cvParam>
     </SoftwareName>

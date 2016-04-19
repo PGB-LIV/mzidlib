@@ -1224,9 +1224,9 @@ public class Tandem2mzid {
         List<Cv> localCvList = cvList.getCv();
         psiCV = new Cv();
 
-        psiCV.setUri("http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo");
+        psiCV.setUri("https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo");
         psiCV.setId(psiCvID);
-        psiCV.setVersion("2.25.0");
+//        psiCV.setVersion("2.25.0");
         psiCV.setFullName("PSI-MS");
 
         unimodCV = new Cv();

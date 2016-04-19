@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib CombineSearchEngines -firstFile C:\Users\fghali\Desktop\simon\mam_042408o_CPTAC_study6_6B011_omssa.mzid -firstcvTerm MS:1001328 -firstbetterScoresAreLower true -secondFile C:\Users\fghali\Desktop\simon\mam_042408o_CPTAC_study6_6B011.t_tandem.mzid -secondcvTerm MS:1001330 -secondbetterScoresAreLower true -decoyRatio 1 -rank 3 -outputFile C:\Users\fghali\Desktop\simon\combined_search_test.mzid -debugFile C:\Users\fghali\Desktop\simon\combined_search_debug_test.txt -decoyRegex REVERSED -compress false</exec.args>
+                <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib AddGenomeCoordinatesForPeptides E:\tobias\PXD000764\34939\PXD000764_34939_combined_fdr_peptide_threshold.mzid E:\tobias\ProteoAnnotator_fawaz.mzid -inputGff E:\tobias\Homo_sapiens.GRCh38.77.gff3 -outputGff E:\tobias\fawaz.gff3 -compress false</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -24,7 +24,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib CombineSearchEngines -firstFile C:\Users\fghali\Desktop\simon\mam_042408o_CPTAC_study6_6B011_omssa.mzid -firstcvTerm MS:1001328 -firstbetterScoresAreLower true -secondFile C:\Users\fghali\Desktop\simon\mam_042408o_CPTAC_study6_6B011.t_tandem.mzid -secondcvTerm MS:1001330 -secondbetterScoresAreLower true -decoyRatio 1 -rank 3 -outputFile C:\Users\fghali\Desktop\simon\combined_search_test.mzid -debugFile C:\Users\fghali\Desktop\simon\combined_search_debug_test.txt -decoyRegex REVERSED -compress false</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib AddGenomeCoordinatesForPeptides E:\tobias\PXD000764\34939\PXD000764_34939_combined_fdr_peptide_threshold.mzid E:\tobias\ProteoAnnotator_fawaz.mzid -inputGff E:\tobias\Homo_sapiens.GRCh38.77.gff3 -outputGff E:\tobias\fawaz.gff3 -compress false</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
@@ -39,7 +39,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib CombineSearchEngines -firstFile C:\Users\fghali\Desktop\simon\mam_042408o_CPTAC_study6_6B011_omssa.mzid -firstcvTerm MS:1001328 -firstbetterScoresAreLower true -secondFile C:\Users\fghali\Desktop\simon\mam_042408o_CPTAC_study6_6B011.t_tandem.mzid -secondcvTerm MS:1001330 -secondbetterScoresAreLower true -decoyRatio 1 -rank 3 -outputFile C:\Users\fghali\Desktop\simon\combined_search_test.mzid -debugFile C:\Users\fghali\Desktop\simon\combined_search_debug_test.txt -decoyRegex REVERSED -compress false</exec.args>
+                <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib AddGenomeCoordinatesForPeptides E:\tobias\PXD000764\34939\PXD000764_34939_combined_fdr_peptide_threshold.mzid E:\tobias\ProteoAnnotator_fawaz.mzid -inputGff E:\tobias\Homo_sapiens.GRCh38.77.gff3 -outputGff E:\tobias\fawaz.gff3 -compress false</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
