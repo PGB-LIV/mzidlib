@@ -21,9 +21,12 @@ package uk.ac.liv.mzidlib;
  */
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -35,6 +38,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.CharEncoding;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.MzIdentMLObject;
 import uk.ac.ebi.jmzidml.model.mzidml.Inputs;
@@ -228,7 +232,7 @@ public class ProteoAnnotator2 {
                                     System.out.println("Spectrum with index: " + j + " has a null PeakList");
                                 } else {
                                     s = specturm.toString();
-                                    s = s.replace("TITLE=", "TITLE=" + j + "@" + spectraDataLocation + ";");
+                                    s = s.replace("TITLE=", "TITLE=index=" + j + "@" + spectraDataLocation + ";");
                                     out12.println(s);
                                 }
 
@@ -252,7 +256,7 @@ public class ProteoAnnotator2 {
 
     private void runSingleMgf(File mgfFileOrLocation, String string1) {
         try {
-            totalSearches = totalSearches + 1;
+
             String newOutput = outputFolder + File.separator + totalSearches;
             File f = new File(newOutput);
             boolean b = f.mkdir();
@@ -304,7 +308,11 @@ public class ProteoAnnotator2 {
             String[] thresholdInput = {"Threshold", falseDiscoveryRateGlobalOutputFile, thresholdOutputFile, "-isPSMThreshold", "true", "-cvAccessionForScoreThreshold", "MS:1002360", "-threshValue", peptideThreshValue, "-betterScoresAreLower", "true", "-deleteUnderThreshold", "true", "-compress", "false"};
             mzidLib.init(thresholdInput);
         } catch (Exception ex) {
+
+            System.out.println(ex.toString());
+            ex.printStackTrace();
             throw new RuntimeException(ex.getMessage());
+
         }
 
     }
@@ -478,18 +486,25 @@ public class ProteoAnnotator2 {
 
             for (String string : listMGFFiles) {
                 if (string.toLowerCase().endsWith(".mgf")) {
-
-                    File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
+                    String newMGFLocation = outputFolder +File.separator + "mgf";
+                    File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(newMGFLocation,new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
 
                     if (mgfFileOrLocation.isDirectory()) {
                         String[] listMGFFiles1 = mgfFileOrLocation.list();
                         for (String string1 : listMGFFiles1) {
                             if (string1.toLowerCase().endsWith(".mgf")) {
+                                System.out.println("Running search from: " + mgfFileOrLocation.getName() + " for file " + string1);
+                                totalSearches = totalSearches + 1;
                                 runSingleMgf(mgfFileOrLocation, string1);
+
                             }
                         }
                     } else {
-                        runSingleMgf(mgfFileOrLocation, string);
+                        System.out.println("Running search from: " + mgfFileOrLocation.getParent() + " for file " + string);
+
+                        totalSearches = totalSearches + 1;
+                        runSingleMgf(new File(mgfFileOrLocation.getParent()), string);
+
                     }
                 }
             }
@@ -498,20 +513,20 @@ public class ProteoAnnotator2 {
             List<String> files2Combine = new ArrayList();
             System.out.println("Files to compile:");
             for (int i = 1; i <= totalSearches; i++) {
-                String newOutput = outputFolder + File.separator + totalSearches;
-                System.out.println("From Dir: "+newOutput);
+                String newOutput = outputFolder + File.separator + i;
+                System.out.println("From Dir: " + newOutput);
                 File tempFile = new File(newOutput);
                 String[] filesList = tempFile.list();
                 for (String string : filesList) {
                     if (string.toLowerCase().endsWith("combined_fdr_peptide_threshold.mzid")) {
-                        String toAdd= newOutput+File.separator +string;
+                        String toAdd = newOutput + File.separator + string;
                         files2Combine.add(toAdd);
-                        System.out.println("File: "+toAdd);
-                        
+                        System.out.println("File: " + toAdd);
+
                     }
                 }
             }
-            
+
             String combinedPSMfiles = outputFolder + File.separator + prefix + "_combined.mzid";
             String combinedInput = "";
             for (int i = 0; i < files2Combine.size(); i++) {
@@ -524,7 +539,7 @@ public class ProteoAnnotator2 {
             if (files2Combine.size() == 1) {
                 combinedPSMfiles = combinedInput;
             }
-            System.out.println("All files to compile: "+combinedInput);
+            System.out.println("All files to compile: " + combinedInput);
             String[] combinedPSMfilesParams = {"CombinePSMMzidFiles", combinedInput, combinedPSMfiles, "-combineFractions", "true", "-compress", "false"};
             mzidLib.init(combinedPSMfilesParams);
 
@@ -578,18 +593,23 @@ public class ProteoAnnotator2 {
                             String result = spectrumString.substring(spectrumString.lastIndexOf("TITLE=") + 6, spectrumString.indexOf(";"));
                             String oldID = result.split("@")[0];
                             String oldLocation = result.split("@")[1];
-                            oldNewIds.put(String.valueOf(j), oldID);
+                            String newID= "index="+String.valueOf(j);
+                            oldNewIds.put(newID, oldID);
                             oldNewLocations.put(spectraDataLocation, oldLocation);
 
                         }
 
                     }
+                    
+                    
 
                     String content = FileUtils.readFileToString(new File(tempFile), "UTF-8");
                     for (Map.Entry<String, String> entry : oldNewIds.entrySet()) {
                         String key = entry.getKey();
                         String value = entry.getValue();
                         content = content.replaceAll(key, value);
+                        System.out.println("Key: "+ key + " value: "+ value);
+                        
 
                     }
 
@@ -597,12 +617,18 @@ public class ProteoAnnotator2 {
                         String key = entry.getKey();
                         String value = entry.getValue();
                         content = content.replaceAll(key, value);
+                       System.out.println("Key: "+ key + " value: "+ value);
 
                     }
 
                     String tempOutName = outputFolder + File.separator + prefix + "OutputFile.mzid";
-                    File tempOutFile = new File(tempOutName);
-                    FileUtils.writeStringToFile(tempOutFile, content, "UTF-8");
+                    Writer out = new BufferedWriter(new OutputStreamWriter(
+                            new FileOutputStream(tempOutName)));
+                    try {
+                        out.write(content);
+                    } finally {
+                        out.close();
+                    }
 
                     String inputCombine = tempOutName + ";" + firstStageFile;
                     String outputCombine = outputFolder + File.separator + prefix + "OutputFile2.mzid";

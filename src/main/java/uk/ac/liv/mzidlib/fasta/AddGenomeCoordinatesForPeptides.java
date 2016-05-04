@@ -427,14 +427,14 @@ public class AddGenomeCoordinatesForPeptides {
                         for (int j = 0; j < outputCDS.size(); j++) {
                             CDS_Information cDS_Information = outputCDS.get(j);
                             s = cDS_Information.getStart() - 1;
-                           // peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(s)));
+                            // peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(s)));
                             startsList = startsList + s + ",";
                             if (j == 0) {
                                 e = cDS_Information.getEnd() + 2;
                             } else {
                                 e = cDS_Information.getEnd();
                             }
-                           // peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(e)));
+                            // peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(e)));
                             coordLen = coordLen + MzidLibUtils.safeLongToInt(e - s);
                             positionsList = positionsList + String.valueOf(e - s) + ",";
 //                            System.out.println("toIntExact(e -s) "+ toIntExact(e -s));
@@ -446,21 +446,20 @@ public class AddGenomeCoordinatesForPeptides {
 //                            System.out.println("FAILED "+ peptideEvidence.getPeptideRef()+" pepLen "+pepLen +" coordLen "+ coordLen);
 //                        }
 //                        System.out.println("");
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002635", "proteogenomics search", "proteogenomics search", psiCV));
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002636", "proteogenomics attribute", "proteogenomics attribute", psiCV));
+                        
 //                        peptideEvidence.getUserParam().add(makeUserParam("chr", gffData.get(0).getSeqID()));
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002637", "chromosome name", gffData.get(0).getSeqID(), psiCV));
 //                        peptideEvidence.getUserParam().add(makeUserParam("strand", gffData.get(0).getStrand()));
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002638", "chromosome strand", gffData.get(0).getStrand(), psiCV));
 
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002639", "peptide start on chromosome", String.valueOf(start_map), psiCV));
+                        //peptideEvidence.getCvParam().add(makeCvParam("MS:1002639", "peptide start on chromosome", String.valueOf(start_map), psiCV));
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002640", "peptide end on chromosome", String.valueOf(end_map), psiCV));
 
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002641", "peptide exon count", String.valueOf(outputCDS.size()), psiCV));
-                        if (startsList.endsWith("'")) {
+                        if (startsList.endsWith(",")) {
                             startsList = startsList.substring(0, startsList.length() - 1);
                         }
-                        if (positionsList.endsWith("'")) {
+                        if (positionsList.endsWith(",")) {
                             positionsList = positionsList.substring(0, positionsList.length() - 1);
                         }
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002642", "peptide exon nucleotide sizes", positionsList, psiCV));
@@ -485,6 +484,21 @@ public class AddGenomeCoordinatesForPeptides {
             writer.write("\n");
 
             if (analysisProtocolCollection != null) {
+                ParamList paramList = analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams();
+                List<CvParam> cvParamList = paramList.getCvParam();
+                boolean exist = false;
+                for (int i = 0; i < cvParamList.size(); i++) {
+                    CvParam get = cvParamList.get(i);
+                    if (get.getAccession().equals("MS:1002635")) {
+                        exist = true;
+                        break;
+                    }
+
+                }
+
+                if (!exist) {
+                    analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams().getCvParam().add(makeCvParam("MS:1002635", "proteogenomics search", "", psiCV));
+                }
                 marshaller.marshal(analysisProtocolCollection, writer);
             }
             writer.write("\n");

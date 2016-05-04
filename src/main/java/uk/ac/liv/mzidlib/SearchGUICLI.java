@@ -201,7 +201,7 @@ public class SearchGUICLI {
         try {
             System.out.println("Running SearchGUI search function using the following command:");
             out.println("Running SearchGUI search function using the following command:");
-            String javaCLI[] = {"java", "-Djava.awt.headless=true","-Xmx4G", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.SearchCLI"};
+            String javaCLI[] = {"java", "-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.SearchCLI"};
             String[] args = (String[]) ArrayUtils.addAll(javaCLI, searchParamters);
 
             for (int i = 0; i < args.length; i++) {

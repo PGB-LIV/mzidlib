@@ -790,8 +790,8 @@ public class ProteoAnnotator {
         startTime = System.currentTimeMillis();
         for (String string : listMGFFiles) {
             if (string.toLowerCase().endsWith(".mgf")) {
-
-                File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
+                String newMGFLocation = outputFolder +File.separator + "mgf";
+                File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(newMGFLocation, new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
                 if (mgfFileOrLocation.isDirectory()) {
                     String[] listMGFFiles1 = mgfFileOrLocation.list();
                     for (String string1 : listMGFFiles1) {

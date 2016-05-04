@@ -121,7 +121,7 @@ public class Utils {
         return null;
     }
 
-    public static File splitMGFsOrReturnSame(File masterMgf, int fileUpperLimit, int spectraUpperLimit) throws IOException {
+    public static File splitMGFsOrReturnSame(String path, File masterMgf, int fileUpperLimit, int spectraUpperLimit) throws IOException {
         int entries = countMgfEntries(masterMgf);
         if (entries < spectraUpperLimit && masterMgf.length() < fileUpperLimit) {
             return masterMgf;
@@ -135,7 +135,7 @@ public class Utils {
             entriesPerFile = Math.ceil(entriesPerFile);
         }
 
-        Path temporaryMgfFolderPath = Files.createTempDirectory("proteosuite_mgf_temp_");
+        Path temporaryMgfFolderPath = Paths.get(path);
         Set<BufferedWriter> writers = new HashSet<>();
         for (int i = 0; i < filesToSplitInto; i++) {
             Path newMgfPath = temporaryMgfFolderPath.resolve("peaks_" + i + ".mgf");
