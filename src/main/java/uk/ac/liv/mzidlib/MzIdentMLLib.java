@@ -33,133 +33,133 @@ import uk.ac.liv.mzidlib.fasta.GenericFasta;
  */
 public class MzIdentMLLib {
 
-    public static String fdrParams = "-decoyRegex decoyRegex -decoyValue decoyToTargetRatio -cvTerm cvTerm -betterScoresAreLower true|false [-compress true|false]";
-    public static String fdrUsageExample = " -decoyRegex Rev_ -decoyValue 1 -cvTerm MS:1001172 -betterScoresAreLower true -compress true";
-    public static String fdrToolDescription = "This tool can be used for mzid files in which a decoy database search has been performed to calculate three new data types for each PSM:"
+    final public static String fdrParams = "-decoyRegex decoyRegex -decoyValue decoyToTargetRatio -cvTerm cvTerm -betterScoresAreLower true|false [-compress true|false]";
+    final public static String fdrUsageExample = " -decoyRegex Rev_ -decoyValue 1 -cvTerm MS:1001172 -betterScoresAreLower true -compress true";
+    final public static String fdrToolDescription = "This tool can be used for mzid files in which a decoy database search has been performed to calculate three new data types for each PSM:"
             + "Local FDR, Q-value and FDRScore [PMID: 19253293] and assign these to every PSM with new CV terms. You must specify the score you wish to order by, using -cvTerm [MS:XXXX] sourced from the PSI-MS CV"
             + "and whether the scores are ordered low to high or vice versa\n. ";
-    public static String fdrUsage = "FalseDiscoveryRate input.mzid output.mzid " + fdrParams + " \n\nDescription:\n" + fdrToolDescription;
-    public static String fdrGlobalParams = "-decoyValue decoyToTargetRatio -decoyRegex decoyRegex -cvTerm cvTerm -betterScoresAreLower true|false -fdrLevel PSM|Peptide|ProteinGroup -proteinLevel PDH|PAG [-compress true|false]";
-    public static String fdrGlobalUsageExample = " -decoyValue 0.01 -decoyRegex REVERSED -cvTerm MS:1002356 -betterScoresAreLower true -fdrLevel Peptide -proteinLevel PAG -compress true";
-    public static String fdrGlobalToolDescription = "The Global FDR module calculates the FDR on one of the three levels. 1) PSM, 2) Peptide, 3) ProteinGroup. If ProteinGroup is chosen, there are two options for protein level PAG or PDH.";
-    public static String fdrGlobalUsage = "FalseDiscoveryRateGlobal input.mzid output.mzid " + fdrGlobalParams + " \n\nDescription:\n" + fdrGlobalToolDescription;
+    final public static String fdrUsage = "FalseDiscoveryRate input.mzid output.mzid " + fdrParams + " \n\nDescription:\n" + fdrToolDescription;
+    final public static String fdrGlobalParams = "-decoyValue decoyToTargetRatio -decoyRegex decoyRegex -cvTerm cvTerm -betterScoresAreLower true|false -fdrLevel PSM|Peptide|ProteinGroup -proteinLevel PDH|PAG [-compress true|false]";
+    final public static String fdrGlobalUsageExample = " -decoyValue 0.01 -decoyRegex REVERSED -cvTerm MS:1002356 -betterScoresAreLower true -fdrLevel Peptide -proteinLevel PAG -compress true";
+    final public static String fdrGlobalToolDescription = "The Global FDR module calculates the FDR on one of the three levels. 1) PSM, 2) Peptide, 3) ProteinGroup. If ProteinGroup is chosen, there are two options for protein level PAG or PDH.";
+    final public static String fdrGlobalUsage = "FalseDiscoveryRateGlobal input.mzid output.mzid " + fdrGlobalParams + " \n\nDescription:\n" + fdrGlobalToolDescription;
 
-    public static String omssa2mzidparams = "[-outputFragmentation true|false] -decoyRegex decoyRegex [-omssaModsFile pathToLocalOmssaModsFile] [-userModsFile pathToLocalUserModsFile] [-compress true|false]";
-    public static String omssa2mzidToolDescription = "This tool converts OMSSA omx (XML) files into mzid. It has optional parameters for inserting fragment ions into mzid (much larger files). If a decoy Regex is specified, the mzid attribute isDecoy will be set correctly for peptides."
+    final public static String omssa2mzidparams = "[-outputFragmentation true|false] -decoyRegex decoyRegex [-omssaModsFile pathToLocalOmssaModsFile] [-userModsFile pathToLocalUserModsFile] [-compress true|false]";
+    final public static String omssa2mzidToolDescription = "This tool converts OMSSA omx (XML) files into mzid. It has optional parameters for inserting fragment ions into mzid (much larger files). If a decoy Regex is specified, the mzid attribute isDecoy will be set correctly for peptides."
             + " No protein inference is done by this tool (no protein list produced). To make valid mzid output, OMSSA must have been run with the option \"-w include spectra and search params in search results\"."
             + " Without this option, search paramaters cannot be extracted from OMSSA. In this case, the OMSSA CSV converter should be used. ";
-    public static String omssa2mzidUsage = "Omssa2mzid input.omx output.mzid " + omssa2mzidparams + " \n\nDescription:\n" + omssa2mzidToolDescription;
-    public static String omssa2mzidUsageExample = " -outputFragmentation false -decoyRegex Rev_ -compress true";
+    final public static String omssa2mzidUsage = "Omssa2mzid input.omx output.mzid " + omssa2mzidparams + " \n\nDescription:\n" + omssa2mzidToolDescription;
+    final public static String omssa2mzidUsageExample = " -outputFragmentation false -decoyRegex Rev_ -compress true";
 
-    public static String tandem2mzidParams = "[-outputFragmentation (true|false)] [-decoyRegex decoyRegex] [-databaseFileFormatID (e.g. MS:1001348 is FASTA format) \"MS:100blah\"] [-massSpecFileFormatID (e.g. MS:1001062 is MGF) \"MS:100blah\"] [-idsStartAtZero (true for mzML searched, false otherwise) [true|false]] [-compress true|false]";
-    public static String tandem2mzidToolDescription = "This tool converts X!Tandem XML results files into mzid. There are several optional parameters: whether to export fragment ions (makes bigger files), "
+    final public static String tandem2mzidParams = "[-outputFragmentation (true|false)] [-decoyRegex decoyRegex] [-databaseFileFormatID (e.g. MS:1001348 is FASTA format) \"MS:100blah\"] [-massSpecFileFormatID (e.g. MS:1001062 is MGF) \"MS:100blah\"] [-idsStartAtZero (true for mzML searched, false otherwise) [true|false]] [-compress true|false]";
+    final public static String tandem2mzidToolDescription = "This tool converts X!Tandem XML results files into mzid. There are several optional parameters: whether to export fragment ions (makes bigger files), "
             + " and include a decoy regular expression to set the isDecoy attribute in mzid. Valid mzid files require several pieces of metadata that are difficult to extract from mzid files, the format of the database searched and the file format of the input spectra. "
             + " If these parameters are not set, the converter attempts to guess these based on the file extension. In X!Tandem, the numbering of spectra differs dependent upon the input spectra type - the IDs start at zero for mzML files, the IDs start at one for other spectra types e.g. MGF. "
             + "This is a command line parameter which should be set to make sure that the mzid file references the correct spectrum in the source spectrum file. ";
-    public static String tandem2mzidUsage = "Tandem2mzid input_tandem.xml output.mzid " + tandem2mzidParams + " \n\nDescription:\n" + tandem2mzidToolDescription;
+    final public static String tandem2mzidUsage = "Tandem2mzid input_tandem.xml output.mzid " + tandem2mzidParams + " \n\nDescription:\n" + tandem2mzidToolDescription;
     public static String tandem2mzidUsageExample = "-outputFragmentation false -decoyRegex Rev_ -databaseFileFormatID MS:1001348 -massSpecFileFormatID MS:1001062 -idsStartAtZero false -compress true";
 
-    public static String csv2mzidParams = "-paramsFile paramsFileLocation -cvAccessionForPSMOrdering (e.g. \"MS:1001328\" is OMSSA:evalue) [-applyFixedMods true|false] [-decoyRegex decoyRegex] [-compress true|false]";
-    public static String csv2mzidToolDescription = "This tool is intended for converting OMSSA CSV output in mzid. Since the CSV format does not contain any search metadata, this tool requires a separate "
+    final public static String csv2mzidParams = "-paramsFile paramsFileLocation -cvAccessionForPSMOrdering (e.g. \"MS:1001328\" is OMSSA:evalue) [-applyFixedMods true|false] [-decoyRegex decoyRegex] [-compress true|false]";
+    final public static String csv2mzidToolDescription = "This tool is intended for converting OMSSA CSV output in mzid. Since the CSV format does not contain any search metadata, this tool requires a separate "
             + "parameters file containing the search metadata (see example under example_files). By default, applyFixedMods = true, this means that the code attempts to add fixed modifications to every peptide based on the search parameters."
             + " This mode is required since OMSSA does not report fixed mods on peptides, which must be present in mzIdentML. This behaviour can be switched off using -applyFixedMods false. "
             + " Developers can easily adapt this tool to process other types of CSV file into mzid, by altering the file csv_config_file.csv under src/resources and re-building.";
-    public static String csv2mzidUsage = "Csv2mzid input_omssa.csv output.mzid " + csv2mzidParams + " \n\nDescription:\n" + csv2mzidToolDescription;
-    public static String csv2mzidUsageExample = " -paramsFile example_files/toxo_omssa_params.csv -cvAccessionForPSMOrdering \"MS:1001328\" -decoyRegex Rev_ -compress true";
+    final public static String csv2mzidUsage = "Csv2mzid input_omssa.csv output.mzid " + csv2mzidParams + " \n\nDescription:\n" + csv2mzidToolDescription;
+    final public static String csv2mzidUsageExample = " -paramsFile example_files/toxo_omssa_params.csv -cvAccessionForPSMOrdering \"MS:1001328\" -decoyRegex Rev_ -compress true";
 
-    public static String mzid2CsvParams = "-exportType exportProteinGroups|exportPSMs|exportProteinsOnly|exportRepProteinPerPAGOnly|exportProteoAnnotator|exportPeptides [-verboseOutput true|false] [-compress true|false]";
-    public static String mzid2CsvToolDescription = "This tool can export from an mzid file into CSV, according to one of the four types of export specified as parameters.";
-    public static String mzid2CsvUsage = "Mzid2Csv input.mzid output.csv " + mzid2CsvParams + " \n\nDescription:\n" + mzid2CsvToolDescription;
-    public static String mzid2CsvUsageExample = " -exportType exportPSMs -verboseOutput false -compress true ";
+    final public static String mzid2CsvParams = "-exportType exportProteinGroups|exportPSMs|exportProteinsOnly|exportRepProteinPerPAGOnly|exportProteoAnnotator|exportPeptides [-verboseOutput true|false] [-compress true|false]";
+    final public static String mzid2CsvToolDescription = "This tool can export from an mzid file into CSV, according to one of the four types of export specified as parameters.";
+    final public static String mzid2CsvUsage = "Mzid2Csv input.mzid output.csv " + mzid2CsvParams + " \n\nDescription:\n" + mzid2CsvToolDescription;
+    final public static String mzid2CsvUsageExample = " -exportType exportPSMs -verboseOutput false -compress true ";
 
-    public static String thresholdParams = "-isPSMThreshold true|false -cvAccessionForScoreThreshold \"MS:100blah\" -threshValue doubleValue  -betterScoresAreLower true|false -deleteUnderThreshold true|false [-compress true|false]";
-    public static String thresholdToolDescription = "This tool can be used to set the passThreshold parameter for PSMs or proteins in an mzid file, to indicate high-quality identifications that will be used by another tool. "
+    final public static String thresholdParams = "-isPSMThreshold true|false -cvAccessionForScoreThreshold \"MS:100blah\" -threshValue doubleValue  -betterScoresAreLower true|false -deleteUnderThreshold true|false [-compress true|false]";
+    final public static String thresholdToolDescription = "This tool can be used to set the passThreshold parameter for PSMs or proteins in an mzid file, to indicate high-quality identifications that will be used by another tool. "
             + "It can handle any type of score (sourced from the PSI-MS CV) and scores can be ordered low to high or vice versa."
             + "If deleteUnderThreshold is specified, PSMs and referenced proteins under the threshold will be removed from the file.";
-    public static String thresholdUsage = "Threshold input.mzid output.mzid " + thresholdParams + " \n\nDescription:\n" + thresholdToolDescription;
-    public static String thresholdUsageExample = " -isPSMThreshold true -cvAccessionForScoreThreshold \"MS:1001171\" -threshValue 40 -betterScoresAreLower false -deleteUnderThreshold true -compress true";
+    final public static String thresholdUsage = "Threshold input.mzid output.mzid " + thresholdParams + " \n\nDescription:\n" + thresholdToolDescription;
+    final public static String thresholdUsageExample = " -isPSMThreshold true -cvAccessionForScoreThreshold \"MS:1001171\" -threshValue 40 -betterScoresAreLower false -deleteUnderThreshold true -compress true";
 
-    public static String proteogrouperParams = "-requireSIIsToPassThreshold true|false -cvAccForSIIScore cvAccForSIIScore -logTransScore true|false -verboseOutput true|false [-version1_1 true|false] [-useProteoAnnotator true|false] [-compress true|false]";
-    public static String proteogrouperToolDescription = "This tool can perform sequence-based protein inference, based on a set of PSMs. It should be parameterized with the CV accession for the PSM score used to create a protein score. "
+    final public static String proteogrouperParams = "-requireSIIsToPassThreshold true|false -cvAccForSIIScore cvAccForSIIScore -logTransScore true|false -verboseOutput true|false [-version1_1 true|false] [-useProteoAnnotator true|false] [-compress true|false]";
+    final public static String proteogrouperToolDescription = "This tool can perform sequence-based protein inference, based on a set of PSMs. It should be parameterized with the CV accession for the PSM score used to create a protein score. "
             + "The tool also needs to know whether the score should be log transformed (true for e/p-values etc) to create a positive protein score. If version1_1 is set to false, export is to the draft mzid 1.2 specification.";
-    public static String proteogrouperUsage = "ProteoGrouper input.mzid output.mzid " + proteogrouperParams + " \n\nDescription:\n" + proteogrouperToolDescription;
-    public static String proteogrouperUsageExample = " -requireSIIsToPassThreshold true -verboseOutput false -cvAccForSIIScore \"MS:1001171\" -logTransScore false -version1_1 true -compress true";
+    final public static String proteogrouperUsage = "ProteoGrouper input.mzid output.mzid " + proteogrouperParams + " \n\nDescription:\n" + proteogrouperToolDescription;
+    final public static String proteogrouperUsageExample = " -requireSIIsToPassThreshold true -verboseOutput false -cvAccForSIIScore \"MS:1001171\" -logTransScore false -version1_1 true -compress true";
 
-    public static String insertMetaDataParams = "-fastaFile fastaFilelocation -accessionSplitRegex (regularExpressionTosplitAccSurroundByForwardSlashes e.g. \"/ /\") [-compress true|false]";
-    public static String insertMetaDataToolDescription = "This tool can be used to extract the description line from a given FASTA file and insert into an mzid file."
+    final public static String insertMetaDataParams = "-fastaFile fastaFilelocation -accessionSplitRegex (regularExpressionTosplitAccSurroundByForwardSlashes e.g. \"/ /\") [-compress true|false]";
+    final public static String insertMetaDataToolDescription = "This tool can be used to extract the description line from a given FASTA file and insert into an mzid file."
             + "The tool needs a regular expression to split the accession from the description line in the FASTA file.";
-    public static String insertMetaDataUsage = "InsertMetaDataFromFasta input.mzid output.mzid " + insertMetaDataParams + " \n\nDescription:\n" + insertMetaDataToolDescription;
-    public static String insertMetaDataUsageExample = " -fastaFile example_files/TgondiiME49_ToxoDB-6_2.fasta -accessionSplitRegex \"/ /\" -compress true";
+    final public static String insertMetaDataUsage = "InsertMetaDataFromFasta input.mzid output.mzid " + insertMetaDataParams + " \n\nDescription:\n" + insertMetaDataToolDescription;
+    final public static String insertMetaDataUsageExample = " -fastaFile example_files/TgondiiME49_ToxoDB-6_2.fasta -accessionSplitRegex \"/ /\" -compress true";
 
-    public static String emPAIParams = "-fastaFile fastaFilelocation -accessionSplitRegex (regularExpressionTosplitAccSurroundByForwardSlashes e.g. \"/ /\") [-enzymeRegex (enzymeRegex defaults to trypsin - \"(?<=[KR])(?!P)\" )] [-verboseOutput true|false] [-compress true|false]";
-    public static String emPAIToolDescription = "This tool applies the emPAI protocol to mzid files [PMID 15958392]. The tool will only work if protein inference has already been performed and there is a protein list in the file. "
+    final public static String emPAIParams = "-fastaFile fastaFilelocation -accessionSplitRegex (regularExpressionTosplitAccSurroundByForwardSlashes e.g. \"/ /\") [-enzymeRegex (enzymeRegex defaults to trypsin - \"(?<=[KR])(?!P)\" )] [-verboseOutput true|false] [-compress true|false]";
+    final public static String emPAIToolDescription = "This tool applies the emPAI protocol to mzid files [PMID 15958392]. The tool will only work if protein inference has already been performed and there is a protein list in the file. "
             + "It requires the location of the fasta file searches, a regular expression (such as a space) to split the accessions from the description lines and optionally a regular expression of the enzyme used in the search (if not trypsin). ";
-    public static String emPAIUsage = "AddEmpaiToMzid input.mzid output.mzid " + emPAIParams + " \n\nDescription:\n" + emPAIToolDescription;
-    public static String emPAIUsageExample = " -fastaFile example_files/TgondiiME49_ToxoDB-6_2.fasta -accessionSplitRegex \"/ /\" -verboseOutput false  -compress true";
+    final public static String emPAIUsage = "AddEmpaiToMzid input.mzid output.mzid " + emPAIParams + " \n\nDescription:\n" + emPAIToolDescription;
+    final public static String emPAIUsageExample = " -fastaFile example_files/TgondiiME49_ToxoDB-6_2.fasta -accessionSplitRegex \"/ /\" -verboseOutput false  -compress true";
 
-    public static String combinedSearchParams = "-firstFile firstFile -firstcvTerm firstcvTerm -firstbetterScoresAreLower firstbetterScoresAreLower -secondFile secondFile -secondcvTerm secondcvTerm -secondbetterScoresAreLower secondbetterScoresAreLower -thirdFile thirdFile -thirdcvTerm thirdcvTerm -thirdbetterScoresAreLower thirdbetterScoresAreLower -rank rank -decoyRatio decoyRatio -outputFile outputFile -debugFile debugFile -decoyRegex decoyRegex -compress false";
-    public static String combinedSearchUsageExample = "-firstFile iprg_omssa.mzid -firstcvTerm MS:1001328 -firstbetterScoresAreLower true -secondFile iprg_mascot.mzid -secondcvTerm MS:1001172 -secondbetterScoresAreLower true -thirdFile iprg_tandem.mzid -thirdcvTerm MS:1001330 -thirdbetterScoresAreLower true -rank 1 -decoyRatio 3 -outputFile iprg_combined.mzid -debugFile debug.txt -decoyRegex RRRR -compress false";
-    public static String combinedSearchDescription = "This tool can be used for combining multiple search engines and can output csv as well as mzid files. This example for three search engines but can be used for two search engines as well\n";
-    public static String combinedSearchUsage = "CombineSearchEngines " + combinedSearchParams + " \n\nDescription:\n" + combinedSearchDescription;
+    final public static String combinedSearchParams = "-firstFile firstFile -firstcvTerm firstcvTerm -firstbetterScoresAreLower firstbetterScoresAreLower -secondFile secondFile -secondcvTerm secondcvTerm -secondbetterScoresAreLower secondbetterScoresAreLower -thirdFile thirdFile -thirdcvTerm thirdcvTerm -thirdbetterScoresAreLower thirdbetterScoresAreLower -rank rank -decoyRatio decoyRatio -outputFile outputFile -debugFile debugFile -decoyRegex decoyRegex -compress false";
+    final public static String combinedSearchUsageExample = "-firstFile iprg_omssa.mzid -firstcvTerm MS:1001328 -firstbetterScoresAreLower true -secondFile iprg_mascot.mzid -secondcvTerm MS:1001172 -secondbetterScoresAreLower true -thirdFile iprg_tandem.mzid -thirdcvTerm MS:1001330 -thirdbetterScoresAreLower true -rank 1 -decoyRatio 3 -outputFile iprg_combined.mzid -debugFile debug.txt -decoyRegex RRRR -compress false";
+    final public static String combinedSearchDescription = "This tool can be used for combining multiple search engines and can output csv as well as mzid files. This example for three search engines but can be used for two search engines as well\n";
+    final public static String combinedSearchUsage = "CombineSearchEngines " + combinedSearchParams + " \n\nDescription:\n" + combinedSearchDescription;
 
-    public static String createRestrictedFASTADatabaseParams = "[-compress true|false]";
-    public static String createRestrictedFASTADatabaseUsageExample = "-compress true";
-    public static String createRestrictedFASTADatabaseToolDescription = "read all PDHs with passthreshold=true and create a new FASTA file from these, assuming that InsertMetaDataFromFasta has already been run to insert sequences and descriptions into the file";
-    public static String createRestrictedFASTADatabaseUsage = "CreateRestrictedFASTADatabase input.mzid output.fasta " + createRestrictedFASTADatabaseParams + " \n\nDescription:\n" + createRestrictedFASTADatabaseToolDescription;
+    final public static String createRestrictedFASTADatabaseParams = "[-compress true|false]";
+    final public static String createRestrictedFASTADatabaseUsageExample = "-compress true";
+    final public static String createRestrictedFASTADatabaseToolDescription = "read all PDHs with passthreshold=true and create a new FASTA file from these, assuming that InsertMetaDataFromFasta has already been run to insert sequences and descriptions into the file";
+    final public static String createRestrictedFASTADatabaseUsage = "CreateRestrictedFASTADatabase input.mzid output.fasta " + createRestrictedFASTADatabaseParams + " \n\nDescription:\n" + createRestrictedFASTADatabaseToolDescription;
 
-    public static String mzIdentMLToMzTabParams = "[-compress true|false]";
-    public static String mzIdentMLToMzTabUsageExample = "-compress true";
-    public static String mzIdentMLToMzTabToolDescription = "Convert mzidentml file to mztab file";
-    public static String mzIdentMLToMzTabUsage = "MzIdentMLToMzTab input.mzid output.mztab " + mzIdentMLToMzTabParams + " \n\nDescription:\n" + mzIdentMLToMzTabToolDescription;
+    final public static String mzIdentMLToMzTabParams = "[-compress true|false]";
+    final public static String mzIdentMLToMzTabUsageExample = "-compress true";
+    final public static String mzIdentMLToMzTabToolDescription = "Convert mzidentml file to mztab file";
+    final public static String mzIdentMLToMzTabUsage = "MzIdentMLToMzTab input.mzid output.mztab " + mzIdentMLToMzTabParams + " \n\nDescription:\n" + mzIdentMLToMzTabToolDescription;
 
-    public static String rescoreModsParams = "-cvAccForScoreToAdapt \"MS:100XXXX\"  -logTransformPSMScore true|false -commonModificationWeight X -mediumModificationWeight X -rareModificationWeight X -generalModificationWeight X -pairedModificationAndUnmodWeight X -multipleVariableModWeight X -compress true|false";
-    public static String rescoreModsDescription = "Note: !!This tool is experimental at this stage, and hasn't been demonstrated to work effetively yet!! \n"
+    final public static String rescoreModsParams = "-cvAccForScoreToAdapt \"MS:100XXXX\"  -logTransformPSMScore true|false -commonModificationWeight X -mediumModificationWeight X -rareModificationWeight X -generalModificationWeight X -pairedModificationAndUnmodWeight X -multipleVariableModWeight X -compress true|false";
+    final public static String rescoreModsDescription = "Note: !!This tool is experimental at this stage, and hasn't been demonstrated to work effetively yet!! \n"
             + "This tool re-scores modifications identified by the search engine. It creates a new \"PTM score\" for all PSMs identifying modifications, by multiplying a user entered (e-value value) score type (low values are better), by various weighting factors depending on the modification classification.";
-    public static String rescoreModsUsage = "RescoreMods input.mzid output.mzid " + rescoreModsParams + " \n\nDescription:\n" + rescoreModsDescription;
-    public static String rescoreModsUsageExample = " -cvAccForScoreToAdapt MS:1002053 -commonModificationWeight 0.5 -mediumModificationWeight 2.0 -rareModificationWeight 10.0 -generalModificationWeight 10.0 -pairedModificationAndUnmodWeight 0.1 -multipleVariableModWeight 10.0  -compress false  -compress true";
+    final public static String rescoreModsUsage = "RescoreMods input.mzid output.mzid " + rescoreModsParams + " \n\nDescription:\n" + rescoreModsDescription;
+    final public static String rescoreModsUsageExample = " -cvAccForScoreToAdapt MS:1002053 -commonModificationWeight 0.5 -mediumModificationWeight 2.0 -rareModificationWeight 10.0 -generalModificationWeight 10.0 -pairedModificationAndUnmodWeight 0.1 -multipleVariableModWeight 10.0  -compress false  -compress true";
 
-    public static String combinePSMMzidFilesParams = "-combineFractions ture|false [-compress true|false]";
-    public static String combinePSMMzidFilesUsageExample = "-combineFractions true -compress true";
-    public static String combinePSMMzidFilesToolDescription = "Combine multiple mzid files on PSM level. Protein-level results (if any) will be removed from the final output";
-    public static String combinePSMMzidFilesUsage = "CombinePSMMzidFiles inputfolder output.mzid " + createRestrictedFASTADatabaseParams + " \n\nDescription:\n" + createRestrictedFASTADatabaseToolDescription;
+    final public static String combinePSMMzidFilesParams = "-combineFractions ture|false [-compress true|false]";
+    final public static String combinePSMMzidFilesUsageExample = "-combineFractions true -compress true";
+    final public static String combinePSMMzidFilesToolDescription = "Combine multiple mzid files on PSM level. Protein-level results (if any) will be removed from the final output";
+    final public static String combinePSMMzidFilesUsage = "CombinePSMMzidFiles inputfolder output.mzid " + createRestrictedFASTADatabaseParams + " \n\nDescription:\n" + createRestrictedFASTADatabaseToolDescription;
 
-    public static String genericFastaParams = "-accession_regex accession_regex [-inputGff inputGff] [-compress true|false]";
-    public static String genericFastaUsageExample = "-accession_regex \\S+ -inputGff inputGff.gff -compress true";
-    public static String genericFastaToolDescription = "Create a generic Fasta file to be used as an input for SearchGUI.";
-    public static String genericFastaUsage = "GenericFasta input.fasta output.fasta " + genericFastaParams + " \n\nDescription:\n" + genericFastaToolDescription;
+    final public static String genericFastaParams = "-accession_regex accession_regex [-inputGff inputGff] [-compress true|false]";
+    final public static String genericFastaUsageExample = "-accession_regex \\S+ -inputGff inputGff.gff -compress true";
+    final public static String genericFastaToolDescription = "Create a generic Fasta file to be used as an input for SearchGUI.";
+    final public static String genericFastaUsage = "GenericFasta input.fasta output.fasta " + genericFastaParams + " \n\nDescription:\n" + genericFastaToolDescription;
 
-    public static String addGenomeCoordinatesForPeptidesParams = "-inputMzid inputMzid -outputMzid outputMzid -inputGff inputGff -outputGff outputGff [-compress true|false]";
-    public static String addGenomeCoordinatesForPeptidesUsageExample = "-inputGff input.gff -outputGff output.gff -compress true";
-    public static String addGenomeCoordinatesForPeptidesToolDescription = "Add genome coordinates for peptides from the gff file to the mzid file";
-    public static String addGenomeCoordinatesForPeptidesUsage = "AddGenomeCoordinatesForPeptides input.mzid output.mzid " + addGenomeCoordinatesForPeptidesParams + " \n\nDescription:\n" + addGenomeCoordinatesForPeptidesToolDescription;
+    final public static String addGenomeCoordinatesForPeptidesParams = "-inputMzid inputMzid -outputMzid outputMzid -inputGff inputGff -outputGff outputGff [-compress true|false]";
+    final public static String addGenomeCoordinatesForPeptidesUsageExample = "-inputGff input.gff -outputGff output.gff -compress true";
+    final public static String addGenomeCoordinatesForPeptidesToolDescription = "Add genome coordinates for peptides from the gff file to the mzid file";
+    final public static String addGenomeCoordinatesForPeptidesUsage = "AddGenomeCoordinatesForPeptides input.mzid output.mzid " + addGenomeCoordinatesForPeptidesParams + " \n\nDescription:\n" + addGenomeCoordinatesForPeptidesToolDescription;
 
-    public static String addRetentionTimeToMzidParams = " -inputSourceFile inputSourceFile -compress true|false";
-    public static String addRetentionTimeToMzidDescription = "add Retention Time to Mzid";
-    public static String addRetentionTimeToMzidUsage = "AddRetentionTimeToMzid input.mzid output.mzid " + addRetentionTimeToMzidParams + " \n\nDescription:\n" + addRetentionTimeToMzidDescription;
-    public static String addRetentionTimeToMzidExample = " -inputSourceFile input.mgf -compress false";
+    final public static String addRetentionTimeToMzidParams = " -inputSourceFile inputSourceFile -compress true|false";
+    final public static String addRetentionTimeToMzidDescription = "add Retention Time to Mzid";
+    final public static String addRetentionTimeToMzidUsage = "AddRetentionTimeToMzid input.mzid output.mzid " + addRetentionTimeToMzidParams + " \n\nDescription:\n" + addRetentionTimeToMzidDescription;
+    final public static String addRetentionTimeToMzidExample = " -inputSourceFile input.mgf -compress false";
 
-    public static String combineFastaFilesParams = " -compress true|false";
-    public static String combineFastaFilesDescription = "Combine Fasta Files";
-    public static String combineFastaFilesUsage = "CombineFastaFiles 1.fasta;2.fasta output.fasta " + addRetentionTimeToMzidParams + " \n\nDescription:\n" + combineFastaFilesDescription;
-    public static String combineFastaFilesExample = " -compress false";
+    final public static String combineFastaFilesParams = " -compress true|false";
+    final public static String combineFastaFilesDescription = "Combine Fasta Files";
+    final public static String combineFastaFilesUsage = "CombineFastaFiles 1.fasta;2.fasta output.fasta " + addRetentionTimeToMzidParams + " \n\nDescription:\n" + combineFastaFilesDescription;
+    final public static String combineFastaFilesExample = " -compress false";
 
     //XtandemPercolator, OmssaPercolator, MsgfPercolator
-    public static String xtandemPercolatorParams = "-decoyRegex decoyregex -compress true|false";
-    public static String xtandemPercolatorDescription = "Running XtandemPercolator";
-    public static String xtandemPercolatorUsage = "XtandemPercolator input.xml outdir " + xtandemPercolatorParams + " \n\nDescription:\n" + xtandemPercolatorDescription;
-    public static String xtandemPercolatorExample = " -decoyRegex decoyregex -compress false";
+    final public static String xtandemPercolatorParams = "-decoyRegex decoyregex -compress true|false";
+    final public static String xtandemPercolatorDescription = "Running XtandemPercolator";
+    final public static String xtandemPercolatorUsage = "XtandemPercolator input.xml outdir " + xtandemPercolatorParams + " \n\nDescription:\n" + xtandemPercolatorDescription;
+    final public static String xtandemPercolatorExample = " -decoyRegex decoyregex -compress false";
     //public static String omssaPercolatorParams = "-mod_file mod_file -database database -decoyregex decoyregex -compress true|false";
-    public static String omssaPercolatorParams = " -database database -decoyRegex decoyregex -compress true|false";
-    public static String omssaPercolatorDescription = "Running OmssaPercolator";
-    public static String omssaPercolatorUsage = "OmssaPercolator input.omx outdir " + omssaPercolatorParams + " \n\nDescription:\n" + omssaPercolatorDescription;
+    final public static String omssaPercolatorParams = " -database database -decoyRegex decoyregex -compress true|false";
+    final public static String omssaPercolatorDescription = "Running OmssaPercolator";
+    final public static String omssaPercolatorUsage = "OmssaPercolator input.omx outdir " + omssaPercolatorParams + " \n\nDescription:\n" + omssaPercolatorDescription;
     //public static String omssaPercolatorExample = " -mod_file E:\\all\\bo\\IPeak_V1.0\\IPeak_release\\mods.xml -database E:\\all\\bo\\IPeak_V1.0\\IPeak_release\\*.fasta -decoyregex REVERSED -compress false";
-    public static String omssaPercolatorExample = " -database E:\\all\\bo\\IPeak_V1.0\\IPeak_release\\*.fasta -decoyRegex REVERSED -compress false";
-    public static String msgfPercolatorParams = " -decoyRegex decoyregex -compress true|false";
-    public static String msgfPercolatorDescription = "Running MsgfPercolator";
-    public static String msgfPercolatorUsage = "MsgfPercolator input.mzid outdir " + msgfPercolatorParams + " \n\nDescription:\n" + msgfPercolatorDescription;
-    public static String msgfPercolatorExample = " -decoyRegex decoyregex -compress false";
+    final public static String omssaPercolatorExample = " -database E:\\all\\bo\\IPeak_V1.0\\IPeak_release\\*.fasta -decoyRegex REVERSED -compress false";
+    final public static String msgfPercolatorParams = " -decoyRegex decoyregex -compress true|false";
+    final public static String msgfPercolatorDescription = "Running MsgfPercolator";
+    final public static String msgfPercolatorUsage = "MsgfPercolator input.mzid outdir " + msgfPercolatorParams + " \n\nDescription:\n" + msgfPercolatorDescription;
+    final public static String msgfPercolatorExample = " -decoyRegex decoyregex -compress false";
 
-    public static String userFeedback = "java -jar jar-location/mzidentml-lib.jar ";
+    protected static String userFeedback = "java -jar jar-location/mzidentml-lib.jar ";
 
 // Added by Fawaz Ghali to automatically update the MzidLib GUI 
     private Map<String, String> allFunctions;
@@ -233,8 +233,8 @@ public class MzIdentMLLib {
                 System.out.print(string + " ");
             }
             System.out.println();
-        } 
-        
+        }
+
         if (args.length > 3) {
 
             inputFileName = args[1];
@@ -685,8 +685,7 @@ public class MzIdentMLLib {
                     ProteoAnnotator2 proteoAnnotator = new ProteoAnnotator2(inputGFF, inputFasta, spectrum_files, outputFolder, inputPredicted, searchParameters, prefix, peptideThreshValue, proteinThreshValue, enableMsgf, enableTwoStageSearch);
                     proteoAnnotator.runProteoAnnotator();
 
-                }
-                else if (args[0].equals("GenericSearch")) {
+                } else if (args[0].equals("GenericSearch")) {
                     //Calling GenericSearch
                     String inputFasta = Utils.getCmdParameter(args, "inputFasta", false);
                     String spectrum_files = Utils.getCmdParameter(args, "spectrum_files", true);
@@ -770,9 +769,8 @@ public class MzIdentMLLib {
 
             //System.out.println(tempFeedback);
             String path = MzIdentMLLib.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-            System.out.println("Error running mzidlib: "+new File(path).getParent());
-            System.out.println("Check the user guide: "+new File(path).getParent()+File.separator+"documentation");
-            
+            System.out.println("Error running mzidlib: " + new File(path).getParent());
+            System.out.println("Check the user guide: " + new File(path).getParent() + File.separator + "documentation");
 
             guiFeedback = tempFeedback;
         }
