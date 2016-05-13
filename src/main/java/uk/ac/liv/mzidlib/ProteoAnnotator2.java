@@ -675,7 +675,7 @@ public class ProteoAnnotator2 {
             }
 
             String addGenomeCoordinatesForPeptidesOutputFile = null;
-            if (inputPredicted != null && !inputPredicted.equals("")) {
+                if (inputPredicted != null && !inputPredicted.equals("")) {
                 String[] predictedSets = inputPredicted.split("##");
                 int i = 2;
                 for (String predictedSet : predictedSets) {

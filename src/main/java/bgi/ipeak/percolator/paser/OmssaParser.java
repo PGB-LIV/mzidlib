@@ -72,10 +72,7 @@ public class OmssaParser {
 		clear();
 	}
 
-	/**
-	 * parse the omx file and extract the features. 
-	 * @throws Exception
-	 */
+	
 	public void parseOmssaXML() throws Exception {
 		System.out.println("Parse OMSSA omx search result "+omssa_omx_file+"...");
 		ReadFastaFile readFasta = new ReadFastaFile(fasta_file);
@@ -431,10 +428,7 @@ public class OmssaParser {
 		}
 	}
 
-	/**
-	 * Count the number of modifiable sites in a peptide sequence. 
-	 * @throws IOException 
-	 */
+	
 	public void  print_features() throws IOException {
 		BufferedWriter out=new BufferedWriter(new FileWriter(new File(output_feature_file)));
 		out.write(feature_title);

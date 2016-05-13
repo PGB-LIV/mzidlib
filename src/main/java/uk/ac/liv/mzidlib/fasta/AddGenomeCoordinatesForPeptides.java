@@ -328,7 +328,13 @@ public class AddGenomeCoordinatesForPeptides {
             SequenceCollection sequenceCollection1 = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.SequenceCollection);
 
             SequenceCollection sq = new SequenceCollection();
-            sq.getDBSequence().addAll(sequenceCollection1.getDBSequence());
+            List<DBSequence> dbSeqList = sequenceCollection1.getDBSequence();
+            HashMap dbSeqHM = new HashMap();
+            for (int i = 0; i < dbSeqList.size(); i++) {
+                DBSequence get = dbSeqList.get(i);
+                dbSeqHM.put(get.getId(), get);
+
+            }
             sq.getPeptide().addAll(sequenceCollection1.getPeptide());
 
             List<PeptideEvidence> peList = sequenceCollection1.getPeptideEvidence();
@@ -446,12 +452,13 @@ public class AddGenomeCoordinatesForPeptides {
 //                            System.out.println("FAILED "+ peptideEvidence.getPeptideRef()+" pepLen "+pepLen +" coordLen "+ coordLen);
 //                        }
 //                        System.out.println("");
-                        
-//                        peptideEvidence.getUserParam().add(makeUserParam("chr", gffData.get(0).getSeqID()));
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002637", "chromosome name", gffData.get(0).getSeqID(), psiCV));
-//                        peptideEvidence.getUserParam().add(makeUserParam("strand", gffData.get(0).getStrand()));
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002638", "chromosome strand", gffData.get(0).getStrand(), psiCV));
 
+//                        peptideEvidence.getUserParam().add(makeUserParam("chr", gffData.get(0).getSeqID()));
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002637", "chromosome name", gffData.get(0).getSeqID(), psiCV));
+//                        peptideEvidence.getUserParam().add(makeUserParam("strand", gffData.get(0).getStrand()));
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002638", "chromosome strand", gffData.get(0).getStrand(), psiCV));
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002644", "genome reference version", new File(inputGff).getName(), psiCV));
+                        dbSeqHM.put(dbSeq.getId(), dbSeq);
                         //peptideEvidence.getCvParam().add(makeCvParam("MS:1002639", "peptide start on chromosome", String.valueOf(start_map), psiCV));
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002640", "peptide end on chromosome", String.valueOf(end_map), psiCV));
 
@@ -465,12 +472,12 @@ public class AddGenomeCoordinatesForPeptides {
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002642", "peptide exon nucleotide sizes", positionsList, psiCV));
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002643", "peptide start positions on chromosome", startsList, psiCV));
 
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002644", "genome reference version", new File(inputGff).getName(), psiCV));
+                        
                     }
                 }
                 newPeList.add(peptideEvidence);
             }
-
+            sq.getDBSequence().addAll(dbSeqHM.values());
             sq.getPeptideEvidence().addAll(newPeList);
 
             if (sq != null) {
@@ -552,10 +559,6 @@ public class AddGenomeCoordinatesForPeptides {
         return cvParam;
     }
 
-    /**
-     * Map the co-ordinates Returns a String array - idx=0=start, idx=1=end and
-     * idx=2=chr
-     */
     public String[] mapToGff(ProteinResults pr) {
         String[] gffMapping = new String[3];
 

@@ -112,9 +112,7 @@ public class FalseDiscoveryRate {
     public static void main(String args[]) {
     }
 
-    /**
-     * Extract all this data from XML
-     */
+   
     public Map<String, List<List<String>>> getFromXMLPeptideModificationHash() {
         return peptideModificationHash;
     }
@@ -127,9 +125,7 @@ public class FalseDiscoveryRate {
         return spectrumInformationHash;
     }
 
-    /**
-     * **************
-     */
+
     public FalseDiscoveryRate(String mzid, String searchEngine, String decoyRatio, String decoy) {
 
         this.decoyRatio = Integer.valueOf(decoyRatio);
@@ -155,9 +151,7 @@ public class FalseDiscoveryRate {
         }
     }
 
-    /**
-     * **************
-     */
+
     public FalseDiscoveryRate(String mzid, String searchEngine, String decoyRatio, String decoy, String cvTerm, boolean betterScore) {
 //        this.decoyRatio = Integer.valueOf(decoyRatio);
 //        this.decoy = decoy;
@@ -1137,14 +1131,6 @@ public class FalseDiscoveryRate {
         this(new File(mzid), Integer.parseInt(decoyRatio), decoy, cvTerm, betterScoresAreLower);
     }
 
-    /**
-     * Return the computed result structure. The elements in all the following
-     * lists are arranged to be in correspondence with each other according to
-     * their indices. Eg - sorted_spectrumResult[i] has sorted_evalues[i] and
-     * estimated_simpleFDR[i] etc. etc. We can pull whatever information we want
-     * individually and create a matrix like structure when needed, for further
-     * processing.
-     */
     public List<String> getSorted_spectrumResult() {
         return sorted_spectrumResult;
     }

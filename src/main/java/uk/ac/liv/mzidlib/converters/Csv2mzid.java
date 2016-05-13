@@ -476,16 +476,7 @@ public class Csv2mzid {
 
     }
 
-    /**
-     * TO DO Capture name and email of the user &lt;AuditCollection&gt; &lt;Person
-     * id="PERSON_DOC_OWNER" firstName="Andy" lastName="Jones"
-     * email="someone@someuniversity.com"&gt; &lt;affiliations
-     * Organization_ref="ORG_DOC_OWNER"/&gt; &lt;/Person> <Organization
-     * id="ORG_DOC_OWNER" address="Some address" name="Some place" /&gt;
-     * &lt;/AuditCollection&gt;
-     *
-     *
-     */
+   
     public void handleAuditCollection() {
         auditCollection = new AuditCollection();
         //List<Contact> contactList = auditCollection.getContactGroup();

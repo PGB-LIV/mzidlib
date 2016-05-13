@@ -113,9 +113,6 @@ public class FalseDiscoveryRateGlobal {
         fdrGlobal.writeToMzIdentMLFile(args[7]);
     }
 
-    /**
-     * Extract all this data from XML
-     */
     public Map<String, String> getFromXMLPeptideSequenceHash() {
         return peptideIdAndSequence;
     }
@@ -1172,14 +1169,7 @@ public class FalseDiscoveryRateGlobal {
 
     }
 
-    /**
-     * Return the computed result structure. The elements in all the following
-     * Arralists are arranged to be in correspondence with each other according
-     * to their indices. Eg - sorted_spectrumResult[i] has sorted_evalues[i] and
-     * estimated_simpleFDR[i] etc. etc. We can pull whatever information we want
-     * individually and create a matrix like structure when needed, for further
-     * processing.
-     */
+   
     public List<String> getSorted_spectrumResult() {
         return sorted_spectrumResult;
     }
