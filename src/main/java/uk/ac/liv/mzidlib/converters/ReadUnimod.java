@@ -78,17 +78,7 @@ public class ReadUnimod {
 
     }
 
-    /**
-     * This method will look for unimod modification entries that are specific for the given
-     * residues and have a mass that falls within the massError window around the given testMass.
-     * It returns, from the entries found, the one with the smallest mass difference.
-     * 
-     * @param testMass
-     * @param massError
-     * @param isMono
-     * @param residues
-     * @return
-     */
+
     public ModT getModByMass(double testMass, double massError, boolean isMono, List<String> residues){
 
         ModT foundMod = null;

@@ -25,25 +25,11 @@ import java.util.Set;
  */
 public class Utils {
 
-    /**
-     * Round a double value and keeping (at max) the given number of decimal
-     * places.
-     *
-     * @param value
-     * @param numberOfDecimalPlaces
-     * @return
-     */
     public static double round(double value, int numberOfDecimalPlaces) {
         double multipicationFactor = Math.pow(10, numberOfDecimalPlaces);
         return Math.round(value * multipicationFactor) / multipicationFactor;
     }
 
-    /**
-     * Initialized the CV map based on the /resources/CV_psi-ms.obo.txt CV file.
-     *
-     * @return
-     * @throws IOException
-     */
     public static Map<String, String> getInitializedCVMap() throws IOException {
         //Read resource file and build up map:
         BufferedReader in = null;
@@ -85,15 +71,7 @@ public class Utils {
 
     }
 
-    /**
-     * Returns the value of a command-line parameter
-     *
-     * @param args : command-line arguments (assuming couples in the form
-     * "-argname", "argvalue" )
-     * @param name : the parameter 'name'
-     * @return returns null if the parameter is not found (and is not required).
-     * If the parameter is not found but is required, it throws an error.
-     */
+
     public static String getCmdParameter(String[] args, String name, boolean required) {
         for (int i = 0; i < args.length; i++) {
             String argName = args[i];

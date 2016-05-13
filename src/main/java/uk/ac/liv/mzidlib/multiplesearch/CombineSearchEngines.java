@@ -60,11 +60,7 @@ public class CombineSearchEngines {
     public CombineSearchEngines() {
     }
 
-    /**
-     *
-     * @param totalSearchEngines
-     * @param searchEngineNames
-     */
+    
     public CombineSearchEngines(String[] searchEngineNames) {
 
         int totalSearchEngines = searchEngineNames.length;
@@ -143,13 +139,7 @@ public class CombineSearchEngines {
 
     }
 
-    /**
-     * Read an mzTdentML file and compute estimated FDR. Return all the
-     * information in the empty FdrAndMzIdentInformationContainer object
-     * provided in argument list.
-     *
-     * @throws Exception
-     */
+   
     public void computeFDRForSingleSearchEngine(int i ,String xmlToRead,
             String searchEngine, FdrAndMzIdentInformationContainer fdrObj, int decoyRatio, String decoyRegex, String cvterm, String betterScore) throws Exception {
 
@@ -361,12 +351,7 @@ public class CombineSearchEngines {
 
     }
 
-    /**
-     * Find out the list of all the unique spectrum IDs
-     *
-     * @return
-     * @throws Exception
-     */
+  
     String[] findAllSpectrumIdsFromSearchEngines() throws Exception {
         Map<String, String> tempMap = new HashMap<String, String>();
 
@@ -383,42 +368,7 @@ public class CombineSearchEngines {
         return tempMap.keySet().toArray(new String[0]).clone();
     }
 
-    /*
-     * // // Find the names of the common spectrum IDs across search engines,
-     * Use the // first SE as reference // String[]
-     * findCommonSpectrumIdsArcossSearchEngines() throws Exception {
-     *
-     * HashMap<String, String> tempMap = new HashMap<String, String>();
-     *
-     * // Use the first SE as reference for comparison String[]
-     * specNamesAsReference =
-     * singleFDRInformation[0].spectrumInfo.keySet().toArray(new String[0]);
-     * Arrays.sort(specNamesAsReference);
-     *
-     * // Sort the arrays for binary search String[][] specForOtherSE = new
-     * String[noOfSearchEngines - 1][]; for (int i = 1; i <
-     * singleFDRInformation.length; i++) { specForOtherSE[i - 1] =
-     * singleFDRInformation[i].spectrumInfo.keySet().toArray(new String[0]);
-     * Arrays.sort(specForOtherSE[i - 1]); }
-     *
-     * for (int k = 0; k < specNamesAsReference.length; k++) { int foundFlag =
-     * 1; for (int i = 0; i < specForOtherSE.length; i++) { String[]
-     * specForThisSE = specForOtherSE[i]; int index =
-     * Arrays.binarySearch(specForThisSE, specNamesAsReference[k]);
-     *
-     * if (index > -1) { // This is a hack - Arrays.binarySearch() has issues
-     * with mixed contents of String+int foundFlag += 1; continue; } else {
-     * foundFlag -= 1; break; } }
-     *
-     * if (foundFlag == noOfSearchEngines) {
-     * tempMap.put(specNamesAsReference[k], ""); } }
-     *
-     * return tempMap.keySet().toArray(new String[0]).clone(); }
-     */
-    /**
-     * Dump the information for each sequence into appropriate
-     * CombinedResultContainer
-     */
+ 
     void addInformationToCombinedResultContainer(String spectrumId, Map<String, String> seqAndMultipleSe,
             Map<String, List<List<Object>>> fdrInfo, Map<String, Double> pepSeqAndAFS) {
 
@@ -448,9 +398,7 @@ public class CombineSearchEngines {
         }
     }
 
-    /**
-     * Compute AFS score for each sequence
-     */
+ 
     Map<String, Double> computeAFS_score(Map<String, List<List<Object>>> fdrRelatedInfo) {
 
         Map<String, Double> afs_score_hash = new HashMap<String, Double>();
@@ -475,13 +423,7 @@ public class CombineSearchEngines {
         return afs_score_hash;
     }
 
-    /**
-     * It will return a "HashMap<String, Vector>" where String is the sequence
-     * and Vector is a Vector of vectors. Eg: <SFGDFGRRFGFG> - 1 (fdr)--------
-     * 2(t) pepID1 pepID2 fdr1 fdr2 decoy decoy rank1 rank2 The above structure
-     * informs that the given sequence was identified by SE "fdr" and "t" and
-     * the corresponding values are the values reported by that particular SE
-     */
+ 
     Map<String, List<List<Object>>> extractFdrRelatedInformationForSeq(
             Map<String, List<Integer>> sequenceSearchEngineMapping, String[][] peptideSeqs, String[][] peptideIds, String spectrumId) {
 
@@ -562,9 +504,7 @@ public class CombineSearchEngines {
         return pepSeqAndFdrDecoyInfo;
     }
 
-    /**
-     *
-     */
+  
     Map<String, String> createMultipleSeIdentifier(Map<String, List<Integer>> sequenceSearchEngineMap) {
 
         Map<String, String> seqAndMappedSe = new HashMap<String, String>();
@@ -602,10 +542,7 @@ public class CombineSearchEngines {
         return seqAndMappedSe;
     }
 
-    /**
-     * Extract the peptide IDs for a given spectum Id from all the search
-     * engines
-     */
+    
     String[][] collectPeptideIdentifiersForGivenSpectrumID(String specID, int rank) {
 
         String[][] peptideIds = new String[noOfSearchEngines][];
@@ -644,9 +581,7 @@ public class CombineSearchEngines {
         return peptideIds.clone();
     }
 
-    /**
-     * Extract peptide sequences for a given peptide ID
-     */
+    
     String[][] collectPeptideSequences(String[][] peptideId) {
         String[][] peptideSequences = new String[noOfSearchEngines][];
         try {
@@ -678,12 +613,7 @@ public class CombineSearchEngines {
         return peptideSequences.clone();
     }
 
-    /**
-     * Compare sequences for a given spectrum across different search engines to
-     * check which search engines identified them. For each sequence, create a
-     * list of search engine identifiers. Eg : SPRFSAGGFS -> 1,2,3 GFSFIERJFS ->
-     * 1,2
-     */
+   
     Map<String, List<Integer>> compareSequences(String[][] peptideSeqs) {
 
         Map<String, List<Integer>> sequenceMap = new HashMap<String, List<Integer>>();
@@ -736,10 +666,7 @@ public class CombineSearchEngines {
         return sequenceMap;
     }
 
-    /**
-     * Dump some diagnostics data into a flat file
-     * HashMap<String,ArrayList<ArrayList<String>>> combinedResultContainer
-     */
+   
     public void writeToFileForDiagnostics(String fileName) throws Exception {
 
         Writer out = new BufferedWriter(new FileWriter(fileName));
@@ -759,11 +686,7 @@ public class CombineSearchEngines {
         out.close();
     }
 
-    /**
-     *
-     * Dump some diagnostics data into a flat file Information about all the
-     * hits reported by individual search engines are reported here
-     */
+  
     public void writeToFileForDiagnostics_singleFDRObj(String fileName) throws Exception {
 
         Writer out = new BufferedWriter(new FileWriter(fileName));
@@ -791,10 +714,7 @@ public class CombineSearchEngines {
         out.close();
     }
 
-    /**
-     * Sort the container elements according to AFS_values
-     *
-     */
+   
     void computeSortedIndicesForSingleContainer(String key) {
 
         //ArrayList<ArrayList<String>> content = (ArrayList<ArrayList<String>>) combinedResultContainer.get(key);
@@ -821,9 +741,7 @@ public class CombineSearchEngines {
         combinedResultContainer.put(key, new ArrayList<List<Object>>(sort_content));
     }
 
-    /**
-     * Sort the whole combined result container according to afs values
-     */
+    
     public void sortWholeCombinedResultContainer() {
         Iterator<String> it = combinedResultContainer.keySet().iterator();
         while (it.hasNext()) {
@@ -831,9 +749,7 @@ public class CombineSearchEngines {
         }
     }
 
-    /**
-     * RK 15-08-12 Add a fake decoy TODO
-     */
+   
     public void insertFakeDecoyInTheEndInSingleContainer(String key) {
 
         Double epsilon_afs = 0.1d;
@@ -865,9 +781,7 @@ public class CombineSearchEngines {
         combinedResultContainer.put(key, new ArrayList<List<Object>>(content));
     }
 
-    /**
-     * Put fake decoy in all the containers
-     */
+   
     public void insertFakeDecoyInWholeCombinedResultContainer() {
         Iterator<String> it = combinedResultContainer.keySet().iterator();
         while (it.hasNext()) {
@@ -896,9 +810,7 @@ public class CombineSearchEngines {
         }
     }
 
-    /**
-     * compute simple FDR for single container
-     */
+   
     void computeSimpleFDRForSingleContainer(String key) {
         int falsePositiveCount = 0;
 
@@ -913,9 +825,7 @@ public class CombineSearchEngines {
         }
     }
 
-    /**
-     * Compute simple FDR for all the containers
-     */
+    
     public void simpleFdrForWholeCombinedResultContainer() {
         Iterator<String> it = combinedResultContainer.keySet().iterator();
         while (it.hasNext()) {
@@ -923,10 +833,7 @@ public class CombineSearchEngines {
         }
     }
 
-    /**
-     * Compute q-value
-     *
-     */
+   
     private void computeQvalueForSingleContainer(String key) {
 
         if (combinedResultContainer.get(key).isEmpty()) {
@@ -1052,9 +959,7 @@ public class CombineSearchEngines {
 
     }
 
-    /**
-     * Compute FDR score for all the containers
-     */
+   
     public void estFDRForWholeCombinedResultContainer() {
         Iterator<String> it = combinedResultContainer.keySet().iterator();
         while (it.hasNext()) {
@@ -1062,9 +967,7 @@ public class CombineSearchEngines {
         }
     }
 
-    /**
-     * Write the CSV file for the whole container...
-     */
+  
     public void prepareTheCSVFileForMzIdentMLParser(String fileName) throws Exception {
 
         Writer out = new BufferedWriter(new FileWriter(fileName));
@@ -1424,9 +1327,7 @@ public class CombineSearchEngines {
 
     }
 
-    /**
-     * Prepare the mod String in a particular format
-     */
+  
     String createModString(List<List<String>> modArray) {
         String modString = new String();
 
@@ -1451,10 +1352,6 @@ public class CombineSearchEngines {
         return modString;
     }
 
-    /**
-     * FG The method to call the pipeline from other java programs, in case if
-     * we want to tinker around in main()
-     */
     public static void runTwoSearchEngines(String[] args) throws Exception {
 
         /*
@@ -1765,15 +1662,7 @@ public class CombineSearchEngines {
 
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     *
-     * Example - exampleMzIDFiles/OUT_SS_tandem.mzid X!Tandem
-     * exampleMzIDFiles/F012143_mascot.mzid mascot 3 1 output/out.txt
-     * output/debug.txt Rev
-     */
+
     public static void main(String[] args) throws Exception {
         if (args.length == 9) {
             runTwoSearchEngines(args);

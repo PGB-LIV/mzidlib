@@ -65,23 +65,12 @@ public class AddEmpaiToMzid {
         AddEmpaiToMzid addEMPAI = new AddEmpaiToMzid();
     }
     
-    /*
-     * Default constructor for testing with defaults only
-     */
+  
     private AddEmpaiToMzid(){
         init();
     }
     
-   /**
-     * 
-     * @param mzidIn	: input mzIdentML file
-     * @param outputfile : output mzIdentML file (if same as mzidIn it will be overwritten)
-     * @param fastaIn : fasta database
-     * @param accRegex : regular expression used to split the accessions from the deflines e.g. " "
-     * @param enzRegex : The regular expression used by the enzyme
-     *      
-     * 
-     */
+
     public AddEmpaiToMzid(String mzidIn, String mzidOut, String fastaIn, String accRegex, String enzRegex, boolean verboseMode){
         this.inputMzid = mzidIn;
         this.outputFile = mzidOut;

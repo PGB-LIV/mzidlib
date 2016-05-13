@@ -14,11 +14,7 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
  */
 public class MzidLibUtils {
 
-    /**
-     * Helper method to create and return a CvParam from accession, name and CV
-     *
-     * @return CvParam
-     */
+  
     public CvParam makeCvParam(String accession, String name, Cv cv) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -27,11 +23,7 @@ public class MzidLibUtils {
         return cvParam;
     }
 
-    /**
-     * Helper method to create and return a CvParam from accession, name and CV
-     *
-     * @return CvParam
-     */
+
     public CvParam makeCvParam(String accession, String name, Cv cv, String value) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -41,12 +33,7 @@ public class MzidLibUtils {
         return cvParam;
     }
 
-    /**
-     * Helper method to create and return a CvParam from accession, name, CV,
-     * unitAccession and unitName (unitCV is automatically provided)
-     *
-     * @return CvParam
-     */
+
     public UserParam makeUserParam(String name, String value) {
         UserParam userParam = new UserParam();
         userParam.setName(name);
@@ -54,9 +41,6 @@ public class MzidLibUtils {
         return userParam;
     }
 
-    /**
-     * Added by Fawaz Ghali return psiCV
-     */
     public Cv getpsiCV(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 
@@ -71,9 +55,7 @@ public class MzidLibUtils {
         return cv1;
     }
 
-    /**
-     * Added by Fawaz Ghali return unimod CV
-     */
+
     public Cv getUnimod(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 
@@ -88,9 +70,7 @@ public class MzidLibUtils {
         return cv1;
     }
 
-    /**
-     * Added by Fawaz Ghali return unit CV
-     */
+   
     public Cv getUnit(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 

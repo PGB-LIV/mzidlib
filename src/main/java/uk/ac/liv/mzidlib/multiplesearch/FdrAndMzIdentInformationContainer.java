@@ -38,23 +38,7 @@ public class FdrAndMzIdentInformationContainer {
 	}
 	
 	
-	/**
-	 *  
-	 * @param xmlToRead 	- The input mzIdentML file
-	 * @param searchEngine	- The search Engine identifier
-	 * @param pepMod		- Empty HashMap to store Peptide-Modification
-	 * @param pepSeq		- Empty HashMap to store Peptide-Sequence
-	 * @param specInfo		- Empty HashMap to store Spectrum Information
-	 * @param sorted_spec	- ArrayList with spectrum ID in sorted order according to evalue
-	 * @param sorted_pepID	- ArrayList with peptide ID in sorted order according to evalue
-	 * @param sorted_evalues- ArrayList in sorted order according to evalue
-	 * @param sorted_scores - ArrayList with score in sorted order according to evalue
-	 * @param sorted_decoy	- ArrayList with decoy=true/false in sorted order according to evalue
-	 * @param sortedFDR		- ArrayList with simple FDR in sorted order according to evalue
-	 * @param sorted_qValues- ArrayList with q value in sorted order according to evalue
-	 * @param sorted_estFDR	- ArrayList with estimated FDR in sorted order according to evalue
-	 */
-	
+
 	public void populateData(String xmlToRead,String searchEngine,
 			Map <String, List<List<String>>> pepMod,
 			Map <String, String> pepSeq,
