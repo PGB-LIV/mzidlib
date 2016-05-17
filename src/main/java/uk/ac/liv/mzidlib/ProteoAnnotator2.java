@@ -73,7 +73,7 @@ public class ProteoAnnotator2 {
     private String performanceFile = "Performance.txt";
     private PrintWriter out = null;
 
-    private boolean useProteoGrouper = true;
+//    private boolean useProteoGrouper = true;
     private String peptideThreshValue = "0.01";
     private String proteinThreshValue = "0.01";
 
@@ -91,7 +91,7 @@ public class ProteoAnnotator2 {
     private File dir;
     private String omssaoutputFile = "";
     private String tandemoutputFile = "";
-    private String msgfoutputFile = "";
+//    private String msgfoutputFile = "";
     private String decoyFasta = "";
 
     // Two stage search
@@ -486,8 +486,8 @@ public class ProteoAnnotator2 {
 
             for (String string : listMGFFiles) {
                 if (string.toLowerCase().endsWith(".mgf")) {
-                    String newMGFLocation = outputFolder +File.separator + "mgf";
-                    File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(newMGFLocation,new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
+                    String newMGFLocation = outputFolder + File.separator + "mgf";
+                    File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(newMGFLocation, new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
 
                     if (mgfFileOrLocation.isDirectory()) {
                         String[] listMGFFiles1 = mgfFileOrLocation.list();
@@ -593,23 +593,20 @@ public class ProteoAnnotator2 {
                             String result = spectrumString.substring(spectrumString.lastIndexOf("TITLE=") + 6, spectrumString.indexOf(";"));
                             String oldID = result.split("@")[0];
                             String oldLocation = result.split("@")[1];
-                            String newID= "index="+String.valueOf(j);
+                            String newID = "index=" + String.valueOf(j);
                             oldNewIds.put(newID, oldID);
                             oldNewLocations.put(spectraDataLocation, oldLocation);
 
                         }
 
                     }
-                    
-                    
 
                     String content = FileUtils.readFileToString(new File(tempFile), "UTF-8");
                     for (Map.Entry<String, String> entry : oldNewIds.entrySet()) {
                         String key = entry.getKey();
                         String value = entry.getValue();
                         content = content.replaceAll(key, value);
-                        System.out.println("Key: "+ key + " value: "+ value);
-                        
+                        System.out.println("Key: " + key + " value: " + value);
 
                     }
 
@@ -617,7 +614,7 @@ public class ProteoAnnotator2 {
                         String key = entry.getKey();
                         String value = entry.getValue();
                         content = content.replaceAll(key, value);
-                       System.out.println("Key: "+ key + " value: "+ value);
+                        System.out.println("Key: " + key + " value: " + value);
 
                     }
 
@@ -675,7 +672,7 @@ public class ProteoAnnotator2 {
             }
 
             String addGenomeCoordinatesForPeptidesOutputFile = null;
-                if (inputPredicted != null && !inputPredicted.equals("")) {
+            if (inputPredicted != null && !inputPredicted.equals("")) {
                 String[] predictedSets = inputPredicted.split("##");
                 int i = 2;
                 for (String predictedSet : predictedSets) {

@@ -1,13 +1,8 @@
-
-
-
 package uk.ac.liv.unimod;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-
-
 
 @XmlType(name = "position_t")
 @XmlEnum
@@ -34,7 +29,7 @@ public enum PositionT {
     }
 
     public static PositionT fromValue(String v) {
-        for (PositionT c: PositionT.values()) {
+        for (PositionT c : PositionT.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

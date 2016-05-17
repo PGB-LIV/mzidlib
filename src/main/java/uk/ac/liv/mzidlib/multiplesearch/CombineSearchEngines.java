@@ -46,7 +46,7 @@ public class CombineSearchEngines {
     private Provider provider;
     private AnalysisProtocolCollection analysisProtocolCollection;
     private CvList cvList;
-    private SequenceCollection sequenceCollection;
+    // private SequenceCollection sequenceCollection;
     private AnalysisCollection analysisCollection;
     private Inputs inputs;
     private int sirCounter = 0;
@@ -54,13 +54,12 @@ public class CombineSearchEngines {
 
     private HashMap<String, SpectraData> spectraDataHashMap = new HashMap();
     private HashMap<String, String> spectraIDLocation = new HashMap();
-    
+
     private AnalysisProtocolCollection analysisProtocolCollectionTandem;
 
     public CombineSearchEngines() {
     }
 
-    
     public CombineSearchEngines(String[] searchEngineNames) {
 
         int totalSearchEngines = searchEngineNames.length;
@@ -119,6 +118,8 @@ public class CombineSearchEngines {
                 namesOfContainers[4] = "13";
                 namesOfContainers[5] = "23";
                 namesOfContainers[6] = "123";
+            default:
+                System.out.println("Min 2 and maximum 3 search engines allowed in the current version");
         }
 
         for (int i = 0; i < totalContainersNeeded; i++) {
@@ -139,8 +140,7 @@ public class CombineSearchEngines {
 
     }
 
-   
-    public void computeFDRForSingleSearchEngine(int i ,String xmlToRead,
+    public void computeFDRForSingleSearchEngine(int i, String xmlToRead,
             String searchEngine, FdrAndMzIdentInformationContainer fdrObj, int decoyRatio, String decoyRegex, String cvterm, String betterScore) throws Exception {
 
         //fdr = new FalseDiscoveryRate(xmlToRead, searchEngine, String.valueOf(decoyRatio), decoyRegex, cvterm, Boolean.valueOf(betterScore).booleanValue());
@@ -212,8 +212,8 @@ public class CombineSearchEngines {
         fdrObj.populateData(xmlToRead, searchEngine, pepMod, pepSeq,
                 specInfo, sorted_spec, sorted_pepID, sorted_evalues,
                 sorted_scores, sorted_decoy, sortedFDR, sorted_qValues, sorted_estFDR);
-        if(i==0){
-          analysisProtocolCollectionTandem=  fdr.getAnalysisProtocolCollection();
+        if (i == 0) {
+            analysisProtocolCollectionTandem = fdr.getAnalysisProtocolCollection();
         }
     }
 
@@ -351,7 +351,6 @@ public class CombineSearchEngines {
 
     }
 
-  
     String[] findAllSpectrumIdsFromSearchEngines() throws Exception {
         Map<String, String> tempMap = new HashMap<String, String>();
 
@@ -368,7 +367,6 @@ public class CombineSearchEngines {
         return tempMap.keySet().toArray(new String[0]).clone();
     }
 
- 
     void addInformationToCombinedResultContainer(String spectrumId, Map<String, String> seqAndMultipleSe,
             Map<String, List<List<Object>>> fdrInfo, Map<String, Double> pepSeqAndAFS) {
 
@@ -398,7 +396,6 @@ public class CombineSearchEngines {
         }
     }
 
- 
     Map<String, Double> computeAFS_score(Map<String, List<List<Object>>> fdrRelatedInfo) {
 
         Map<String, Double> afs_score_hash = new HashMap<String, Double>();
@@ -423,7 +420,6 @@ public class CombineSearchEngines {
         return afs_score_hash;
     }
 
- 
     Map<String, List<List<Object>>> extractFdrRelatedInformationForSeq(
             Map<String, List<Integer>> sequenceSearchEngineMapping, String[][] peptideSeqs, String[][] peptideIds, String spectrumId) {
 
@@ -504,7 +500,6 @@ public class CombineSearchEngines {
         return pepSeqAndFdrDecoyInfo;
     }
 
-  
     Map<String, String> createMultipleSeIdentifier(Map<String, List<Integer>> sequenceSearchEngineMap) {
 
         Map<String, String> seqAndMappedSe = new HashMap<String, String>();
@@ -542,7 +537,6 @@ public class CombineSearchEngines {
         return seqAndMappedSe;
     }
 
-    
     String[][] collectPeptideIdentifiersForGivenSpectrumID(String specID, int rank) {
 
         String[][] peptideIds = new String[noOfSearchEngines][];
@@ -581,7 +575,6 @@ public class CombineSearchEngines {
         return peptideIds.clone();
     }
 
-    
     String[][] collectPeptideSequences(String[][] peptideId) {
         String[][] peptideSequences = new String[noOfSearchEngines][];
         try {
@@ -613,7 +606,6 @@ public class CombineSearchEngines {
         return peptideSequences.clone();
     }
 
-   
     Map<String, List<Integer>> compareSequences(String[][] peptideSeqs) {
 
         Map<String, List<Integer>> sequenceMap = new HashMap<String, List<Integer>>();
@@ -662,11 +654,9 @@ public class CombineSearchEngines {
 //            System.out.println( key + ", " + s);
 //        }
 
-
         return sequenceMap;
     }
 
-   
     public void writeToFileForDiagnostics(String fileName) throws Exception {
 
         Writer out = new BufferedWriter(new FileWriter(fileName));
@@ -686,7 +676,6 @@ public class CombineSearchEngines {
         out.close();
     }
 
-  
     public void writeToFileForDiagnostics_singleFDRObj(String fileName) throws Exception {
 
         Writer out = new BufferedWriter(new FileWriter(fileName));
@@ -714,7 +703,6 @@ public class CombineSearchEngines {
         out.close();
     }
 
-   
     void computeSortedIndicesForSingleContainer(String key) {
 
         //ArrayList<ArrayList<String>> content = (ArrayList<ArrayList<String>>) combinedResultContainer.get(key);
@@ -741,7 +729,6 @@ public class CombineSearchEngines {
         combinedResultContainer.put(key, new ArrayList<List<Object>>(sort_content));
     }
 
-    
     public void sortWholeCombinedResultContainer() {
         Iterator<String> it = combinedResultContainer.keySet().iterator();
         while (it.hasNext()) {
@@ -749,7 +736,6 @@ public class CombineSearchEngines {
         }
     }
 
-   
     public void insertFakeDecoyInTheEndInSingleContainer(String key) {
 
         Double epsilon_afs = 0.1d;
@@ -774,14 +760,13 @@ public class CombineSearchEngines {
 
             fake_ds.add(fake_vec);
         }
-        
+
         fake_ds.add(fakeAfs);
 
         content.add(fake_ds);
         combinedResultContainer.put(key, new ArrayList<List<Object>>(content));
     }
 
-   
     public void insertFakeDecoyInWholeCombinedResultContainer() {
         Iterator<String> it = combinedResultContainer.keySet().iterator();
         while (it.hasNext()) {
@@ -810,7 +795,6 @@ public class CombineSearchEngines {
         }
     }
 
-   
     void computeSimpleFDRForSingleContainer(String key) {
         int falsePositiveCount = 0;
 
@@ -825,7 +809,6 @@ public class CombineSearchEngines {
         }
     }
 
-    
     public void simpleFdrForWholeCombinedResultContainer() {
         Iterator<String> it = combinedResultContainer.keySet().iterator();
         while (it.hasNext()) {
@@ -833,7 +816,6 @@ public class CombineSearchEngines {
         }
     }
 
-   
     private void computeQvalueForSingleContainer(String key) {
 
         if (combinedResultContainer.get(key).isEmpty()) {
@@ -959,7 +941,6 @@ public class CombineSearchEngines {
 
     }
 
-   
     public void estFDRForWholeCombinedResultContainer() {
         Iterator<String> it = combinedResultContainer.keySet().iterator();
         while (it.hasNext()) {
@@ -967,7 +948,6 @@ public class CombineSearchEngines {
         }
     }
 
-  
     public void prepareTheCSVFileForMzIdentMLParser(String fileName) throws Exception {
 
         Writer out = new BufferedWriter(new FileWriter(fileName));
@@ -1327,7 +1307,6 @@ public class CombineSearchEngines {
 
     }
 
-  
     String createModString(List<List<String>> modArray) {
         String modString = new String();
 
@@ -1661,7 +1640,6 @@ public class CombineSearchEngines {
         }
 
     }
-
 
     public static void main(String[] args) throws Exception {
         if (args.length == 9) {

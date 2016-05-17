@@ -15,7 +15,7 @@ import uk.ac.liv.mzidlib.converters.Tandem2mzid;
 public class Tandem2mzidTest extends TestCase {
 
     public void test_basic2() throws Exception {
-		//String xTandemFile = "src/test/data/OutputBrueba.2014_09_23_16_44_27.t.xml";
+        //String xTandemFile = "src/test/data/OutputBrueba.2014_09_23_16_44_27.t.xml";
         //String resultFile = "src/test/out/OutputBrueba.2014_09_23_16_44_27.t.xml.mzid";
         // Updated by Fawaz Ghali 19/10/2015 file does not exist
         String xTandemFile = "src/test/data/tandem_results.2012_02_23_15_24_58.t.xml";
@@ -56,7 +56,7 @@ public class Tandem2mzidTest extends TestCase {
         String outMzid = xTandemFileFromGalaxyStep + ".mzid";
         new Tandem2mzid(xTandemFileFromGalaxyStep, outMzid, "MS:1001348", "MS:1000584", false, true);
 
-		//Possible check if code below would work...:
+        //Possible check if code below would work...:
 		/*
          uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller unmarshaller = new uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller(new File(outMzid));
          SpectrumIdentificationItem firstIdentification = (SpectrumIdentificationItem)unmarshaller.unmarshal(".//SpectrumIdentificationItem");

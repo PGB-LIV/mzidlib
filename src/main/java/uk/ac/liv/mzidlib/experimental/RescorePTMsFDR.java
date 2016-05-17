@@ -120,7 +120,6 @@ public class RescorePTMsFDR {
         System.out.println("Note: code assumes threshold has been run to set passThreshold=true sensibly e.g. FDR < 0.01. "
                 + "All unmodified SIIs with passThreshold = false are (and should be) discarded");
 
-
         readIPRGAnswers(inputIPRG2012Answer, inputIPRG2012AnswerSpiked);
         readPSMs(inputMzid);
         writeToMzIdentMLFile(outputMzidUnmodified, "unmodified");
@@ -129,7 +128,6 @@ public class RescorePTMsFDR {
         writeToMzIdentMLFile(outputMzidSinglePariedPTM, "single paired PTM");
         writeToMzIdentMLFile(outputMzidMultiplePariedPTM, "multiple paired PTM");
         //writeToMzIdentMLFile(outputMzid,"all types");
-
 
     }
 
@@ -182,8 +180,6 @@ public class RescorePTMsFDR {
             allSearchMods.add(searchMod);
         }
 
-
-
         Iterator<Peptide> iterPeptide = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
 
         int countVarMods = 0;
@@ -194,8 +190,6 @@ public class RescorePTMsFDR {
             peptideIDMap.put(pep.getId(), pep);
 
             boolean hasVarMods = false;
-
-
 
             if (pep.getModification() != null && !pep.getModification().isEmpty()) {
                 for (Modification mod : pep.getModification()) {
@@ -210,8 +204,6 @@ public class RescorePTMsFDR {
         }
 
         System.out.println("Var mods:" + countVarMods + " fixed mods: " + countFixMods);
-
-
 
         Iterator<SpectrumIdentificationResult> iterSIR = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
 
@@ -252,7 +244,6 @@ public class RescorePTMsFDR {
 
         }
 
-
         for (String id : siiIDMap.keySet()) {
             SpectrumIdentificationItem sii = siiIDMap.get(id);
             SpectrumIdentificationResult sir = siiToSirMap.get(sii);
@@ -267,7 +258,6 @@ public class RescorePTMsFDR {
                         isPaired = true;
                     }
                 }
-
 
                 Modification varMod = null;
                 int varModCounter = 0;
@@ -297,7 +287,6 @@ public class RescorePTMsFDR {
                         sii.getCvParam().add(utils.makeCvParam("MS:1XYZ", "Modification classification", psiCV, "unmodified"));
                     }
                 }
-
 
             } else {
                 sii.getCvParam().add(utils.makeCvParam("MS:1XYZ", "Modification classification", psiCV, "unmodified"));
@@ -408,21 +397,19 @@ public class RescorePTMsFDR {
                 writer.write(marshaller.createMzIdentMLStartTag("12345") + "\n");
             }
 
-
-
             if (cvList != null) {
                 marshaller.marshal(cvList, writer);
             }
             writer.write("\n");
             if (analysisSoftwareList != null) {
                 AnalysisSoftware analysisSoftware = new AnalysisSoftware();
-            Date date = new Date() ;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss") ;
-            analysisSoftware.setName(this.getClass().getSimpleName()+"_"+dateFormat.format(date)); analysisSoftware.setId(this.getClass().getSimpleName()+"_"+dateFormat.format(date));
+                Date date = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+                analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
+                analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
                 analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
                 marshaller.marshal(analysisSoftwareList, writer);
             }
-
 
             writer.write("\n");
 
@@ -442,7 +429,6 @@ public class RescorePTMsFDR {
 
             writer.write("\n");
 
-
             String spectrumIdentificationListRef = "";
             if (analysisCollection.getSpectrumIdentification().size() > 0) {
                 spectrumIdentificationListRef = analysisCollection.getSpectrumIdentification().get(0).getSpectrumIdentificationListRef();
@@ -458,7 +444,6 @@ public class RescorePTMsFDR {
                 FragmentationTable fr = iterFragmentationTable.next();
                 siList.setFragmentationTable(fr);
             }
-
 
             Iterator<SpectrumIdentificationResult> sirIter = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
             while (sirIter.hasNext()) {
@@ -546,8 +531,6 @@ public class RescorePTMsFDR {
 
                 siList.getSpectrumIdentificationResult().add(sr);
 
-
-
             }
 
             if (analysisCollection != null) {
@@ -560,7 +543,6 @@ public class RescorePTMsFDR {
             }
             writer.write("\n");
 
-
             writer.write(marshaller.createDataCollectionStartTag() + "\n");
 
             writer.write("\n");
@@ -571,7 +553,6 @@ public class RescorePTMsFDR {
             writer.write("\n");
 
             writer.write(marshaller.createAnalysisDataStartTag() + "\n");
-
 
             marshaller.marshal(siList, writer);
             writer.write("\n");

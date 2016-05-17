@@ -216,7 +216,6 @@ public class Csv2mzid {
             System.out.println(message);
         }
 
-
     }
 
     /*
@@ -338,7 +337,6 @@ public class Csv2mzid {
 
     private void validateModifications() {
 
-
         System.out.print("Doing basic validation of modifications entered...");
         boolean passed = true;
         String[] allowedResidues = {"G", "P", "A", "V", "L", "I", "M", "C", "F", "Y", "W", "H", "K", "R", "Q", "N", "E", "D", "S", "T", "."};
@@ -402,8 +400,9 @@ public class Csv2mzid {
      *
      * Aim is to write out set up the analysisSoftwareList following this
      * structure: &lt;AnalysisSoftware id="ID_software" name="xtandem"
-     * version="2008.12.1.1" &gt; &lt;SoftwareName&gt; &lt;cvParam accession="MS:1001476"
-     * name="xtandem" cvRef="PSI-MS" /&gt; &lt;/SoftwareName&gt;
+     * version="2008.12.1.1" &gt; &lt;SoftwareName&gt; &lt;cvParam
+     * accession="MS:1001476" name="xtandem" cvRef="PSI-MS" /&gt;
+     * &lt;/SoftwareName&gt;
      *
      */
     public void handleAnalysisSoftware() {
@@ -426,11 +425,9 @@ public class Csv2mzid {
 
     public void handleCVs() {
 
-
         //<cv id="PSI-MS" fullName="PSI-MS" URI="http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo" version="2.25.0"/>
         //<cv id="UNIMOD" fullName="UNIMOD" URI="http://www.unimod.org/obo/unimod.obo" />
         //<cv id="UO" fullName="UNIT-ONTOLOGY" URI="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo"></cv>
-
         cvList = new CvList();
         List<Cv> localCvList = cvList.getCv();
         psiCV = new Cv();
@@ -455,9 +452,10 @@ public class Csv2mzid {
     }
 
     /**
-     * Setup Provider element as follows &lt;Provider id="PROVIDER"&gt; &lt;ContactRole
-     * Contact_ref="PERSON_DOC_OWNER"&gt; &lt;role&gt; &lt;cvParam accession="MS:1001271"
-     * name="researcher" cvRef="PSI-MS"/&gt; &lt;/role&gt; &lt;/ContactRole&gt; &lt;/Provider&gt;
+     * Setup Provider element as follows &lt;Provider id="PROVIDER"&gt;
+     * &lt;ContactRole Contact_ref="PERSON_DOC_OWNER"&gt; &lt;role&gt;
+     * &lt;cvParam accession="MS:1001271" name="researcher" cvRef="PSI-MS"/&gt;
+     * &lt;/role&gt; &lt;/ContactRole&gt; &lt;/Provider&gt;
      *
      */
     public void handleProvider() {
@@ -467,7 +465,6 @@ public class Csv2mzid {
         ContactRole contactRole = new ContactRole();
         contactRole.setContact(docOwner);
 
-
         Role role = new Role();
         role.setCvParam(makeCvParam("MS:1001271", "researcher", psiCV));
         contactRole.setRole(role);
@@ -476,7 +473,6 @@ public class Csv2mzid {
 
     }
 
-   
     public void handleAuditCollection() {
         auditCollection = new AuditCollection();
         //List<Contact> contactList = auditCollection.getContactGroup();
@@ -489,13 +485,11 @@ public class Csv2mzid {
         docOwner.getCvParam().add(makeCvParam("MS:1000587", "contact address", psiCV, paramToCvParamValue.get("File contact address")));
 
         //docOwner.setEmail(email);
-
         Organization org = new Organization();
         org.setId("ORG_DOC_OWNER");
         org.setName(paramToCvParamValue.get("File contact organization name"));
         org.getCvParam().add(makeCvParam("MS:1000586", "contact name", psiCV, paramToCvParamValue.get("File contact organization name")));
         //org.setAddress(address);
-
 
         List<Affiliation> affList = docOwner.getAffiliation();
         Affiliation aff = new Affiliation();
@@ -539,8 +533,6 @@ public class Csv2mzid {
         searchDBRef.setSearchDatabase(searchDB);
         searchDBRefList.add(searchDBRef);
 
-
-
         if (paramToCvParamValue.get("Searched spectrum") != null) {
             List<InputSpectra> inputSpecList = specIdent.getInputSpectra();
             InputSpectra inputSpec = new InputSpectra();
@@ -553,35 +545,39 @@ public class Csv2mzid {
 
     /**
      * &lt;AnalysisProtocolCollection&gt; &lt;SpectrumIdentificationProtocol
-     * id="SearchProtocol" AnalysisSoftware_ref="ID_software"&gt; &lt;SearchType&gt;
-     * &lt;cvParam accession="MS:1001083" name="ms-ms search" cvRef="PSI-MS"/&gt;
-     * &lt;/SearchType&gt; &lt;AdditionalSearchParams&gt; &lt;cvParam accession="MS:1001211"
-     * name="parent mass type mono" cvRef="PSI-MS"/&gt; &lt;cvParam
-     * accession="MS:1001256" name="fragment mass type mono" cvRef="PSI-MS"/&gt;
-     * &lt;/AdditionalSearchParams&gt; &lt;ModificationParams&gt; &lt;SearchModification
-     * fixedMod="true"&gt; &lt;ModParam massDelta="57.021464" residues="C"&gt; &lt;cvParam
-     * accession="UNIMOD:4" name="Carbamidomethyl" cvRef="UNIMOD" /&gt; &lt;/ModParam&gt;
-     * &lt;/SearchModification&gt; &lt;SearchModification fixedMod="false"&gt; &lt;ModParam
-     * massDelta="15.994919" residues="M"&gt; &lt;cvParam accession="UNIMOD:35"
-     * name="Oxidation" cvRef="UNIMOD" /&gt; &lt;/ModParam&gt; &lt;/SearchModification&gt;
-     * &lt;/ModificationParams&gt; &lt;Enzymes independent="0"&gt; &lt;Enzyme id="ENZ_1"
-     * CTermGain="OH" NTermGain="H" missedCleavages="1" semiSpecific="0"&gt;
-     * &lt;EnzymeName&gt; &lt;cvParam accession="MS:1001251" name="Trypsin"
-     * cvRef="PSI-MS" /&gt; &lt;/EnzymeName&gt; &lt;/Enzyme&gt; &lt;/Enzymes&gt; &lt;MassTable id="0"
+     * id="SearchProtocol" AnalysisSoftware_ref="ID_software"&gt;
+     * &lt;SearchType&gt; &lt;cvParam accession="MS:1001083" name="ms-ms search"
+     * cvRef="PSI-MS"/&gt; &lt;/SearchType&gt; &lt;AdditionalSearchParams&gt;
+     * &lt;cvParam accession="MS:1001211" name="parent mass type mono"
+     * cvRef="PSI-MS"/&gt; &lt;cvParam accession="MS:1001256" name="fragment
+     * mass type mono" cvRef="PSI-MS"/&gt; &lt;/AdditionalSearchParams&gt;
+     * &lt;ModificationParams&gt; &lt;SearchModification fixedMod="true"&gt;
+     * &lt;ModParam massDelta="57.021464" residues="C"&gt; &lt;cvParam
+     * accession="UNIMOD:4" name="Carbamidomethyl" cvRef="UNIMOD" /&gt;
+     * &lt;/ModParam&gt; &lt;/SearchModification&gt; &lt;SearchModification
+     * fixedMod="false"&gt; &lt;ModParam massDelta="15.994919" residues="M"&gt;
+     * &lt;cvParam accession="UNIMOD:35" name="Oxidation" cvRef="UNIMOD" /&gt;
+     * &lt;/ModParam&gt; &lt;/SearchModification&gt; &lt;/ModificationParams&gt;
+     * &lt;Enzymes independent="0"&gt; &lt;Enzyme id="ENZ_1" CTermGain="OH"
+     * NTermGain="H" missedCleavages="1" semiSpecific="0"&gt; &lt;EnzymeName&gt;
+     * &lt;cvParam accession="MS:1001251" name="Trypsin" cvRef="PSI-MS" /&gt;
+     * &lt;/EnzymeName&gt; &lt;/Enzyme&gt; &lt;/Enzymes&gt; &lt;MassTable id="0"
      * msLevel="2"&gt; &lt;/MassTable&gt; &lt;FragmentTolerance&gt; &lt;cvParam
      * accession="MS:1001412" name="search tolerance plus value" value="0.5"
      * cvRef="PSI-MS" unitAccession="UO:0000221" unitName="dalton"
-     * unitCvRef="UO" /&gt; &lt;cvParam accession="MS:1001413" name="search tolerance
-     * minus value" value="0.5" cvRef="PSI-MS" unitAccession="UO:0000221"
-     * unitName="dalton" unitCvRef="UO" /&gt; &lt;/FragmentTolerance&gt;
-     * &lt;ParentTolerance&gt; &lt;cvParam accession="MS:1001412" name="search tolerance
-     * plus value" value="0.5" cvRef="PSI-MS" unitAccession="UO:0000221"
-     * unitName="dalton" unitCvRef="UO" /&gt; &lt;cvParam accession="MS:1001413"
-     * name="search tolerance minus value" value="0.5" cvRef="PSI-MS"
+     * unitCvRef="UO" /&gt; &lt;cvParam accession="MS:1001413" name="search
+     * tolerance minus value" value="0.5" cvRef="PSI-MS"
      * unitAccession="UO:0000221" unitName="dalton" unitCvRef="UO" /&gt;
-     * &lt;/ParentTolerance&gt; &lt;Threshold&gt; &lt;cvParam accession="MS:1001494" name="no
-     * threshold" cvRef="PSI-MS" /&gt; &lt;/Threshold&gt;
-     * &lt;/SpectrumIdentificationProtocol&gt; &lt;/AnalysisProtocolCollection&gt;
+     * &lt;/FragmentTolerance&gt; &lt;ParentTolerance&gt; &lt;cvParam
+     * accession="MS:1001412" name="search tolerance plus value" value="0.5"
+     * cvRef="PSI-MS" unitAccession="UO:0000221" unitName="dalton"
+     * unitCvRef="UO" /&gt; &lt;cvParam accession="MS:1001413" name="search
+     * tolerance minus value" value="0.5" cvRef="PSI-MS"
+     * unitAccession="UO:0000221" unitName="dalton" unitCvRef="UO" /&gt;
+     * &lt;/ParentTolerance&gt; &lt;Threshold&gt; &lt;cvParam
+     * accession="MS:1001494" name="no threshold" cvRef="PSI-MS" /&gt;
+     * &lt;/Threshold&gt; &lt;/SpectrumIdentificationProtocol&gt;
+     * &lt;/AnalysisProtocolCollection&gt;
      *
      *
      */
@@ -641,7 +637,6 @@ public class Csv2mzid {
             searchModList.add(searchMod);
         }
 
-
         siProtocol.setModificationParams(modParams);
 
         Enzymes enzymes = siProtocol.getEnzymes();
@@ -653,7 +648,6 @@ public class Csv2mzid {
         enzymes.setIndependent(false);
 
         List<Enzyme> enzymeList = enzymes.getEnzyme();
-
 
         Enzyme enzyme = new Enzyme();
         //[KR]|{P}
@@ -677,7 +671,6 @@ public class Csv2mzid {
         List<CvParam> fragCvList = fragTol.getCvParam();
         CvParam fragCvPlus = getCvParamWithMassUnits(true);
         CvParam fragCvMinus = getCvParamWithMassUnits(true);
-
 
         fragCvPlus.setAccession("MS:1001412");
         fragCvPlus.setName("search tolerance plus value");
@@ -777,7 +770,6 @@ public class Csv2mzid {
             spectraDataList.add(spectraData);
         }
 
-
     }
 
     private void buildPSMs() {
@@ -786,7 +778,6 @@ public class Csv2mzid {
             CSVReader reader = new CSVReader(new FileReader(inputCsvFile));
             System.out.println("Processing..." + inputCsvFile);
             String[] nextLine;
-
 
             sequenceCollection = new SequenceCollection();
             List<Peptide> peptideList = sequenceCollection.getPeptide();
@@ -827,7 +818,6 @@ public class Csv2mzid {
                         }
                     }
 
-
                     if (spectraLocation != null && !spectraLocation.equals("")) {
                         specUniqueID = spectrumID + "_" + spectraLocation;
                     } else {
@@ -843,7 +833,6 @@ public class Csv2mzid {
                         sir.setId("SIR_" + sirCounter);
                         sir.setSpectrumID(spectrumID);
                         sirCounter++;
-
 
                         //If spectra Location is found in the file (not Omssa)
                         if (spectraLocation != null) {
@@ -897,7 +886,6 @@ public class Csv2mzid {
                         System.out.println("Error - Unable to extract protein accessions from the Defline - quitting");
                     }
 
-
                     DBSequence dbSequence = null;
                     if (accessionToDBSequenceHashMap.containsKey(protAcc)) {
                         dbSequence = accessionToDBSequenceHashMap.get(protAcc);
@@ -910,7 +898,6 @@ public class Csv2mzid {
                         dbSequence.setSearchDatabase(searchDB);
                         accessionToDBSequenceHashMap.put(protAcc, dbSequence);
                     }
-
 
                     String pepSeq = nextLine[headerToColumnMap.get("Peptide")].toUpperCase();
                     String modString = nextLine[headerToColumnMap.get("Mods")];
@@ -932,7 +919,6 @@ public class Csv2mzid {
                         if (addFixedModsBasedOnSearchParams) {
                             convertFixedMods(pep);
                         }
-
 
                     }
 
@@ -965,8 +951,6 @@ public class Csv2mzid {
 
                     }
 
-
-
                     List<SpectrumIdentificationItem> siiList = sir.getSpectrumIdentificationItem();
 
                     /*
@@ -974,7 +958,6 @@ public class Csv2mzid {
                      * PeptideEvidence, use same sii If PepID is different, new
                      * SII
                      */
-
                     SpectrumIdentificationItem sii = null;
 
                     for (SpectrumIdentificationItem currentSii : siiList) {
@@ -1136,7 +1119,6 @@ public class Csv2mzid {
                         }
                     }
                 }
-
 
                 //TODO Protein N or C term mods not yet supported
             }
@@ -1309,7 +1291,6 @@ public class Csv2mzid {
         try {
             Writer writer = new FileWriter(outFile);
 
-
             // mzIdentML
             //     cvList
             //     AnalysisSoftwareList
@@ -1328,36 +1309,28 @@ public class Csv2mzid {
             //     /DataCollection
             //     BibliographicReference
             // /mzIdentML
-
-
             // Note: writing of '\n' characters is optional and only for readability of the produced XML document
             // Also note: since the XML is produced in individual parts, the overall formatting of the document
             //            is not as nice as it would be when marshalling the whole structure at once.
-
             // XML header
             writer.write(marshaller.createXmlHeader() + "\n");
 
-
             // mzIdentML start tag
-
             writer.write(marshaller.createMzIdentMLStartTag("12345") + "\n");
-
-
 
             marshaller.marshall(cvList, writer);
             writer.write("\n");
             AnalysisSoftware analysisSoftware = new AnalysisSoftware();
-            Date date = new Date() ;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss") ;
-            analysisSoftware.setName(this.getClass().getSimpleName()+"_"+dateFormat.format(date)); analysisSoftware.setId(this.getClass().getSimpleName()+"_"+dateFormat.format(date));
+            Date date = new Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+            analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
+            analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
 
             marshaller.marshall(analysisSoftwareList, writer);
             writer.write("\n");
 
-
             marshaller.marshall(provider, writer);
             writer.write("\n");
-
 
             marshaller.marshall(auditCollection, writer);
             writer.write("\n");
@@ -1368,31 +1341,22 @@ public class Csv2mzid {
             marshaller.marshall(analysisCollection, writer);
             writer.write("\n");
 
-
             marshaller.marshall(analysisProtocolCollection, writer);
             writer.write("\n");
-
 
             writer.write(marshaller.createDataCollectionStartTag() + "\n");
             marshaller.marshall(inputs, writer);
             writer.write("\n");
 
-
             //Inputs inputs = unmarshaller.unmarshal(MzIdentMLElement.Inputs.getXpath());
             //m.marshall(inputs, writer);
             //writer.write("\n");
-
             writer.write(marshaller.createAnalysisDataStartTag() + "\n");
 
-
-
             // writer.write(m.createSpectrumIdentificationListStartTag("SIL_1", null, 71412L) + "\n");
-
             //FragmentationTable table = unmarshaller.unmarshal(MzIdentMLElement.FragmentationTable.getXpath());
             //m.marshall(table, writer);
             //writer.write("\n");
-
-
             //Iterator<SpectrumIdentificationResult> specResIter = unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
 
             /*
@@ -1401,13 +1365,10 @@ public class Csv2mzid {
              * SpectrumIdentificationResult specIdentRes = specResIter.next();
              * m.marshall(specIdentRes, writer); writer.write("\n"); }
              */
-
             marshaller.marshall(siList, writer);
             writer.write("\n");
 
-
             // writer.write(m.createSpectrumIdentificationListClosingTag() + "\n");
-
             writer.write(marshaller.createProteinDetectionListStartTag("PDL_1", null) + "\n");
 
             /*
@@ -1418,7 +1379,6 @@ public class Csv2mzid {
              * writer); writer.write("\n"); }
              *
              */
-
             writer.write(marshaller.createProteinDetectionListClosingTag() + "\n");
             writer.write(marshaller.createAnalysisDataClosingTag() + "\n");
             writer.write(marshaller.createDataCollectionClosingTag() + "\n");
@@ -1426,7 +1386,6 @@ public class Csv2mzid {
             //BibliographicReference ref = unmarshaller.unmarshal(MzIdentMLElement.BibliographicReference.getXpath());
             // m.marshall(ref, writer);
             // writer.write("\n");
-
             writer.write(marshaller.createMzIdentMLClosingTag());
 
             writer.close();

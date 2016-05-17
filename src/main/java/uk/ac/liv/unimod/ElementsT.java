@@ -1,5 +1,3 @@
-
-
 package uk.ac.liv.unimod;
 
 import java.util.ArrayList;
@@ -15,7 +13,6 @@ import javax.xml.bind.annotation.XmlType;
 public class ElementsT {
 
     protected List<ElemT> elem;
-
 
     public List<ElemT> getElem() {
         if (elem == null) {

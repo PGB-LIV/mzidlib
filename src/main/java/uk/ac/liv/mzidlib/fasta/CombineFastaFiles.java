@@ -17,7 +17,7 @@ public class CombineFastaFiles {
     private String alphabet2 = "CDEFGHIJKLMNOPQRSTUVWXYZ";
 
     public CombineFastaFiles(String enableTwoStageSearch) {
-        if (enableTwoStageSearch!=null&&enableTwoStageSearch.equals("1")) {
+        if (enableTwoStageSearch != null && enableTwoStageSearch.equals("1")) {
             this.enableTwoStageSearch = true;
         }
     }

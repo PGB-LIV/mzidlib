@@ -57,7 +57,7 @@ public class MzIdentMLLib {
             + " If these parameters are not set, the converter attempts to guess these based on the file extension. In X!Tandem, the numbering of spectra differs dependent upon the input spectra type - the IDs start at zero for mzML files, the IDs start at one for other spectra types e.g. MGF. "
             + "This is a command line parameter which should be set to make sure that the mzid file references the correct spectrum in the source spectrum file. ";
     final public static String tandem2mzidUsage = "Tandem2mzid input_tandem.xml output.mzid " + tandem2mzidParams + " \n\nDescription:\n" + tandem2mzidToolDescription;
-    public static String tandem2mzidUsageExample = "-outputFragmentation false -decoyRegex Rev_ -databaseFileFormatID MS:1001348 -massSpecFileFormatID MS:1001062 -idsStartAtZero false -compress true";
+    final public static String tandem2mzidUsageExample = "-outputFragmentation false -decoyRegex Rev_ -databaseFileFormatID MS:1001348 -massSpecFileFormatID MS:1001062 -idsStartAtZero false -compress true";
 
     final public static String csv2mzidParams = "-paramsFile paramsFileLocation -cvAccessionForPSMOrdering (e.g. \"MS:1001328\" is OMSSA:evalue) [-applyFixedMods true|false] [-decoyRegex decoyRegex] [-compress true|false]";
     final public static String csv2mzidToolDescription = "This tool is intended for converting OMSSA CSV output in mzid. Since the CSV format does not contain any search metadata, this tool requires a separate "
@@ -664,8 +664,8 @@ public class MzIdentMLLib {
                     String proteinThreshValue = Utils.getCmdParameter(args, "proteinThreshValue", true);
                     String enableMsgf = Utils.getCmdParameter(args, "enableMsgf", true);
                     String enableTwoStageSearch = Utils.getCmdParameter(args, "enableTwoStageSearch", false);
-
-                    ProteoAnnotator proteoAnnotator = new ProteoAnnotator(inputGFF, inputFasta, spectrum_files, outputFolder, inputPredicted, searchParameters, prefix, peptideThreshValue, proteinThreshValue, enableMsgf, enableTwoStageSearch);
+                    System.out.println("ProteoAnnotator is no longer in use, using ProteoAnnotator2 instead.");
+                    ProteoAnnotator2 proteoAnnotator = new ProteoAnnotator2(inputGFF, inputFasta, spectrum_files, outputFolder, inputPredicted, searchParameters, prefix, peptideThreshValue, proteinThreshValue, enableMsgf, enableTwoStageSearch);
                     proteoAnnotator.runProteoAnnotator();
 
                 } else if (args[0].equals("ProteoAnnotator2")) {

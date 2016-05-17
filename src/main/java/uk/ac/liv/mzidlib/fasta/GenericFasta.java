@@ -24,13 +24,13 @@ public class GenericFasta {
 
     public GenericFasta(String input, String output, String accession_regex, String inputGff) {
         this.inputFasta_A = input;
-        System.out.println("Input Fasta A: "+inputFasta_A );
+        System.out.println("Input Fasta A: " + inputFasta_A);
         this.output = output;
-        System.out.println("output: "+output);
+        System.out.println("output: " + output);
         this.accession_regex = accession_regex;
-        System.out.println("accession_regex: "+accession_regex );
+        System.out.println("accession_regex: " + accession_regex);
         this.inputGff = inputGff;
-        System.out.println("Input GFF: "+inputGff );
+        System.out.println("Input GFF: " + inputGff);
         //this.description_regex = description_regex;
         if (inputGff != null && !inputGff.equals("")) {
             createGenericeFastaFromGff();
@@ -109,7 +109,7 @@ public class GenericFasta {
             if (accession.startsWith(">sp|")) {
                 accession = accession.replaceFirst(">sp|", ">generic");
                 //newHeader = accession  + "|" + description;
-                newHeader = accession ;
+                newHeader = accession;
             } else {
                 accession = accession.replaceFirst(">", "");
                 if (accession.contains("|")) {
@@ -117,8 +117,7 @@ public class GenericFasta {
                 }
                 newHeader = ">generic|" + accession + "|" + description;
             }
-        }
-        else {
+        } else {
             accession = header;
             accession = accession.replaceFirst(">", "");
             newHeader = ">generic|" + accession + "|";

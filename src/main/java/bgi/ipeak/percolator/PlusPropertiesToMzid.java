@@ -71,6 +71,7 @@ public class PlusPropertiesToMzid {
 
     /**
      * Add features to mzid.
+     *
      * @param args Arguments to the main method.
      * @throws IOException IOException thrown by main method.
      */

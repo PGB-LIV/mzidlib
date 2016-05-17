@@ -32,7 +32,7 @@ public class GenericSearch {
     private String peptideThreshValue = "0.01";
     private String proteinThreshValue = "0.01";
 
-    private boolean enablePercolator = false ;
+    private boolean enablePercolator = false;
 
     // Constructor 
     public GenericSearch() {
@@ -153,7 +153,7 @@ public class GenericSearch {
                             throw new RuntimeException("The MGF file is bigger than 1GB or the Spectra Count > 25000.");
 
                         }
-                        String[] searchParamters = {"-spectrum_files", spectrum_files + File.separator + string, "-output_folder", outputFolder, "-id_params", outputParameterFile,"-comet","0", "-msgf", "0", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0", "-tide", "0"};
+                        String[] searchParamters = {"-spectrum_files", spectrum_files + File.separator + string, "-output_folder", outputFolder, "-id_params", outputParameterFile, "-comet", "0", "-msgf", "0", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0", "-tide", "0"};
                         SearchGUICLI.runSearchGUICLI(searchParamters);
                         out = new PrintWriter(new BufferedWriter(new FileWriter(debugFile, true)));
                     }
@@ -282,7 +282,7 @@ public class GenericSearch {
                     throw new RuntimeException("The MGF file is too small to run.");
                 }
 
-                String[] searchParamters = {"-spectrum_files", spectrum_files, "-output_folder", outputFolder, "-id_params", outputParameterFile, "-comet","0","-msgf", "0", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0", "-tide", "0"};
+                String[] searchParamters = {"-spectrum_files", spectrum_files, "-output_folder", outputFolder, "-id_params", outputParameterFile, "-comet", "0", "-msgf", "0", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0", "-tide", "0"};
                 SearchGUICLI.runSearchGUICLI(searchParamters);
                 out = new PrintWriter(new BufferedWriter(new FileWriter(debugFile, true)));
 
@@ -409,7 +409,6 @@ public class GenericSearch {
 //            String[] proteoGrouperFDRThresholdInputAddEmpaiToMzid = {"AddEmpaiToMzid", proteoGrouperFDRThresholdOutputFile, proteoGrouperFDRThresholdAddEmpaiToMzidOutputFile, "-fastaFile", decoyFasta, "-accessionSplitRegex", "/ /", "-compress", "false"};
 //            print(out, proteoGrouperFDRThresholdInputAddEmpaiToMzid);
 //            mzidLib.init(proteoGrouperFDRThresholdInputAddEmpaiToMzid);
-
             // Simon: Commented out the following as they are not currently relevant to the GenericSearch.
             // exportPSMs to csv using Mzid2Csv
             out.println("exportPSMs to csv using Mzid2Csv");

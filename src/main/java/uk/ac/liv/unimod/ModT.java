@@ -1,6 +1,3 @@
-
-
-
 package uk.ac.liv.unimod;
 
 import java.util.ArrayList;
@@ -10,8 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
-
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "mod_t", propOrder = {
@@ -54,7 +49,6 @@ public class ModT {
     @XmlAttribute(name = "record_id")
     protected Long recordId;
 
-   
     public List<SpecificityT> getSpecificity() {
         if (specificity == null) {
             specificity = new ArrayList<SpecificityT>();
@@ -62,7 +56,6 @@ public class ModT {
         return this.specificity;
     }
 
-   
     public CompositionT getDelta() {
         return delta;
     }
@@ -71,7 +64,6 @@ public class ModT {
         this.delta = value;
     }
 
- 
     public List<CompositionT> getIgnore() {
         if (ignore == null) {
             ignore = new ArrayList<CompositionT>();
@@ -79,7 +71,6 @@ public class ModT {
         return this.ignore;
     }
 
-  
     public List<String> getAltName() {
         if (altName == null) {
             altName = new ArrayList<String>();
@@ -87,7 +78,6 @@ public class ModT {
         return this.altName;
     }
 
-  
     public List<XrefT> getXref() {
         if (xref == null) {
             xref = new ArrayList<XrefT>();
@@ -103,42 +93,34 @@ public class ModT {
         this.miscNotes = value;
     }
 
-
     public String getTitle() {
         return title;
     }
-
 
     public void setTitle(String value) {
         this.title = value;
     }
 
-   
     public String getFullName() {
         return fullName;
     }
 
- 
     public void setFullName(String value) {
         this.fullName = value;
     }
-
 
     public String getUsernameOfPoster() {
         return usernameOfPoster;
     }
 
-  
     public void setUsernameOfPoster(String value) {
         this.usernameOfPoster = value;
     }
 
-  
     public String getGroupOfPoster() {
         return groupOfPoster;
     }
 
- 
     public void setGroupOfPoster(String value) {
         this.groupOfPoster = value;
     }
@@ -147,12 +129,10 @@ public class ModT {
         return dateTimePosted;
     }
 
- 
     public void setDateTimePosted(String value) {
         this.dateTimePosted = value;
     }
 
-  
     public String getDateTimeModified() {
         return dateTimeModified;
     }
@@ -161,27 +141,22 @@ public class ModT {
         this.dateTimeModified = value;
     }
 
-   
     public Boolean isApproved() {
         return approved;
     }
 
- 
     public void setApproved(Boolean value) {
         this.approved = value;
     }
 
-  
     public String getExCodeName() {
         return exCodeName;
     }
 
-  
     public void setExCodeName(String value) {
         this.exCodeName = value;
     }
 
-  
     public Long getRecordId() {
         return recordId;
     }

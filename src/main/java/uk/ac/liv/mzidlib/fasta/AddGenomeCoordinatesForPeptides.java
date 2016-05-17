@@ -472,7 +472,6 @@ public class AddGenomeCoordinatesForPeptides {
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002642", "peptide exon nucleotide sizes", positionsList, psiCV));
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002643", "peptide start positions on chromosome", startsList, psiCV));
 
-                        
                     }
                 }
                 newPeList.add(peptideEvidence);

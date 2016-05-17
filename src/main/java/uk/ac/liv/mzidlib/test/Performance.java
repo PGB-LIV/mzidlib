@@ -6,13 +6,11 @@ import java.util.List;
 import uk.ac.liv.mzidlib.MzIdentMLLib;
 
 /**
- * 
- * @author Fawaz Ghali 28-Jul-2015 
+ *
+ * @author Fawaz Ghali 28-Jul-2015
  */
-
-
 public class Performance {
-    
+
     // Calling the MzidLib Main class
     private MzIdentMLLib mzidLib = null;
 
@@ -41,14 +39,14 @@ public class Performance {
     long startTime, stopTime, elapsedTime;
 
     private boolean verbose = true;
-    
-    public Performance(){
-          mzidLib = new MzIdentMLLib();
+
+    public Performance() {
+        mzidLib = new MzIdentMLLib();
     }
-    
+
     // Run ProteoAnnotator
     public void runPerformance() {
-        
+
     }
 
 }

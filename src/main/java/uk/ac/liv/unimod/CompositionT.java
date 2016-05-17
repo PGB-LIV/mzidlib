@@ -1,6 +1,3 @@
-
-
-
 package uk.ac.liv.unimod;
 
 import java.util.ArrayList;
@@ -10,8 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-
-
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "composition_t", propOrder = {
@@ -31,7 +26,6 @@ public class CompositionT {
     @XmlAttribute(name = "avge_mass")
     protected Double avgeMass;
 
-  
     public List<ElemRefT> getElement() {
         if (element == null) {
             element = new ArrayList<ElemRefT>();
@@ -47,21 +41,17 @@ public class CompositionT {
         this.composition = value;
     }
 
-   
     public Double getMonoMass() {
         return monoMass;
     }
-
 
     public void setMonoMass(Double value) {
         this.monoMass = value;
     }
 
-  
     public Double getAvgeMass() {
         return avgeMass;
     }
-
 
     public void setAvgeMass(Double value) {
         this.avgeMass = value;

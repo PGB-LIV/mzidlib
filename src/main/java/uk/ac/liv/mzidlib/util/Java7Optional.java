@@ -10,6 +10,8 @@ package uk.ac.liv.mzidlib.util;
  * @author SPerkins
  */
 public interface Java7Optional<T> {
+
     public T get();
+
     public boolean isEmpty();
 }

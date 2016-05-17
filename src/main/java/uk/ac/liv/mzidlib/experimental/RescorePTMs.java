@@ -104,16 +104,16 @@ public class RescorePTMs {
         rescorePTMs.init();
     }
 
-    public RescorePTMs(){
-        
+    public RescorePTMs() {
+
     }
-    
-    public RescorePTMs(String inputFile, String outputFile, double commonModificationWeight, double mediumModWeight, double rareModWeight, double generalModWeight, double pairedModAndUnmodWeight){
-        
+
+    public RescorePTMs(String inputFile, String outputFile, double commonModificationWeight, double mediumModWeight, double rareModWeight, double generalModWeight, double pairedModAndUnmodWeight) {
+
         commonModWeight = commonModificationWeight;
-        
+
     }
-    
+
     private void init() {
 
         System.out.println("Note: code assumes threshold has been run to set passThreshold=true sensibly e.g. FDR < 0.01. "
@@ -170,12 +170,11 @@ public class RescorePTMs {
         commonUnimodIDs.put("UNIMOD:7", "Q");
         commonUnimodIDs.put("UNIMOD:7", "N");
         commonUnimodIDs.put("UNIMOD:385", "[C");
-        
+
         System.out.println("Assuming common mods:");
-        for(String unimodID: commonUnimodIDs.keySet()){
+        for (String unimodID : commonUnimodIDs.keySet()) {
             System.out.println(unimodID + " " + commonUnimodIDs.get(unimodID));
         }
-                
 
         mediumCommonUnimodIDs.put("UNIMOD:21", "S");
         mediumCommonUnimodIDs.put("UNIMOD:21", "T");
@@ -186,7 +185,7 @@ public class RescorePTMs {
         mediumCommonUnimodIDs.put("UNIMOD:1", "S");
 
         System.out.println("Assuming \"medium\" mods:");
-        for(String unimodID: mediumCommonUnimodIDs.keySet()){
+        for (String unimodID : mediumCommonUnimodIDs.keySet()) {
             System.out.println(unimodID + " " + mediumCommonUnimodIDs.get(unimodID));
         }
     }
@@ -203,8 +202,6 @@ public class RescorePTMs {
             allSearchMods.add(searchMod);
         }
 
-
-
         Iterator<Peptide> iterPeptide = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
 
         int countVarMods = 0;
@@ -215,8 +212,6 @@ public class RescorePTMs {
             peptideIDMap.put(pep.getId(), pep);
 
             boolean hasVarMods = false;
-
-
 
             if (pep.getModification() != null && !pep.getModification().isEmpty()) {
                 for (Modification mod : pep.getModification()) {
@@ -231,8 +226,6 @@ public class RescorePTMs {
         }
 
         System.out.println("Var mods:" + countVarMods + " fixed mods: " + countFixMods);
-
-
 
         Iterator<SpectrumIdentificationItem> iterSII = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationItem);
 
@@ -267,7 +260,6 @@ public class RescorePTMs {
             }
 
         }
-
 
         for (String id : siiIDMap.keySet()) {
             SpectrumIdentificationItem sii = siiIDMap.get(id);
@@ -340,7 +332,6 @@ public class RescorePTMs {
                     sii.getCvParam().add(utils.makeCvParam(newCvAcc, newCvName, psiCV, "" + newEvalue));  //Add new score to SII                        
                 }
             }
-
 
             if (!scoreFound) {
                 System.out.println("Error - SII without required score found, accession:" + cvAccForBaseScore + " on " + sii.getId());
@@ -451,17 +442,16 @@ public class RescorePTMs {
                 writer.write(marshaller.createMzIdentMLStartTag("12345") + "\n");
             }
 
-
-
             if (cvList != null) {
                 marshaller.marshal(cvList, writer);
             }
             writer.write("\n");
             if (analysisSoftwareList != null) {
                 AnalysisSoftware analysisSoftware = new AnalysisSoftware();
-            Date date = new Date() ;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss") ;
-            analysisSoftware.setName(this.getClass().getSimpleName()+"_"+dateFormat.format(date)); analysisSoftware.setId(this.getClass().getSimpleName()+"_"+dateFormat.format(date));
+                Date date = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+                analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
+                analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
                 analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
 
                 marshaller.marshal(analysisSoftwareList, writer);
@@ -484,7 +474,6 @@ public class RescorePTMs {
 
             writer.write("\n");
 
-
             String spectrumIdentificationListRef = "";
             if (analysisCollection.getSpectrumIdentification().size() > 0) {
                 spectrumIdentificationListRef = analysisCollection.getSpectrumIdentification().get(0).getSpectrumIdentificationListRef();
@@ -500,7 +489,6 @@ public class RescorePTMs {
                 FragmentationTable fr = iterFragmentationTable.next();
                 siList.setFragmentationTable(fr);
             }
-
 
             Iterator<SpectrumIdentificationResult> sirIter = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
             while (sirIter.hasNext()) {
@@ -531,7 +519,6 @@ public class RescorePTMs {
                         newSpecTitle = cycleValue + "." + expValue;
 
                         //System.out.println(newSpecTitle);
-
                         if (iprgAnswerMap.containsKey(newSpecTitle)) {
                             iprgInsert = iprgAnswerMap.get(newSpecTitle);
                         } else {
@@ -582,8 +569,6 @@ public class RescorePTMs {
 
                 siList.getSpectrumIdentificationResult().add(sr);
 
-
-
             }
 
             if (analysisCollection != null) {
@@ -596,7 +581,6 @@ public class RescorePTMs {
             }
             writer.write("\n");
 
-
             writer.write(marshaller.createDataCollectionStartTag() + "\n");
 
             writer.write("\n");
@@ -607,7 +591,6 @@ public class RescorePTMs {
             writer.write("\n");
 
             writer.write(marshaller.createAnalysisDataStartTag() + "\n");
-
 
             marshaller.marshal(siList, writer);
             writer.write("\n");

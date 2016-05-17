@@ -197,7 +197,7 @@ public class MzIdentMLToMzTab {
                 }
                 if (!ambiguity_members.equals("")) {
                     ambiguity_members = ambiguity_members.substring(0, ambiguity_members.length() - 1);
-                }else{
+                } else {
                     ambiguity_members = "null";
                 }
 

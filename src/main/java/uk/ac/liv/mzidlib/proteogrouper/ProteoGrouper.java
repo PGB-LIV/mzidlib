@@ -1076,7 +1076,6 @@ public class ProteoGrouper {
 //                System.out.println("PDH: " + pdh.getDBSequenceRef() + " not assigned to a group");
 //            }
 //        }
-
     }
 
     //Takes array of peptides (uniques and razors combined), sum scores and adds it to the PAG

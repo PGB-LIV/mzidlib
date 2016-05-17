@@ -14,7 +14,6 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
  */
 public class MzidLibUtils {
 
-  
     public CvParam makeCvParam(String accession, String name, Cv cv) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -22,7 +21,6 @@ public class MzidLibUtils {
         cvParam.setCv(cv);
         return cvParam;
     }
-
 
     public CvParam makeCvParam(String accession, String name, Cv cv, String value) {
         CvParam cvParam = new CvParam();
@@ -32,7 +30,6 @@ public class MzidLibUtils {
         cvParam.setValue(value);
         return cvParam;
     }
-
 
     public UserParam makeUserParam(String name, String value) {
         UserParam userParam = new UserParam();
@@ -55,7 +52,6 @@ public class MzidLibUtils {
         return cv1;
     }
 
-
     public Cv getUnimod(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 
@@ -70,7 +66,6 @@ public class MzidLibUtils {
         return cv1;
     }
 
-   
     public Cv getUnit(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 

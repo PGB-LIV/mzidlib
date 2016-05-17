@@ -9,10 +9,10 @@ import uk.ac.ebi.jmzidml.model.mzidml.CvParam;
  */
 public class CompareCvParam extends CvParam {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static boolean compareCvParam(CvParam p1, CvParam p2) {
-     
+    public static boolean compareCvParam(CvParam p1, CvParam p2) {
+
         if ((p1.getAccession() != null && p2.getAccession() == null) || (p1.getAccession() == null && p2.getAccession() != null)) {
             return false;
         }
@@ -48,7 +48,6 @@ public class CompareCvParam extends CvParam {
             }
         }
         return true;
-
 
     }
 }

@@ -1,5 +1,3 @@
-
-
 package uk.ac.liv.unimod;
 
 import java.math.BigInteger;
@@ -7,8 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-
-
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "elem_ref_t")
@@ -19,7 +15,6 @@ public class ElemRefT {
     @XmlAttribute
     protected BigInteger number;
 
-
     public String getSymbol() {
         return symbol;
     }
@@ -28,7 +23,6 @@ public class ElemRefT {
         this.symbol = value;
     }
 
- 
     public BigInteger getNumber() {
         if (number == null) {
             return new BigInteger("1");
@@ -37,7 +31,6 @@ public class ElemRefT {
         }
     }
 
- 
     public void setNumber(BigInteger value) {
         this.number = value;
     }

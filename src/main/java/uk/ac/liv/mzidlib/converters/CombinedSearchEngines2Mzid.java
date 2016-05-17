@@ -291,7 +291,6 @@ public class CombinedSearchEngines2Mzid {
                 }
 
                 //write code to compare next by alphabetical order ... complete putting PDHs into correct PAGs etc...PAGs
-
                 return i;
             }
         });
@@ -315,9 +314,7 @@ public class CombinedSearchEngines2Mzid {
                 innerRankCounter++;
             }
 
-
         }
-
 
     }
 

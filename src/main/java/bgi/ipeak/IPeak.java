@@ -40,8 +40,6 @@ import bgi.ipeak.util.Properties;
  *
  */
 public class IPeak {
-    
-
 
     public static final String DESCRIPTION = "\nIPeak v1.0(2014-03-3)\nWritten by Guilin Li (liguilin@genomics.org.cn) "
             + "Chaoqin Du(duchaoqin@genomics.cn) Bo Wen(wenbo@genomics.cn) in the\n"
@@ -79,7 +77,7 @@ public class IPeak {
     @Option(name = "-outdir", required = true, usage = "(required) Output directory")
     private String out_file_dir;
     @Option(name = "-u", required = false, usage = "(options)[true or false] Filter result in peptide-level FDR, default is true")
-    private String use_peptidefdr="true";
+    private String use_peptidefdr = "true";
     //@Option(name = "-mod", required = true, usage = "(required) The OMSSA modification file")
     //private String mod = "./mod.xml";
     //@Option(name = "-pp", required = true, usage = "(required) The executable Percolator file path")
@@ -127,7 +125,6 @@ public class IPeak {
     private File[] xtandem_list;
     private File[] omssa_list;
 
-    
     public static void main(String[] args) throws Exception {
         IPeak ip = new IPeak();
         CmdLineParser parser = new CmdLineParser(ip);
@@ -146,10 +143,9 @@ public class IPeak {
         ip.iPeak_CombinedResult();
     }
 
-	//
+    //
     //
     public void iPeak_CombinedResult() throws Exception {
-
 
         searchtype = set_filelist_and_get_analyse_method();
 
@@ -206,7 +202,7 @@ public class IPeak {
         AddProtein2Mzid();
 
         Combined_ThreeMethod();
-        
+
         Get_PeptideLevalFDR();
 
         if (group_type == 1) {
@@ -272,7 +268,7 @@ public class IPeak {
             String msgf_mzidfile = files_list.getMsgf_mzid();
             CallExportAsMzid omx2mzid = new CallExportAsMzid(omssa, omssa_mzidfile, umod, decoyregrex);
             CallExportAsMzid xtd2mzid = new CallExportAsMzid(xtandem, xtandem_mzidfile, decoyregrex, databaseformat,
-            		accessionSplitRegex, spectrumformat, bc);
+                    accessionSplitRegex, spectrumformat, bc);
             SetDecoyInfo set_decoy = new SetDecoyInfo(msgf, msgf_mzidfile, decoyregrex);
             set_decoy.SetAndPrint();
             omx2mzid.convert();
@@ -282,14 +278,14 @@ public class IPeak {
                 String out_dir = files_list.getXtandem_out_dir();
                 String name = xtandem_file.getName().substring(0, xtandem_file.getName().lastIndexOf("."));
                 CallExportAsMzid xtd2mzid = new CallExportAsMzid(xtandem_file.getAbsolutePath(),
-                        out_dir + name + ".mzid", decoyregrex, databaseformat,accessionSplitRegex, spectrumformat, bc);
+                        out_dir + name + ".mzid", decoyregrex, databaseformat, accessionSplitRegex, spectrumformat, bc);
                 xtd2mzid.convert();
             }
             for (File omssa_file : omssa_list) {
                 String out_dir = files_list.getOmssa_out_dir();
                 String name = omssa_file.getName().substring(0, omssa_file.getName().lastIndexOf("."));
                 CallExportAsMzid omx2mzid = new CallExportAsMzid(omssa_file.getAbsolutePath(),
-                        out_dir + name + ".mzid",  umod, decoyregrex);
+                        out_dir + name + ".mzid", umod, decoyregrex);
                 omx2mzid.convert();
             }
             for (File msgf_file : msgf_list) {
@@ -423,10 +419,11 @@ public class IPeak {
     }
 
     /**
-     * combined three search engine result,the score of each engine use percolator score;
-     * the out put mzid has the combined fdr score
-     * if debug modle,combined with e-value,and each single engine reported the result,evalue and the percolator score 
-     * result are both reported; 
+     * combined three search engine result,the score of each engine use
+     * percolator score; the out put mzid has the combined fdr score if debug
+     * modle,combined with e-value,and each single engine reported the
+     * result,evalue and the percolator score result are both reported;
+     *
      * @throws IOException
      * @throws InterruptedException
      */
@@ -489,30 +486,30 @@ public class IPeak {
     }
 
     /**
-     * 
+     *
      */
-    private void Get_PeptideLevalFDR(){
-    	/*
-    	 * peptide leval fdr options;
-    	 */
-    	String decoy_rate="1";
-    	String FDRScoreCV="MS:1002355";
-    	String CombinedFDRScore="MS:1002356";
-    	Boolean better_score_are_lower=true;
-    	String fdr_leval="Peptide";
-    	String protein_leval="PAG";
-    	
+    private void Get_PeptideLevalFDR() {
+        /*
+         * peptide leval fdr options;
+         */
+        String decoy_rate = "1";
+        String FDRScoreCV = "MS:1002355";
+        String CombinedFDRScore = "MS:1002356";
+        Boolean better_score_are_lower = true;
+        String fdr_leval = "Peptide";
+        String protein_leval = "PAG";
+
         String mxo_percolator = files_list.getCombined_resultUsePerScore();
-        String outpep_mxo_percolator=files_list.getPepFDR_combined_resultUsePerScore();
+        String outpep_mxo_percolator = files_list.getPepFDR_combined_resultUsePerScore();
         System.out.println("Combine result prosperity\n\n");
-        CallFalseDiscoveryRateGlobal mxo_pep =new CallFalseDiscoveryRateGlobal(mxo_percolator,outpep_mxo_percolator,
-        		decoy_rate,decoyregrex,CombinedFDRScore,better_score_are_lower,fdr_leval,protein_leval);
+        CallFalseDiscoveryRateGlobal mxo_pep = new CallFalseDiscoveryRateGlobal(mxo_percolator, outpep_mxo_percolator,
+                decoy_rate, decoyregrex, CombinedFDRScore, better_score_are_lower, fdr_leval, protein_leval);
         mxo_pep.run_FdrAnalyse();
         if (Boolean.valueOf(debug)) {
             String mxo_evalue = files_list.getEcombined_resultUseEvalue();
             String outpep_mxo_evalue = files_list.getPepFDR_Ecombined_resultUseEvalue();
-            CallFalseDiscoveryRateGlobal mxo_evalue_pep =new CallFalseDiscoveryRateGlobal(mxo_evalue,outpep_mxo_evalue,
-            		decoy_rate,decoyregrex,CombinedFDRScore,better_score_are_lower,fdr_leval,protein_leval);
+            CallFalseDiscoveryRateGlobal mxo_evalue_pep = new CallFalseDiscoveryRateGlobal(mxo_evalue, outpep_mxo_evalue,
+                    decoy_rate, decoyregrex, CombinedFDRScore, better_score_are_lower, fdr_leval, protein_leval);
             mxo_evalue_pep.run_FdrAnalyse();
             System.out.println("Combine result prosperity\n\n");
 
@@ -528,39 +525,40 @@ public class IPeak {
             String outpep_mzid2pepFDR_mp = files_list.getPepFDR_msgfPP_pfdr();
             String outpep_mzid2pepFDR_xp = files_list.getPepFDR_xtandemPP_pfdr();
             String outpep_mzid2pepFDR_op = files_list.getPepFDR_omssaPP_pfdr();
-            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_me =new CallFalseDiscoveryRateGlobal(mzid2pepFDR_me,outpep_mzid2pepFDR_me,
-            		decoy_rate,decoyregrex,FDRScoreCV,better_score_are_lower,fdr_leval,protein_leval);
+            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_me = new CallFalseDiscoveryRateGlobal(mzid2pepFDR_me, outpep_mzid2pepFDR_me,
+                    decoy_rate, decoyregrex, FDRScoreCV, better_score_are_lower, fdr_leval, protein_leval);
             getpep_mzid2pepFDR_me.run_FdrAnalyse();
-            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_xe =new CallFalseDiscoveryRateGlobal(mzid2pepFDR_xe,outpep_mzid2pepFDR_xe,
-            		decoy_rate,decoyregrex,FDRScoreCV,better_score_are_lower,fdr_leval,protein_leval);
+            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_xe = new CallFalseDiscoveryRateGlobal(mzid2pepFDR_xe, outpep_mzid2pepFDR_xe,
+                    decoy_rate, decoyregrex, FDRScoreCV, better_score_are_lower, fdr_leval, protein_leval);
             getpep_mzid2pepFDR_xe.run_FdrAnalyse();
-            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_oe =new CallFalseDiscoveryRateGlobal(mzid2pepFDR_oe,outpep_mzid2pepFDR_oe,
-            		decoy_rate,decoyregrex,FDRScoreCV,better_score_are_lower,fdr_leval,protein_leval);
+            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_oe = new CallFalseDiscoveryRateGlobal(mzid2pepFDR_oe, outpep_mzid2pepFDR_oe,
+                    decoy_rate, decoyregrex, FDRScoreCV, better_score_are_lower, fdr_leval, protein_leval);
             getpep_mzid2pepFDR_oe.run_FdrAnalyse();
-            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_mp =new CallFalseDiscoveryRateGlobal(mzid2pepFDR_mp,outpep_mzid2pepFDR_mp,
-            		decoy_rate,decoyregrex,FDRScoreCV,better_score_are_lower,fdr_leval,protein_leval);
+            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_mp = new CallFalseDiscoveryRateGlobal(mzid2pepFDR_mp, outpep_mzid2pepFDR_mp,
+                    decoy_rate, decoyregrex, FDRScoreCV, better_score_are_lower, fdr_leval, protein_leval);
             getpep_mzid2pepFDR_mp.run_FdrAnalyse();
-            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_xp =new CallFalseDiscoveryRateGlobal(mzid2pepFDR_xp,outpep_mzid2pepFDR_xp,
-            		decoy_rate,decoyregrex,FDRScoreCV,better_score_are_lower,fdr_leval,protein_leval);
+            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_xp = new CallFalseDiscoveryRateGlobal(mzid2pepFDR_xp, outpep_mzid2pepFDR_xp,
+                    decoy_rate, decoyregrex, FDRScoreCV, better_score_are_lower, fdr_leval, protein_leval);
             getpep_mzid2pepFDR_xp.run_FdrAnalyse();
-            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_op =new CallFalseDiscoveryRateGlobal(mzid2pepFDR_op,outpep_mzid2pepFDR_op,
-            		decoy_rate,decoyregrex,FDRScoreCV,better_score_are_lower,fdr_leval,protein_leval);
+            CallFalseDiscoveryRateGlobal getpep_mzid2pepFDR_op = new CallFalseDiscoveryRateGlobal(mzid2pepFDR_op, outpep_mzid2pepFDR_op,
+                    decoy_rate, decoyregrex, FDRScoreCV, better_score_are_lower, fdr_leval, protein_leval);
             getpep_mzid2pepFDR_op.run_FdrAnalyse();
-            
+
         }
     }
+
     /**
-     * 
+     *
      * @throws IOException
      * @throws InterruptedException
      */
-    private void Mzid2Summary() throws IOException, InterruptedException {  
-    	String Combined_FDRScoreCV="MS:1002356";
-    	String FDRScoreCV="MS:1002355";
-    	if(Boolean.valueOf(use_peptidefdr)){
-    		Combined_FDRScoreCV="MS:1002360";
-    		FDRScoreCV="MS:1002360";
-    	}    	
+    private void Mzid2Summary() throws IOException, InterruptedException {
+        String Combined_FDRScoreCV = "MS:1002356";
+        String FDRScoreCV = "MS:1002355";
+        if (Boolean.valueOf(use_peptidefdr)) {
+            Combined_FDRScoreCV = "MS:1002360";
+            FDRScoreCV = "MS:1002360";
+        }
         String mzid2threshold = files_list.getPepFDR_combined_resultUsePerScore();
         String output_summary = files_list.getCombined_resultUsePerScore_primaryfilename();
         Mzid2Summary mxo_mzid2Summary = new Mzid2Summary(mzid2threshold, output_summary, database,
@@ -654,8 +652,9 @@ public class IPeak {
     }
 
     /**
-     * the four function working when the option -group_type=1;
-     * used the mzidentml-lib's threshold,protein group method,report method;
+     * the four function working when the option -group_type=1; used the
+     * mzidentml-lib's threshold,protein group method,report method;
+     *
      * @throws IOException
      * @throws InterruptedException
      */
@@ -704,8 +703,9 @@ public class IPeak {
     }
 
     /**
-     * the four function working when the option -group_type=1;
-     * used the mzidentml-lib's threshold,protein group method,report method;
+     * the four function working when the option -group_type=1; used the
+     * mzidentml-lib's threshold,protein group method,report method;
+     *
      * @throws IOException
      * @throws InterruptedException
      */
@@ -753,8 +753,9 @@ public class IPeak {
     }
 
     /**
-     * the four function working when the option -group_type=1;
-     * used the mzidentml-lib's threshold,protein group method,report method;
+     * the four function working when the option -group_type=1; used the
+     * mzidentml-lib's threshold,protein group method,report method;
+     *
      * @throws IOException
      * @throws InterruptedException
      */
@@ -830,8 +831,9 @@ public class IPeak {
     }
 
     /**
-     * the four function working when the option -group_type=1;
-     * used the mzidentml-lib's threshold,protein group method,report method;
+     * the four function working when the option -group_type=1; used the
+     * mzidentml-lib's threshold,protein group method,report method;
+     *
      * @throws IOException
      */
     private void trans2summary_report() throws IOException {
@@ -945,7 +947,7 @@ public class IPeak {
             String result_file_path = result_file.getAbsolutePath();
             IPeakPercolator resul2feature;
             if (engineID == 2) {
-                resul2feature = new IPeakPercolator(engineID, result_file_path, primaryfilename, database,  umod, decoyregrex);
+                resul2feature = new IPeakPercolator(engineID, result_file_path, primaryfilename, database, umod, decoyregrex);
             } else {
                 resul2feature = new IPeakPercolator(engineID, result_file_path, primaryfilename, decoyregrex);
             }
@@ -1044,6 +1046,5 @@ public class IPeak {
         }
         return addp_mzdi_list;
     }
-    
-   
+
 }

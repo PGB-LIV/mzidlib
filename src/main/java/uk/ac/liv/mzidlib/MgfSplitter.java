@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
 /**
  *
  * @author fghali
@@ -53,28 +52,27 @@ public class MgfSplitter {
                 int k = 0;
                 String line = br.readLine();
                 bw.write(line);
-                bw.newLine();  
+                bw.newLine();
                 while (line != null) {
                     line = br.readLine();
-                    if(line!=null)
-                    {
+                    if (line != null) {
                         bw.write(line);
                         bw.newLine();
                         if (line != null && line.equals("END IONS")) {
                             k += 1;
                         }
-                        if (k >= numberOfIons &&j != (numberOfFiles-1)) {
+                        if (k >= numberOfIons && j != (numberOfFiles - 1)) {
                             break;
                         }
                     }
                 }
                 bw.close();
-                
+
             }
-            
+
             br.close();
         } catch (IOException ex) {
-           ex.printStackTrace();
+            ex.printStackTrace();
         }
     }
 }

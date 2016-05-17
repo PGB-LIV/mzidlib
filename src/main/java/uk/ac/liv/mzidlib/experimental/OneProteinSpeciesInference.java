@@ -251,8 +251,8 @@ public class OneProteinSpeciesInference {
                 {
 //                    bestScorePerPeptideHypothesis = bestScorePerPeptideHypothesis / bestSii.getPeptideEvidenceRef().size();
 
-                        //bestScorePerPeptideHypothesis = bestScorePerPeptideHypothesis / speciesNameCount;
-                      //Now we need to divide the score by the number of different taxa to which it is matched
+                    //bestScorePerPeptideHypothesis = bestScorePerPeptideHypothesis / speciesNameCount;
+                    //Now we need to divide the score by the number of different taxa to which it is matched
                     List<PeptideEvidenceRef> peptideEvidenceRefList = bestSii.getPeptideEvidenceRef();
                     Map<String, Boolean> countTaxaMap = new HashMap<>();
                     for (int k = 0; k < peptideEvidenceRefList.size(); k++) {
@@ -267,7 +267,7 @@ public class OneProteinSpeciesInference {
                         }
                     }
 
-                      //System.out.println("Best SII: " + bestSii.getId() + " score: " + bestScorePerPeptideHypothesis + " / " + countTaxaMap.size() + " = " + bestScorePerPeptideHypothesis / countTaxaMap.size());
+                    //System.out.println("Best SII: " + bestSii.getId() + " score: " + bestScorePerPeptideHypothesis + " / " + countTaxaMap.size() + " = " + bestScorePerPeptideHypothesis / countTaxaMap.size());
                     //if(countTaxaMap.size() == 1){
                     //bestScorePerPeptideHypothesis = bestScorePerPeptideHypothesis;          //Nothing to do here
                     System.out.println("\tScoring pep " + bestSii.getId() + " " + bestSii.getPeptideRef() + " score: " + bestScorePerPeptideHypothesis);
@@ -281,7 +281,7 @@ public class OneProteinSpeciesInference {
                     //    bestScorePerPeptideHypothesis = 0; 
                     //}
 
-                  // bestScorePerPeptideHypothesis = bestScorePerPeptideHypothesis / countTaxaMap.size();   
+                    // bestScorePerPeptideHypothesis = bestScorePerPeptideHypothesis / countTaxaMap.size();   
                 }
                 // Add up the PHscores from all PeptideHypothesis elements to arrive at a final â€œprotein scoreâ€�
                 proteinScore = proteinScore + bestScorePerPeptideHypothesis;
@@ -377,8 +377,8 @@ public class OneProteinSpeciesInference {
                 {
 //                    bestScorePerPeptideHypothesis = bestScorePerPeptideHypothesis / bestSii.getPeptideEvidenceRef().size();
 
-                        //bestScorePerPeptideHypothesis = bestScorePerPeptideHypothesis / speciesNameCount;
-                      //Now we need to divide the score by the number of different taxa to which it is matched
+                    //bestScorePerPeptideHypothesis = bestScorePerPeptideHypothesis / speciesNameCount;
+                    //Now we need to divide the score by the number of different taxa to which it is matched
                     List<PeptideEvidenceRef> peptideEvidenceRefList = bestSii.getPeptideEvidenceRef();
                     Map<String, Boolean> countTaxaMap = new HashMap<>();
                     for (int k = 0; k < peptideEvidenceRefList.size(); k++) {
@@ -393,7 +393,7 @@ public class OneProteinSpeciesInference {
                         }
                     }
 
-                      //System.out.println("Best SII: " + bestSii.getId() + " score: " + bestScorePerPeptideHypothesis + " / " + countTaxaMap.size() + " = " + bestScorePerPeptideHypothesis / countTaxaMap.size());
+                    //System.out.println("Best SII: " + bestSii.getId() + " score: " + bestScorePerPeptideHypothesis + " / " + countTaxaMap.size() + " = " + bestScorePerPeptideHypothesis / countTaxaMap.size());
                     if (countTaxaMap.size() == 1) {
                         //bestScorePerPeptideHypothesis = bestScorePerPeptideHypothesis;          //Nothing to do here
                         //System.out.println("\tScoring pep " + bestSii.getId() + " " + bestSii.getPeptideRef() + " score: " + bestScorePerPeptideHypothesis);

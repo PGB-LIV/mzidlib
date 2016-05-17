@@ -218,7 +218,7 @@ public class Omssa2mzid {
             System.out.println(message);
         }
 
-    }    
+    }
 
     public void parseFile(OmssaOmxFile omxFile) {
 
@@ -877,7 +877,6 @@ public class Omssa2mzid {
         localCvList.add(unitCV);
     }
 
-    
     public CvParam makeCvParam(String accession, String name, Cv cv) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -886,7 +885,6 @@ public class Omssa2mzid {
         return cvParam;
     }
 
-    
     public CvParam makeCvParam(String accession, String name, Cv cv, String value) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -896,7 +894,6 @@ public class Omssa2mzid {
         return cvParam;
     }
 
-    
     public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -908,7 +905,6 @@ public class Omssa2mzid {
         return cvParam;
     }
 
-    
     public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName, Cv alternateUnitCV) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -920,7 +916,6 @@ public class Omssa2mzid {
         return cvParam;
     }
 
-    
     public void handleAnalysisSoftware(String version) {
         analysisSoftwareList = new AnalysisSoftwareList();
         List<AnalysisSoftware> analysisSoftwares = analysisSoftwareList.getAnalysisSoftware();
@@ -946,7 +941,6 @@ public class Omssa2mzid {
 
     }
 
-    
     public void handleProvider() {
         provider = new Provider();
         provider.setId("PROVIDER");
@@ -1000,7 +994,6 @@ public class Omssa2mzid {
 
     }
 
-
     public void handleAnalysisCollection(String activityDate) {
         analysisCollection = new AnalysisCollection();
         List<SpectrumIdentification> specIdentList = analysisCollection.getSpectrumIdentification();
@@ -1021,7 +1014,6 @@ public class Omssa2mzid {
         specIdentList.add(specIdent);
 
     }
-
 
     public void handleAnalysisProtocolCollection() {
 
@@ -1386,7 +1378,6 @@ public class Omssa2mzid {
          */
     }
 
-
     public void writeMzidFile(String output) {
         try {
             FileWriter writer = null;
@@ -1513,7 +1504,6 @@ public class Omssa2mzid {
         }
 
     }
-
 
     public CvParam getCvParamWithMassUnits(Boolean isDaltonUnit) {
         CvParam cvParam = new CvParam();

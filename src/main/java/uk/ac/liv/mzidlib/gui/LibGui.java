@@ -1,4 +1,3 @@
-
 package uk.ac.liv.mzidlib.gui;
 
 import java.util.ArrayList;
@@ -19,18 +18,18 @@ import uk.ac.liv.mzidlib.MzIdentMLLib;
  */
 public class LibGui extends javax.swing.JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private JFileChooser fc = new JFileChooser();
+    private static final long serialVersionUID = 1L;
+    private JFileChooser fc = new JFileChooser();
     private MzIdentMLLib mzIdentMLLib;
 
     /**
      * Creates new form LibGui
      */
     public LibGui() throws ClassNotFoundException {
-       
-             try {
-                 
-               initComponents();
+
+        try {
+
+            initComponents();
             int w = getSize().width;
             int h = getSize().height;
             int x = (w - 300) / 2;
@@ -39,14 +38,14 @@ public class LibGui extends javax.swing.JFrame {
             // Move the window
             setLocation(x, y);
             mzIdentMLLib = new MzIdentMLLib();
-            
+
             Set<String> functions = mzIdentMLLib.getAllFunctions().keySet();
-                 for (Iterator<String> it = functions.iterator(); it.hasNext();) {
-                     String key = it.next();
-                     jComboBox1.addItem(key);
-                     
-                 }
-  
+            for (Iterator<String> it = functions.iterator(); it.hasNext();) {
+                String key = it.next();
+                jComboBox1.addItem(key);
+
+            }
+
         } catch (Exception ex) {
         }
     }
@@ -241,73 +240,65 @@ public class LibGui extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
-       
-        
-        
         if (jTextField1.getText() != null && jTextField2 != null) {
             String input = jTextField1.getText();
 
             String output = jTextField2.getText();
-            
+
             //whitespace in file path
             //FG 05/02/2013
-            input="\""+input+"\"";
-            output="\""+output+"\"";
-           
-            String selected = (String)jComboBox1.getSelectedItem();
+            input = "\"" + input + "\"";
+            output = "\"" + output + "\"";
+
+            String selected = (String) jComboBox1.getSelectedItem();
             String argsTemp = selected + " " + input + " " + output + " " + jTextField3.getText();
             List<String> matchList = new ArrayList<String>();
             Pattern regex = Pattern.compile("[^\\s\"']+|\"[^\"]*\"|'[^']*'");           //split unless surrounded by double quotes
             Matcher regexMatcher = regex.matcher(argsTemp);
             while (regexMatcher.find()) {
-                matchList.add(regexMatcher.group().replaceAll("\"",""));
-            } 
-            String [] args = matchList.toArray(new String[matchList.size()]);
-            
+                matchList.add(regexMatcher.group().replaceAll("\"", ""));
+            }
+            String[] args = matchList.toArray(new String[matchList.size()]);
+
             //System.out.println("input: " + input + " output: " + output);
-            
-            if(input!= null && output!= null && !input.equals("") && !output.equals("")){
-            
+            if (input != null && output != null && !input.equals("") && !output.equals("")) {
+
                 String libFeedback = null;
                 try {
                     libFeedback = mzIdentMLLib.init(args);
                 } catch (Exception ex) {
-                   ex.printStackTrace();
+                    ex.printStackTrace();
                 }
 
-                if(libFeedback.equals("")){
+                if (libFeedback.equals("")) {
                     JOptionPane.showMessageDialog(null, "Output written to " + output, "Result", JOptionPane.INFORMATION_MESSAGE);
 
-                }
-                else{   //if any feeback is provided, must be an error
+                } else {   //if any feeback is provided, must be an error
                     JOptionPane.showMessageDialog(null, "Error running pipeline, see Feedback", "Result", JOptionPane.INFORMATION_MESSAGE);
                     jTextArea1.setText("Error message\n*******************\n"
                             + libFeedback + "\n*******************\n"
                             + "Please check you have entered the correct types of input / output files and parameters.\n If you think this is a bug, please log it here: http://code.google.com/p/mzidentml-lib/issues/list\n");
                 }
+            } else {
+                jTextArea1.setText("Error message\n*******************\n"
+                        + "Please check you have entered  of input and output files\n");
             }
-            else{
-                 jTextArea1.setText("Error message\n*******************\n"
-                           + "Please check you have entered  of input and output files\n");
-            }
-            
+
             //TODO  - fix other error: out stream only closed on program exit!
-            
         }
-        
-        
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-      String selected = (String)jComboBox1.getSelectedItem();
-      String value = (String)mzIdentMLLib.getAllFunctions().get(selected);
-      String[]split = value.split(";@;");
-      jTextField3.setText(split[2]);
-      jTextArea1.setText("Help guide\n************************\n"
-              + "- Parameters in square brackets are optional - example parameters above can be edited.\n"
-              + "- A valid input and output file need to provided in mzid or csv formats (where appropriate).\n"
-              + "- If the output and input file are the same, the input will be overwritten.\n"
-              + "Options for tool " + selected + ":\n\n" + split[0]);
+        String selected = (String) jComboBox1.getSelectedItem();
+        String value = (String) mzIdentMLLib.getAllFunctions().get(selected);
+        String[] split = value.split(";@;");
+        jTextField3.setText(split[2]);
+        jTextArea1.setText("Help guide\n************************\n"
+                + "- Parameters in square brackets are optional - example parameters above can be edited.\n"
+                + "- A valid input and output file need to provided in mzid or csv formats (where appropriate).\n"
+                + "- If the output and input file are the same, the input will be overwritten.\n"
+                + "Options for tool " + selected + ":\n\n" + split[0]);
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
@@ -324,9 +315,9 @@ public class LibGui extends javax.swing.JFrame {
          * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
-           
-         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-           
+
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         } catch (InstantiationException ex) {
@@ -347,7 +338,7 @@ public class LibGui extends javax.swing.JFrame {
                 try {
                     new LibGui().setVisible(true);
                 } catch (ClassNotFoundException ex) {
-                   ex.printStackTrace();
+                    ex.printStackTrace();
                 }
             }
         });

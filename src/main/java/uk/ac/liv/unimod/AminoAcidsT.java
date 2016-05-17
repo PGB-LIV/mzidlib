@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2011.03.15 at 10:02:01 AM GMT 
 //
-
-
 package uk.ac.liv.unimod;
 
 import java.util.ArrayList;
@@ -13,8 +11,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-
-
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "amino_acids_t", propOrder = {

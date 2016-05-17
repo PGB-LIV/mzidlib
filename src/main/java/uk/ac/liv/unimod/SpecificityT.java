@@ -1,5 +1,3 @@
-
-
 package uk.ac.liv.unimod;
 
 import java.math.BigInteger;
@@ -10,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "specificity_t", propOrder = {
@@ -37,7 +34,6 @@ public class SpecificityT {
     @XmlAttribute(name = "spec_group")
     protected BigInteger specGroup;
 
-   
     public List<NeutralLossT> getNeutralLoss() {
         if (neutralLoss == null) {
             neutralLoss = new ArrayList<NeutralLossT>();
@@ -45,14 +41,12 @@ public class SpecificityT {
         return this.neutralLoss;
     }
 
-
     public List<PepNeutralLossT> getPepNeutralLoss() {
         if (pepNeutralLoss == null) {
             pepNeutralLoss = new ArrayList<PepNeutralLossT>();
         }
         return this.pepNeutralLoss;
     }
-
 
     public String getMiscNotes() {
         return miscNotes;
@@ -62,7 +56,6 @@ public class SpecificityT {
         this.miscNotes = value;
     }
 
-
     public boolean isHidden() {
         if (hidden == null) {
             return false;
@@ -71,42 +64,34 @@ public class SpecificityT {
         }
     }
 
-  
     public void setHidden(Boolean value) {
         this.hidden = value;
     }
-
 
     public String getSite() {
         return site;
     }
 
- 
     public void setSite(String value) {
         this.site = value;
     }
 
-  
     public PositionT getPosition() {
         return position;
     }
 
- 
     public void setPosition(PositionT value) {
         this.position = value;
     }
-
 
     public String getClassification() {
         return classification;
     }
 
- 
     public void setClassification(String value) {
         this.classification = value;
     }
 
-    
     public BigInteger getSpecGroup() {
         if (specGroup == null) {
             return new BigInteger("1");
@@ -115,7 +100,6 @@ public class SpecificityT {
         }
     }
 
-  
     public void setSpecGroup(BigInteger value) {
         this.specGroup = value;
     }

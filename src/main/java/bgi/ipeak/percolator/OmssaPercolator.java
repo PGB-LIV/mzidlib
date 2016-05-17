@@ -19,7 +19,7 @@ public class OmssaPercolator {
     private String searchResult = "";
     @Option(name = "-database", required = true, usage = "(required) database path")
     private String database;
-	//@Option(name="-pp",required=true,usage="(required) percolator path. ")
+    //@Option(name="-pp",required=true,usage="(required) percolator path. ")
     //private String percolator_path="";	
     //@Option(name="-mod",required=true,usage="(required) percolator path. ")
     private String mod_file = "";
@@ -66,7 +66,7 @@ public class OmssaPercolator {
         this.searchResult = input_file;
         this.out_dir = output_dir;
         this.decoyregex = decoyregex;
-        
+
         this.database = database;
         this.mod_file = Properties.getModFile_path();
         //this.percolator_path=percolator_path;

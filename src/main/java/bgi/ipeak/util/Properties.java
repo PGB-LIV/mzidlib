@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-
 /**
  * @author Administrator
  *
@@ -34,50 +33,49 @@ public class Properties {
         String jarPath = bgi.ipeak.IPeak.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         File jarPFile = new File(jarPath);
         jarPath = jarPFile.getParent();
-        
+
         //set the mods.xml file path
-        this.modFile_path = jarPath +File.separator+ "mods.xml";
+        this.modFile_path = jarPath + File.separator + "mods.xml";
         File modFile = new File(this.modFile_path);
         //if don't find the mods.xml file in *.jar folder, then we will use the default file
-        if(!modFile.isFile()){
+        if (!modFile.isFile()) {
             System.out.println("Using the default mods.xml file\n");
             this.modFile_path = "mods.xml";
             InputStream inMods = ClassLoader.getSystemClassLoader().getResourceAsStream("mods.xml");
             extractFileFromJar(inMods, this.modFile_path);
         }
-        
+
         //set the usermods.xml file path
-        this.usermodFile_path = jarPath +File.separator+ "usermods.xml";
+        this.usermodFile_path = jarPath + File.separator + "usermods.xml";
         File usermodFile = new File(this.usermodFile_path);
         //if don't find the mods.xml file in *.jar folder, then we will use the default file
-        if(!usermodFile.isFile()){
+        if (!usermodFile.isFile()) {
             System.out.println("Using the default usermods.xml file\n");
             this.usermodFile_path = "usermods.xml";
             InputStream inMods = ClassLoader.getSystemClassLoader().getResourceAsStream("usermods.xml");
             extractFileFromJar(inMods, this.usermodFile_path);
         }
-        
-        
+
         //set percolator path
         jarPath = jarPFile.getParent();
         String OS = System.getProperty("os.name").toLowerCase();
         //OS=OS.replaceAll("\\\\", "/");
         //for linux
         if (OS.indexOf("nux") >= 0) {
-            this.percolator_path = jarPath + File.separator+ "percolator"+File.separator+ "percolator_linux.exe";
+            this.percolator_path = jarPath + File.separator + "percolator" + File.separator + "percolator_linux.exe";
             //for windows
         } else if (OS.indexOf("win") >= 0) {
-            this.percolator_path = jarPath + File.separator+ "percolator"+File.separator+ "percolator_win.exe";
+            this.percolator_path = jarPath + File.separator + "percolator" + File.separator + "percolator_win.exe";
             //for mac
         } else if (OS.indexOf("mac") >= 0) {
-            this.percolator_path = jarPath + File.separator+ "percolator"+File.separator+ "percolator_mac.exe";
+            this.percolator_path = jarPath + File.separator + "percolator" + File.separator + "percolator_mac.exe";
         } else {
             System.err.println("Don't support current system!");
             System.exit(0);
         }
         System.out.println("Percolator path: " + this.percolator_path);
         Check_SoftwarePath();
-        
+
     }
 
     private Boolean check_file(String file_path) {
@@ -91,7 +89,7 @@ public class Properties {
     public String getModFile() {
         return this.modFile_path;
     }
-    
+
     public String getUserModFile() {
         return this.usermodFile_path;
     }
@@ -102,40 +100,40 @@ public class Properties {
      * @return Percolator path.
      */
     public String getPercolator() {
-        
+
         return this.percolator_path;
     }
 
     public static String getPercolator_path() {
-        if(the_Properties==null){
-            the_Properties=new Properties();
+        if (the_Properties == null) {
+            the_Properties = new Properties();
         }
         return the_Properties.getPercolator();
     }
 
     public static String getModFile_path() {
-        if(the_Properties==null){
-            the_Properties=new Properties();
+        if (the_Properties == null) {
+            the_Properties = new Properties();
         }
         return the_Properties.getModFile();
     }
-    
+
     public static String getUserModFile_path() {
-        if(the_Properties==null){
-            the_Properties=new Properties();
+        if (the_Properties == null) {
+            the_Properties = new Properties();
         }
         return the_Properties.getUserModFile();
     }
 
     private void Check_SoftwarePath() {
         if (check_file(modFile_path) && check_file(percolator_path) && check_file(usermodFile_path)) {
-            System.out.println(modFile_path + "\n" + usermodFile_path+"\n"+ percolator_path + "\n");
+            System.out.println(modFile_path + "\n" + usermodFile_path + "\n" + percolator_path + "\n");
         } else {
             System.err.println("Can not find the percolator.exe, the mod file or the usermod file\n");
         }
     }
-    
-     /*
+
+    /*
      * Helper method to get the mod file out of the jar, since local file is
      * needed for OMXParser
      * This function is from Omssa2mzid.java
@@ -161,7 +159,6 @@ public class Properties {
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
-
 
     }
 }

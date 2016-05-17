@@ -138,7 +138,6 @@ public class Tandem2mzid {
     private Pattern proteinCodeRegexPattern = null;
     boolean outputFragmentation = true;
 
-   
     public Tandem2mzid(String inputfile, String outputfile) throws Exception {
         //Calling the more detailed initialization method with all optionals set to null:
         XTandemFile xfile = new XTandemFile(inputfile);
@@ -146,7 +145,6 @@ public class Tandem2mzid {
         convertFile(xfile, inputfile, outputfile);
     }
 
-    
     public Tandem2mzid(String inputfile, String outputfile,
             String databaseFileFormatID, String massSpecFileFormatID,
             boolean isMs2SpectrumIdStartingAtZero, boolean outputFragmentation) throws Exception {
@@ -155,7 +153,6 @@ public class Tandem2mzid {
         convertFile(xfile, inputfile, outputfile);
     }
 
-   
     public Tandem2mzid(String inputfile, String outputfile,
             String databaseFileFormatID, String massSpecFileFormatID,
             boolean isMs2SpectrumIdStartingAtZero, String decoyRegularExpression, boolean outputFragmentation) throws Exception {
@@ -165,7 +162,6 @@ public class Tandem2mzid {
         convertFile(xfile, inputfile, outputfile);
     }
 
-   
     public Tandem2mzid(String inputfile, String outputfile,
             String databaseFileFormatID, String massSpecFileFormatID,
             boolean isMs2SpectrumIdStartingAtZero, String decoyRegularExpression,
@@ -177,14 +173,12 @@ public class Tandem2mzid {
         convertFile(xfile, inputfile, outputfile);
     }
 
-    
     private void initializeVariables(XTandemFile xfile, String databaseFileFormatID, String massSpecFileFormatID,
             Boolean isMs2SpectrumIdStartingAtZero, String decoyRegularExpression,
             String proteinCodeRegex, boolean outputFragmentation) throws IOException {
         if (decoyRegularExpression != null && !decoyRegularExpression.trim().equals("")) {
             this.decoyRegex = decoyRegularExpression;
         }
-
 
         if (proteinCodeRegex != null && !proteinCodeRegex.trim().equals("")) {
             //this regex should ensure the protein code is parsed from the longer string that X!Tandem is
@@ -243,7 +237,6 @@ public class Tandem2mzid {
         }
     }
 
-  
     private String getCVName(String cvItemID) throws IOException {
         //If CV map is not yet initialized, do it:
         if (this.cvMap == null) {
@@ -276,14 +269,12 @@ public class Tandem2mzid {
         String dbName = tandemParams.getSequenceSourceDescription_1();
         long totalProts = (long) tandemParams.getTotalProteinsUsed();
 
-
         InputParams inputParams = iXTandemFile.getInputParameters();
         //If the spectrum path is null, then we can assume all input parameters are missing
         //as the spectrum path is a mandatory for X!tandem to run:
         if (inputParams.getSpectrumPath() == null) {
             throw new RuntimeException("Expected parameter not found in X!Tandem file. Please run your X!Tandem search with option 'output, parameters=yes'. See http://thegpm.org/tandem/api/opara.html for more details.");
         }
-
 
         //TODO - This only works if the user specified to output the input params - need to document this clearly
         double massError = inputParams.getSpectrumParentMonoIsoMassErrorMinus();
@@ -305,7 +296,6 @@ public class Tandem2mzid {
         handleInputs(inputfile, dbName, dbLocation, totalProts, inputParams.getSpectrumPath());
         handleAnalysisCollection(tandemParams.getProcStartTime());
 
-
         // Create fragmentation table
         /*
          * <Measure id="m_mz"> <cvParam cvRef="PSI-MS" accession="MS:1001225"
@@ -316,7 +306,6 @@ public class Tandem2mzid {
          * unitAccession="MS:1000040" unitName="m/z" unitCvRef="PSI-MS"/>
          * </Measure>
          */
-
         Measure mzMeasure = null;
         Measure intMeasure = null;
         Measure errorMeasure = null;
@@ -510,8 +499,6 @@ public class Tandem2mzid {
 
             // Fill the peptide map: for each spectrum get the corressponding peptide list.
             //peptideMap.put(spectrumNumber, pepList);
-
-
             /**
              * ***********************************************
              *  *** Complete SpectrumIdentificationResult ****
@@ -532,7 +519,6 @@ public class Tandem2mzid {
             }
 
             //TODO add checks to find out what is the data format submitted to X!Tandem and to correct the spectrumID value accordingly
-
             String label = supportData.getFragIonSpectrumDescription();
             specIdentRes.setSpectrumID("index=" + spectrumID);
             specIdentRes.setSpectraData(spectraData);
@@ -544,27 +530,19 @@ public class Tandem2mzid {
 
             }
 
-
             specIdentResults.add(specIdentRes);
             sirCounter++;
 
             //TO - currently only implements the case where the same peptide matches to different proteins
-
-
             // Initialize the array lists
             //ArrayList<double> mzValues;
             //ArrayList<double> intensityValues;
-
             // Get the spectrum fragment mz and intensity values
             //mzValues = supportData.getXValuesFragIonMass2Charge();
-
             //intensityValues = supportData.getYValuesFragIonMass2Charge();
-
             // Fill the maps
             //allMzValues.put(new Integer(spectrumNumber), mzValues);
             // allIntensityValues.put(new Integer(spectrumNumber), intensityValues);
-
-
         }
 
     }
@@ -589,7 +567,6 @@ public class Tandem2mzid {
 
         }
         pepEvid.setPost("" + post); //Reports 4 chars, we need the first only
-
 
         char pre = domain.getUpFlankSequence().charAt(domain.getUpFlankSequence().length() - 1);
         if (pre == '[') {
@@ -627,7 +604,6 @@ public class Tandem2mzid {
 
     }
 
-   
     private String[] parseProteinDetails(Map<String, DBSequence> foundProts, Domain domain,
             de.proteinms.xtandemparser.xtandem.Peptide peptide, XTandemFile iXTandemFile) {
         Protein protein = iXTandemFile.getProteinMap().getProtein(domain.getProteinKey());
@@ -673,7 +649,6 @@ public class Tandem2mzid {
         return result;
     }
 
-  
     private void parseScoresAndOtherSIIAttributes(SpectrumIdentificationItem sii, Domain domain, Spectrum spectrum) {
         double evalue = domain.getDomainExpect();
         double hyperscore = domain.getDomainHyperScore();
@@ -704,8 +679,6 @@ public class Tandem2mzid {
         cvParamList.add(makeCvParam("MS:1001331", "X\\!Tandem:hyperscore", psiCV, "" + hyperscore));
     }
 
-
-
     private void parseFragmentationData(List<IonType> ionTypeList, Domain domain,
             de.proteinms.xtandemparser.xtandem.Peptide peptide, XTandemFile iXTandemFile,
             Measure mzMeasure, Measure intMeasure, Measure errorMeasure) {
@@ -725,14 +698,14 @@ public class Tandem2mzid {
                 //ions can lose charge during fragmentation, but never gain...not sure if this is 
                 //always the case). 
                 System.out.println("WARN: Fragment ion annotation data is inferred based on new calculations "
-                		+ "triggered by this (Tandem2mzid) conversion library. "
-                		+ "This is done because fragment ion annotation information is not present in X!Tandem file (X!Tandem SLEDGEHAMMER (2013.09.01) and previous) . "); //TODO add real logger option
+                        + "triggered by this (Tandem2mzid) conversion library. "
+                        + "This is done because fragment ion annotation information is not present in X!Tandem file (X!Tandem SLEDGEHAMMER (2013.09.01) and previous) . "); //TODO add real logger option
                 @SuppressWarnings("unchecked")
                 List<FragmentIon[]> ionsForPeptide = iXTandemFile.getFragmentIonsForPeptide(peptide, domain, iXTandemFile.getInputParameters().getSpectrumMonoIsoMassError());
                 //TODO improvement for item above: a good trade-off would be that the X!Tandem parser lib reads the 
                 //                     search parameters (present in the X!Tandem output file) and use in it's in silico 
                 //                     fragmentation only the same ion types (i.e. b and y) used in the search.
-                
+
                 /*
                  * <IonType index="2 4 4 9 7 10 8 11 8 13" charge="1"> <cvParam
                  * cvRef="PSI-MS" accession="MS:1001366" name="frag: internal ya
@@ -743,23 +716,23 @@ public class Tandem2mzid {
                  * Measure_ref="m_error"/> </IonType>
                  *
                  */
-                
-				//The part below creates a structure like the one commented above, 
-				//one structure <IonType> per charge found. The fragments reported
-				//in each structure are only the ones reported on the respective charge.
-                Map<Integer, Map<Integer,List<FragmentIon>>> map = orderFragmentIons(ionsForPeptide);
-                for( Entry<Integer, Map<Integer,List<FragmentIon>>> entryCharge : map.entrySet() ) {
-                	for( Entry<Integer,List<FragmentIon>> entryType : entryCharge.getValue().entrySet() ) {
-                		if( entryType.getValue().isEmpty() )
-                			continue;                		
-                		
-                		IonType ion = new IonType();
-                		ion.setCharge(entryCharge.getKey());
-                		ion.setCvParam(getFragmentCVParam(entryType.getKey()));
-                		List<FragmentArray> fragmentList = ion.getFragmentArray();
+                //The part below creates a structure like the one commented above, 
+                //one structure <IonType> per charge found. The fragments reported
+                //in each structure are only the ones reported on the respective charge.
+                Map<Integer, Map<Integer, List<FragmentIon>>> map = orderFragmentIons(ionsForPeptide);
+                for (Entry<Integer, Map<Integer, List<FragmentIon>>> entryCharge : map.entrySet()) {
+                    for (Entry<Integer, List<FragmentIon>> entryType : entryCharge.getValue().entrySet()) {
+                        if (entryType.getValue().isEmpty()) {
+                            continue;
+                        }
+
+                        IonType ion = new IonType();
+                        ion.setCharge(entryCharge.getKey());
+                        ion.setCvParam(getFragmentCVParam(entryType.getKey()));
+                        List<FragmentArray> fragmentList = ion.getFragmentArray();
                         List<Integer> ionIndexList = ion.getIndex();
-                		
-                		FragmentArray mzArray = new FragmentArray();
+
+                        FragmentArray mzArray = new FragmentArray();
                         FragmentArray intArray = new FragmentArray();
                         FragmentArray errorArray = new FragmentArray();
                         mzArray.setMeasure(mzMeasure);
@@ -767,23 +740,23 @@ public class Tandem2mzid {
                         errorArray.setMeasure(errorMeasure);
                         List<Float> mzValues = mzArray.getValues();
                         List<Float> intValues = intArray.getValues();
-                        List<Float> errorValues = errorArray.getValues();                                               
+                        List<Float> errorValues = errorArray.getValues();
                         fragmentList.add(mzArray);
                         fragmentList.add(intArray);
                         fragmentList.add(errorArray);
-                        
+
                         ionTypeList.add(ion);
-                        
-                        for( FragmentIon fragIon : entryType.getValue() ) {
-                        	//Reported MZ is the theoretical value
+
+                        for (FragmentIon fragIon : entryType.getValue()) {
+                            //Reported MZ is the theoretical value
                             mzValues.add((float) (fragIon.getMZ() + fragIon.getTheoreticalExperimentalMassError()));
                             intValues.add((float) fragIon.getIntensity());       //Note intensity values in Tandem do not match the source spectrum, appears that some processing happens
                             errorValues.add((float) fragIon.getTheoreticalExperimentalMassError());
                             ionIndexList.add(fragIon.getNumber());  //index position
                         }
-                	}
+                    }
                 }
-                                
+
             } catch (Exception e) {
                 throw new RuntimeException("Error while parsing the MS/MS fragmentation data. Please check if "
                         + " your input files indeed contain fragmentation data (this is optional and depending "
@@ -792,27 +765,25 @@ public class Tandem2mzid {
         }
     }
 
-   
     private Map<Integer, Map<Integer, List<FragmentIon>>> orderFragmentIons(List<FragmentIon[]> ionsForPeptide) {
-    	Map<Integer, Map<Integer,List<FragmentIon>>> map = new HashMap<>();
+        Map<Integer, Map<Integer, List<FragmentIon>>> map = new HashMap<>();
         for (FragmentIon[] ions : ionsForPeptide) {
-        	for( FragmentIon ion : ions) {
-        		Map<Integer,List<FragmentIon>> mapCharge = map.get((int)ion.getCharge());
-        		if( mapCharge == null ) {
-        			mapCharge = new HashMap<>();
-        			map.put((int)ion.getCharge(), mapCharge);
-        		}
-        		List<FragmentIon> list = mapCharge.get(ion.getType());
-        		if( list == null ) {
-        			list = new ArrayList<>();
-        			mapCharge.put(ion.getType(), list);
-        		}
-        		list.add(ion);
-        	}
+            for (FragmentIon ion : ions) {
+                Map<Integer, List<FragmentIon>> mapCharge = map.get((int) ion.getCharge());
+                if (mapCharge == null) {
+                    mapCharge = new HashMap<>();
+                    map.put((int) ion.getCharge(), mapCharge);
+                }
+                List<FragmentIon> list = mapCharge.get(ion.getType());
+                if (list == null) {
+                    list = new ArrayList<>();
+                    mapCharge.put(ion.getType(), list);
+                }
+                list.add(ion);
+            }
         }
         return map;
-	}
-
+    }
 
     private void parseModificationsAndSubstitutions(Peptide mzidPep, Domain domain, XTandemFile iXTandemFile, boolean fragmentIsMono) {
         //Parse the modifications
@@ -843,7 +814,6 @@ public class Tandem2mzid {
 
     }
 
-  
     private SubstitutionModification translateToMzidSubstitution(de.proteinms.xtandemparser.interfaces.Modification reportedMod, Domain domain, boolean fragmentIsMono) {
         SubstitutionModification mzidSubs = new SubstitutionModification();
 
@@ -858,7 +828,6 @@ public class Tandem2mzid {
 
         mzidSubs.setReplacementResidue(reportedMod.getSubstitutedAminoAcid());
 
-
         //TODO - the current storing of the modification mass in either
         //setMonoisotopicMassDelta or setAvgMassDelta seems wrong as the massDelta is 
         //a delta on the parent ion mass which is always monoisotopic in xtandem. On the other hand, 
@@ -866,7 +835,6 @@ public class Tandem2mzid {
         //shifted by x, x being the modification mass.
         //So check with X!Tandem developer whether the modification (and substitution) masses 
         //follow the fragment mass type or the parent mass type.
-
         double mass = reportedMod.getMass();
 
         if (fragmentIsMono) {
@@ -879,7 +847,6 @@ public class Tandem2mzid {
 
     }
 
- 
     private Modification translateToMzidModification(de.proteinms.xtandemparser.interfaces.Modification reportedMod,
             Domain domain, boolean fragmentIsMono) {
         Modification mzidMod = new Modification();
@@ -938,7 +905,6 @@ public class Tandem2mzid {
         return mzidMod;
     }
 
-   
     private boolean isNewSII(String sIIKey, Map<String, SpectrumIdentificationItem> sIIMap) {
         if (sIIMap.get(sIIKey) != null) {
             return false;
@@ -946,7 +912,6 @@ public class Tandem2mzid {
             return true;
         }
     }
-
 
     private String getPeptideKey(Domain domain, XTandemFile iXTandemFile) {
         //is really the same as in getSIIKey, but the context of both maps is different (peptide map is global and siimap is local within 
@@ -988,11 +953,9 @@ public class Tandem2mzid {
 
     public void handleCVs() {
 
-
         //<cv id="PSI-MS" fullName="PSI-MS" URI="http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo" version="2.25.0"/>
         //<cv id="UNIMOD" fullName="UNIMOD" URI="http://www.unimod.org/obo/unimod.obo" />
         //<cv id="UO" fullName="UNIT-ONTOLOGY" URI="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo"></cv>
-
         cvList = new CvList();
         List<Cv> localCvList = cvList.getCv();
         psiCV = new Cv();
@@ -1017,7 +980,6 @@ public class Tandem2mzid {
         localCvList.add(unitCV);
     }
 
-  
     public CvParam makeCvParam(String accession, String name, Cv cv) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -1025,7 +987,6 @@ public class Tandem2mzid {
         cvParam.setCv(cv);
         return cvParam;
     }
-
 
     public CvParam makeCvParam(String accession, String name, Cv cv, String value) {
         CvParam cvParam = new CvParam();
@@ -1036,7 +997,6 @@ public class Tandem2mzid {
         return cvParam;
     }
 
-   
     public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -1048,7 +1008,6 @@ public class Tandem2mzid {
         return cvParam;
     }
 
-   
     public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName, Cv alternateUnitCV) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -1060,7 +1019,6 @@ public class Tandem2mzid {
         return cvParam;
     }
 
-  
     public void handleAnalysisSoftware(String version) {
         analysisSoftwareList = new AnalysisSoftwareList();
         List<AnalysisSoftware> analysisSoftwares = analysisSoftwareList.getAnalysisSoftware();
@@ -1088,14 +1046,12 @@ public class Tandem2mzid {
 
     }
 
-
     public void handleProvider() {
         provider = new Provider();
         provider.setId("PROVIDER");
 
         ContactRole contactRole = new ContactRole();
         contactRole.setContact(docOwner);
-
 
         Role role = new Role();
         role.setCvParam(makeCvParam("MS:1001271", "researcher", psiCV));
@@ -1116,15 +1072,12 @@ public class Tandem2mzid {
         docOwner.getCvParam().add(makeCvParam("MS:1000587", "contact address", psiCV, address));
 
         //docOwner.setEmail(email);
-
         Organization org = new Organization();
         org.setId("ORG_DOC_OWNER");
         org.setName(affiliationName);
         org.getCvParam().add(makeCvParam("MS:1000586", "contact name", psiCV, address));
 
         //org.setAddress(address);
-
-
         List<Affiliation> affList = docOwner.getAffiliation();
         Affiliation aff = new Affiliation();
         aff.setOrganization(org);
@@ -1134,13 +1087,11 @@ public class Tandem2mzid {
 
     }
 
- 
     public void handleAnalysisSampleCollection() {
         analysisSampleCollection = new AnalysisSampleCollection();
 
     }
 
-   
     public void handleAnalysisCollection(String activityDate) {
         analysisCollection = new AnalysisCollection();
         List<SpectrumIdentification> specIdentList = analysisCollection.getSpectrumIdentification();
@@ -1153,7 +1104,6 @@ public class Tandem2mzid {
         searchDBRef.setSearchDatabase(searchDB);
         searchDBRefList.add(searchDBRef);
 
-
         List<InputSpectra> inputSpecList = specIdent.getInputSpectra();
         InputSpectra inputSpec = new InputSpectra();
         inputSpec.setSpectraData(spectraData);
@@ -1163,11 +1113,9 @@ public class Tandem2mzid {
 
     }
 
-
     public boolean handleAnalysisProtocolCollection(InputParams inputParams) {
 
         //boolean (parentIsMono, boolean fragmentIsMono, SearchModification[] searchMods, String enzymeName, double parTolPlus, double parTolMinus, double fragTolPlus, double fragTolMinus);
-
         analysisProtocolCollection = new AnalysisProtocolCollection();
         List<SpectrumIdentificationProtocol> sipList = analysisProtocolCollection.getSpectrumIdentificationProtocol();
 
@@ -1195,7 +1143,6 @@ public class Tandem2mzid {
             cvParamList.add(makeCvParam("MS:1001212", "parent mass type average", psiCV));
         }
 
-
         boolean fragmentIsMono = true;
         if ("average".equals(inputParams.getSpectrumFragMassType())) {
             fragmentIsMono = false;
@@ -1203,7 +1150,6 @@ public class Tandem2mzid {
         } else {
             cvParamList.add(makeCvParam("MS:1001256", "fragment mass type mono", psiCV));
         }
-
 
         ModificationParams modParams = new ModificationParams();
         List<SearchModification> searchModList = modParams.getSearchModification();
@@ -1302,7 +1248,6 @@ public class Tandem2mzid {
          * value="0.5" cvRef="PSI-MS" unitAccession="UO:0000221"
          * unitName="dalton" unitCvRef="UO" /> </ParentTolerance>
          */
-
         fragCvPlus.setAccession("MS:1001412");
         fragCvPlus.setName("search tolerance plus value");
         fragCvMinus.setAccession("MS:1001413");
@@ -1348,7 +1293,6 @@ public class Tandem2mzid {
         return fragmentIsMono;
     }
 
- 
     private SearchModification translateToSearchModification(String reportedMod, boolean fragmentIsMono, boolean isFixedMod) {
         List<String> residues = new ArrayList<String>();
         String[] temp = reportedMod.split("@");
@@ -1400,7 +1344,6 @@ public class Tandem2mzid {
         //searchDB.setDatabaseName(param);
         searchDB.setLocation(databaselocation);
 
-
         FileFormat ff = new FileFormat();
         ff.setCvParam(makeCvParam(this.databaseFileFormatID, this.databaseFileFormatName, psiCV));
         searchDB.setFileFormat(ff);
@@ -1436,8 +1379,6 @@ public class Tandem2mzid {
          * accession="MS:1000774" name="multiple peak list nativeID format"
          * cvRef="PSI-MS" /> </spectrumIDFormat>
          */
-
-
         //From tandem: <note label="modelling, total proteins used">22348</note>
        /*
          * <SearchDatabase
@@ -1450,7 +1391,6 @@ public class Tandem2mzid {
          * /> </DatabaseName> <cvParam accession="MS:1001073" name="database
          * type amino acid" cvRef="PSI-MS" /> </SearchDatabase>
          */
-
     }
 
     public void writeMzidFile(String outputfile) {
@@ -1483,30 +1423,24 @@ public class Tandem2mzid {
             //     /DataCollection
             //     BibliographicReference
             // /mzIdentML
-
-
             // Note: writing of '\n' characters is optional and only for readability of the produced XML document
             // Also note: since the XML is produced in individual parts, the overall formatting of the document
             //            is not as nice as it would be when marshalling the whole structure at once.
-
             // XML header
             writer.write(m.createXmlHeader() + "\n");
 
-
             // mzIdentML start tag
-
             writer.write(m.createMzIdentMLStartTag("12345") + "\n");
-
-
 
             m.marshall(cvList, writer);
             writer.write("\n");
             AnalysisSoftware analysisSoftware = new AnalysisSoftware();
-            Date date = new Date() ;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss") ;
+            Date date = new Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
             //TODO: this seems strange...a date in the id and name fields? Check if there
             //is perhaps a date field where the date information could be stored.
-            analysisSoftware.setName(this.getClass().getSimpleName()+"_"+dateFormat.format(date)); analysisSoftware.setId(this.getClass().getSimpleName()+"_"+dateFormat.format(date));
+            analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
+            analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             Param param = new Param();
             param.setParam(makeCvParam("MS:1002237", "mzidLib", psiCV));
             analysisSoftware.setSoftwareName(param);
@@ -1514,52 +1448,36 @@ public class Tandem2mzid {
             m.marshal(analysisSoftwareList, writer);
             writer.write("\n");
 
-
             m.marshall(provider, writer);
             writer.write("\n");
-
 
             m.marshall(auditCollection, writer);
             writer.write("\n");
 
-
             //m.marshall(analysisSampleCollection, writer);     //TODO - complete this part
             //writer.write("\n");
-
-
             m.marshall(sequenceCollection, writer);
             writer.write("\n");
-
-
 
             m.marshall(analysisCollection, writer);
             writer.write("\n");
 
-
             m.marshall(analysisProtocolCollection, writer);
             writer.write("\n");
-
 
             writer.write(m.createDataCollectionStartTag() + "\n");
             m.marshall(inputs, writer);
             writer.write("\n");
 
-
             //Inputs inputs = unmarshaller.unmarshal(MzIdentMLElement.Inputs.getXpath());
             //m.marshall(inputs, writer);
             //writer.write("\n");
-
             writer.write(m.createAnalysisDataStartTag() + "\n");
 
-
-
             // writer.write(m.createSpectrumIdentificationListStartTag("SIL_1", null, 71412L) + "\n");
-
             //FragmentationTable table = unmarshaller.unmarshal(MzIdentMLElement.FragmentationTable.getXpath());
             //m.marshall(table, writer);
             //writer.write("\n");
-
-
             //Iterator<SpectrumIdentificationResult> specResIter = unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
 
             /*
@@ -1568,13 +1486,10 @@ public class Tandem2mzid {
              * SpectrumIdentificationResult specIdentRes = specResIter.next();
              * m.marshall(specIdentRes, writer); writer.write("\n"); }
              */
-
             m.marshall(siList, writer);
             writer.write("\n");
 
-
             // writer.write(m.createSpectrumIdentificationListClosingTag() + "\n");
-
             writer.write(m.createProteinDetectionListStartTag("PDL_1", null) + "\n");
 
             /*
@@ -1585,7 +1500,6 @@ public class Tandem2mzid {
              * writer); writer.write("\n"); }
              *
              */
-
             writer.write(m.createProteinDetectionListClosingTag() + "\n");
 
             writer.write(m.createAnalysisDataClosingTag() + "\n");
@@ -1595,9 +1509,6 @@ public class Tandem2mzid {
             //BibliographicReference ref = unmarshaller.unmarshal(MzIdentMLElement.BibliographicReference.getXpath());
             // m.marshall(ref, writer);
             // writer.write("\n");
-
-
-
             writer.write(m.createMzIdentMLClosingTag());
 
             writer.close();
@@ -1609,10 +1520,8 @@ public class Tandem2mzid {
             System.out.println(message);
         }
 
-
     }
 
-  
     public CvParam getCvParamWithMassUnits(boolean isDaltonUnit) {
         CvParam cvParam = new CvParam();
 

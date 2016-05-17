@@ -1169,7 +1169,6 @@ public class FalseDiscoveryRateGlobal {
 
     }
 
-   
     public List<String> getSorted_spectrumResult() {
         return sorted_spectrumResult;
     }

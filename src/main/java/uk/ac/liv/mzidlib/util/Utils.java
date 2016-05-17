@@ -35,7 +35,7 @@ public class Utils {
         BufferedReader in = null;
         Map<String, String> resultMap = new HashMap<String, String>();
         try {
-        	//Use the getResourceAsStream trick to read the file packaged in
+            //Use the getResourceAsStream trick to read the file packaged in
             //the .jar .  This simplifies usage of the solution as no extra 
             //classpath or path configurations are needed: 
             InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("CV_psi-ms.obo.txt");
@@ -70,7 +70,6 @@ public class Utils {
         }
 
     }
-
 
     public static String getCmdParameter(String[] args, String name, boolean required) {
         for (int i = 0; i < args.length; i++) {
@@ -153,7 +152,7 @@ public class Utils {
 
         return temporaryMgfFolderPath.toFile();
     }
-        
+
     private static int countMgfEntries(File mgf) throws IOException {
         BufferedReader reader = Files.newBufferedReader(Paths.get(mgf.getAbsolutePath()), StandardCharsets.UTF_8);
         String line = null;
