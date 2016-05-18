@@ -320,6 +320,17 @@
                     <suppressionsFileExpression>checkstyle.suppresions.file</suppressionsFileExpression>
                 </configuration>
             </plugin>
+            
+             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.3</version>
+                <configuration>
+                    <excludeFilterFile>src/main/resources/findbugs-exclude.xml</excludeFilterFile>
+                    <findbugsXmlOutput>true</findbugsXmlOutput>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+            </plugin>   
         </plugins>
         
         <extensions>
