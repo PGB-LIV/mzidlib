@@ -321,7 +321,7 @@
                 </configuration>
             </plugin>
             
-             <plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.3</version>
@@ -352,6 +352,17 @@
                     <configLocation>checkstyle.xml</configLocation>
                     <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
                     <suppressionsFileExpression>checkstyle.suppresions.file</suppressionsFileExpression>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.6</version>
+                <configuration>
+                    <excludes>
+                        <exclude>bgi</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
