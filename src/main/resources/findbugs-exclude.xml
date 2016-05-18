@@ -3,4 +3,8 @@
     <Match>
         <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
     </Match>
+    
+      <Match>
+    <Package name="~bgi\" />
+  </Match>
 </FindBugsFilter>
