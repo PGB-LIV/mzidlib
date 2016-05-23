@@ -839,9 +839,9 @@ public class ProteoGrouper {
                 ProteinAmbiguityGroup pag = new ProteinAmbiguityGroup();
                 numPAGsPassThreshold++;
                 //Needed for v1.2 files
-                if (!isV11) {
+              //  if (!isV11) {
                     pag.getCvParam().add(utils.makeCvParam("MS:1002415", "protein group passes threshold", psiCV, "true"));
-                }
+                //}
 
                 List<String> allScoringPeps = new ArrayList<>();
                 allScoringPeps.addAll(uniquePeptides);
