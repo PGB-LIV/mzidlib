@@ -25,31 +25,17 @@ import java.util.Set;
  */
 public class Utils {
 
-    /**
-     * Round a double value and keeping (at max) the given number of decimal
-     * places.
-     *
-     * @param value
-     * @param numberOfDecimalPlaces
-     * @return
-     */
     public static double round(double value, int numberOfDecimalPlaces) {
         double multipicationFactor = Math.pow(10, numberOfDecimalPlaces);
         return Math.round(value * multipicationFactor) / multipicationFactor;
     }
 
-    /**
-     * Initialized the CV map based on the /resources/CV_psi-ms.obo.txt CV file.
-     *
-     * @return
-     * @throws IOException
-     */
     public static Map<String, String> getInitializedCVMap() throws IOException {
         //Read resource file and build up map:
         BufferedReader in = null;
         Map<String, String> resultMap = new HashMap<String, String>();
         try {
-        	//Use the getResourceAsStream trick to read the file packaged in
+            //Use the getResourceAsStream trick to read the file packaged in
             //the .jar .  This simplifies usage of the solution as no extra 
             //classpath or path configurations are needed: 
             InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("CV_psi-ms.obo.txt");
@@ -85,15 +71,6 @@ public class Utils {
 
     }
 
-    /**
-     * Returns the value of a command-line parameter
-     *
-     * @param args : command-line arguments (assuming couples in the form
-     * "-argname", "argvalue" )
-     * @param name : the parameter 'name'
-     * @return returns null if the parameter is not found (and is not required).
-     * If the parameter is not found but is required, it throws an error.
-     */
     public static String getCmdParameter(String[] args, String name, boolean required) {
         for (int i = 0; i < args.length; i++) {
             String argName = args[i];
@@ -121,7 +98,7 @@ public class Utils {
         return null;
     }
 
-    public static File splitMGFsOrReturnSame(File masterMgf, int fileUpperLimit, int spectraUpperLimit) throws IOException {
+    public static File splitMGFsOrReturnSame(String path, File masterMgf, int fileUpperLimit, int spectraUpperLimit) throws IOException {
         int entries = countMgfEntries(masterMgf);
         if (entries < spectraUpperLimit && masterMgf.length() < fileUpperLimit) {
             return masterMgf;
@@ -135,7 +112,7 @@ public class Utils {
             entriesPerFile = Math.ceil(entriesPerFile);
         }
 
-        Path temporaryMgfFolderPath = Files.createTempDirectory("proteosuite_mgf_temp_");
+        Path temporaryMgfFolderPath = Paths.get(path);
         Set<BufferedWriter> writers = new HashSet<>();
         for (int i = 0; i < filesToSplitInto; i++) {
             Path newMgfPath = temporaryMgfFolderPath.resolve("peaks_" + i + ".mgf");
@@ -175,7 +152,7 @@ public class Utils {
 
         return temporaryMgfFolderPath.toFile();
     }
-        
+
     private static int countMgfEntries(File mgf) throws IOException {
         BufferedReader reader = Files.newBufferedReader(Paths.get(mgf.getAbsolutePath()), StandardCharsets.UTF_8);
         String line = null;

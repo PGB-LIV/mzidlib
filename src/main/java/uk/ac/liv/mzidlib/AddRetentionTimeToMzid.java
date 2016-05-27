@@ -44,7 +44,7 @@ public class AddRetentionTimeToMzid {
 
     private String inputMzid;
     private String outputFile;
-    
+
     private Map<String, Map<String, String>> mzmlSpectraRts = new HashMap<>();
     private Map<String, MgfFile> mgfFiles = new HashMap<>();
 
@@ -52,7 +52,7 @@ public class AddRetentionTimeToMzid {
     private MzIdentMLUnmarshaller mzIdentMLUnmarshaller;
     private Cv psiCV;
     private Cv unitCV;
-    
+
     //metadata
     private AnalysisSoftwareList analysisSoftwareList;
     private AuditCollection auditCollection;
@@ -67,8 +67,11 @@ public class AddRetentionTimeToMzid {
     public static void main(String args[]) {
         new AddRetentionTimeToMzid(args[0], args[1], args[2]);
     }
+
     /**
-     * Creates a new mzIdentML file from the given mzIdentML file, with retention times extracted from the given raw file.
+     * Creates a new mzIdentML file from the given mzIdentML file, with
+     * retention times extracted from the given raw file.
+     *
      * @param mzidIn Input mzIdentML file.
      * @param rawIn Input raw file.
      * @param mzidOut Output mzIdentML file.
@@ -92,7 +95,7 @@ public class AddRetentionTimeToMzid {
     private void init() {
         try {
             readDetailsFromMzid();
-            extractMzMLDetailsAndCreateMgfParsers();            
+            extractMzMLDetailsAndCreateMgfParsers();
             writeMzidFile(outputFile);
         } catch (OutOfMemoryError error) {
             String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
@@ -167,12 +170,12 @@ public class AddRetentionTimeToMzid {
             } else if (cv.getUri().toLowerCase().contains("unit")) {
                 unitCV = cv;
             }
-        }               
-        
+        }
+
         if (inputSpectraFiles == null || stream(inputSpectraFiles).filterReverse(nullStringPredicate).any().isEmpty()) {
             // No input spectra files have been set.
             // Let's go hunting for the input files ourselves.                       
-            
+
             inputSpectraFiles = new LinkedList<>();
             for (SpectraData data : inputs.getSpectraData()) {
                 inputSpectraFiles.add(data.getLocation());
@@ -281,11 +284,11 @@ public class AddRetentionTimeToMzid {
 
                 String spectrumIndex = spectrumID.substring(6);
                 Integer spectrumIndexAsInteger = null;
-                
+
                 if (isInteger(spectrumIndex)) {
                     spectrumIndexAsInteger = Integer.valueOf(spectrumIndex);
                     ms2Query = resolveMs2QueryFromMgf(spectrumIndexAsInteger, sr.getSpectraDataRef());
-                }                
+                }
 
                 if (ms2Query != null) {
                     mgfLookupSuccess = true;
@@ -397,7 +400,7 @@ public class AddRetentionTimeToMzid {
         } catch (NumberFormatException ex) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -425,7 +428,7 @@ public class AddRetentionTimeToMzid {
             return testObject == null;
         }
     };
-    
+
     private final Java7Mapper<SpectrumIdentificationItem, String> mzMapperToString = new Java7Mapper<SpectrumIdentificationItem, String>() {
         @Override
         public String map(SpectrumIdentificationItem item) {

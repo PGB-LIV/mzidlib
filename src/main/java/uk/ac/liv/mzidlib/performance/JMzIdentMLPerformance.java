@@ -188,7 +188,7 @@ public class JMzIdentMLPerformance {
         Runtime runtime = Runtime.getRuntime();
         long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
         System.out.println("Used Memory before: " + usedMemoryBefore);
-       
+
         String s = jMzIdentML.runXtandem() + jMzIdentML.runOmssa();
 
         long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
@@ -198,4 +198,3 @@ public class JMzIdentMLPerformance {
     }
 
 }
-    

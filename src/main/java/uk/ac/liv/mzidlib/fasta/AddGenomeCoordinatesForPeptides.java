@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +25,7 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 import uk.ac.liv.mzidlib.gff.CDS_Information;
 import uk.ac.liv.mzidlib.gff.ProteinResults;
+import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
 /**
  *
@@ -36,6 +38,8 @@ public class AddGenomeCoordinatesForPeptides {
     private String inputGff;
     private String outputGff;
     private Cv psiCV;
+
+    private List unmmappedAccessions = new ArrayList();
 
     private Map<String, List<CDS_Information>> cdsRecords = new HashMap<>();
 
@@ -264,7 +268,7 @@ public class AddGenomeCoordinatesForPeptides {
             analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             Param param = new Param();
 
-            param.setParam(makeCvParam("MS:1002237", "mzidLib", psiCV));
+            param.setParam(makeCvParam("MS:1002237", "mzidLib", "mzidLib", psiCV));
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
             marshaller.marshal(analysisSoftwareList, writer);
@@ -324,7 +328,13 @@ public class AddGenomeCoordinatesForPeptides {
             SequenceCollection sequenceCollection1 = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.SequenceCollection);
 
             SequenceCollection sq = new SequenceCollection();
-            sq.getDBSequence().addAll(sequenceCollection1.getDBSequence());
+            List<DBSequence> dbSeqList = sequenceCollection1.getDBSequence();
+            HashMap dbSeqHM = new HashMap();
+            for (int i = 0; i < dbSeqList.size(); i++) {
+                DBSequence get = dbSeqList.get(i);
+                dbSeqHM.put(get.getId(), get);
+
+            }
             sq.getPeptide().addAll(sequenceCollection1.getPeptide());
 
             List<PeptideEvidence> peList = sequenceCollection1.getPeptideEvidence();
@@ -346,7 +356,7 @@ public class AddGenomeCoordinatesForPeptides {
                     long start_map, end_map;
 
                     co_ords = mapToGff(pr);
-                    if (co_ords != null) {
+                    if (co_ords != null && !unmmappedAccessions.contains(pr.getAccession())) {
                         start_map = Long.parseLong(co_ords[0]);
                         end_map = Long.parseLong(co_ords[1]);
                         if (end_map < start_map) {
@@ -360,7 +370,7 @@ public class AddGenomeCoordinatesForPeptides {
                         List<CDS_Information> outputCDS = new ArrayList();
                         int countCDS = 0;
                         boolean sorted = false;
-                        if (gffData.get(0).getStrand().equals("-")){
+                        if (gffData.get(0).getStrand().equals("-")) {
                             sortedCDS = sortCDSAccordingToStartPositionTemp(sortedCDS);
                         }
                         for (int j = 0; j < sortedCDS.size(); j++) {
@@ -405,28 +415,68 @@ public class AddGenomeCoordinatesForPeptides {
                                 }
                             }
                         }
+                        int pepLen = 3 * (peptideEvidence.getEnd().intValue() - peptideEvidence.getStart().intValue() + 1);
+                        int coordLen = 0;
+//                        for (int j = 0; j < outputCDS.size(); j++) {
+//                            CDS_Information cDS_Information = outputCDS.get(j);
+//                            cDS_Information.getStart();
+//                            cDS_Information.getEnd();
+//                            coordLen = coordLen + toIntExact(cDS_Information.getEnd() - cDS_Information.getStart());
+//                        }
+                        long s, e = 0;
+                        String startsList = "";
+                        String positionsList = "";
 
                         //System.out.println("END");
+                        // System.out.println("pepLen "+ pepLen);
+                        //System.out.println("outputCDS.size() "+ outputCDS.size());
                         for (int j = 0; j < outputCDS.size(); j++) {
                             CDS_Information cDS_Information = outputCDS.get(j);
-                            // Added by Fawaz based on Tobias email 29/01/2016
-                            if (j==0){
-                                peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
-                                peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(cDS_Information.getEnd()+3)));
-                            }else{
-                                peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(cDS_Information.getStart())));
-                                peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(cDS_Information.getEnd()+1)));
+                            s = cDS_Information.getStart() - 1;
+                            // peptideEvidence.getUserParam().add(makeUserParam("start_map", String.valueOf(s)));
+                            startsList = startsList + s + ",";
+                            if (j == 0) {
+                                e = cDS_Information.getEnd() + 2;
+                            } else {
+                                e = cDS_Information.getEnd();
                             }
-
+                            // peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(e)));
+                            coordLen = coordLen + MzidLibUtils.safeLongToInt(e - s);
+                            positionsList = positionsList + String.valueOf(e - s) + ",";
+//                            System.out.println("toIntExact(e -s) "+ toIntExact(e -s));
                         }
+//                            System.out.println("coordLen "+ coordLen);
+//                        if (pepLen==coordLen){
+//                            System.out.println("PASS "+ peptideEvidence.getPeptideRef() +" pepLen "+pepLen +" coordLen "+ coordLen);
+//                        }else{
+//                            System.out.println("FAILED "+ peptideEvidence.getPeptideRef()+" pepLen "+pepLen +" coordLen "+ coordLen);
+//                        }
+//                        System.out.println("");
 
-                        peptideEvidence.getUserParam().add(makeUserParam("chr", gffData.get(0).getSeqID()));
-                        peptideEvidence.getUserParam().add(makeUserParam("strand", gffData.get(0).getStrand()));
+//                        peptideEvidence.getUserParam().add(makeUserParam("chr", gffData.get(0).getSeqID()));
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002637", "chromosome name", gffData.get(0).getSeqID(), psiCV));
+//                        peptideEvidence.getUserParam().add(makeUserParam("strand", gffData.get(0).getStrand()));
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002638", "chromosome strand", gffData.get(0).getStrand(), psiCV));
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002644", "genome reference version", new File(inputGff).getName(), psiCV));
+                        dbSeqHM.put(dbSeq.getId(), dbSeq);
+                        //peptideEvidence.getCvParam().add(makeCvParam("MS:1002639", "peptide start on chromosome", String.valueOf(start_map), psiCV));
+                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002640", "peptide end on chromosome", String.valueOf(end_map), psiCV));
+
+                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002641", "peptide exon count", String.valueOf(outputCDS.size()), psiCV));
+                        if (startsList.endsWith(",")) {
+                            startsList = startsList.substring(0, startsList.length() - 1);
+                        }
+                        if (positionsList.endsWith(",")) {
+                            positionsList = positionsList.substring(0, positionsList.length() - 1);
+                        }
+                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002642", "peptide exon nucleotide sizes", positionsList, psiCV));
+                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002643", "peptide start positions on chromosome", startsList, psiCV));
+
                     }
                 }
                 newPeList.add(peptideEvidence);
             }
-
+            sq.getDBSequence().addAll(dbSeqHM.values());
             sq.getPeptideEvidence().addAll(newPeList);
 
             if (sq != null) {
@@ -440,6 +490,21 @@ public class AddGenomeCoordinatesForPeptides {
             writer.write("\n");
 
             if (analysisProtocolCollection != null) {
+                ParamList paramList = analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams();
+                List<CvParam> cvParamList = paramList.getCvParam();
+                boolean exist = false;
+                for (int i = 0; i < cvParamList.size(); i++) {
+                    CvParam get = cvParamList.get(i);
+                    if (get.getAccession().equals("MS:1002635")) {
+                        exist = true;
+                        break;
+                    }
+
+                }
+
+                if (!exist) {
+                    analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams().getCvParam().add(makeCvParam("MS:1002635", "proteogenomics search", "", psiCV));
+                }
                 marshaller.marshal(analysisProtocolCollection, writer);
             }
             writer.write("\n");
@@ -484,18 +549,15 @@ public class AddGenomeCoordinatesForPeptides {
         return userParam;
     }
 
-    public CvParam makeCvParam(String accession, String name, Cv cv) {
+    public CvParam makeCvParam(String accession, String name, String value, Cv cv) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
         cvParam.setName(name);
+        cvParam.setValue(value);
         cvParam.setCv(cv);
         return cvParam;
     }
 
-    /**
-     * Map the co-ordinates Returns a String array - idx=0=start, idx=1=end and
-     * idx=2=chr
-     */
     public String[] mapToGff(ProteinResults pr) {
         String[] gffMapping = new String[3];
 
@@ -531,19 +593,21 @@ public class AddGenomeCoordinatesForPeptides {
         // Get locations from the protein object
         long start = pr.getstart();
         long end = pr.getEnd();
-        
+
         // sort the CDS collection according to the strand
         List<CDS_Information> sortedCDS = sortCDSAccordingToStartPosition(cdsColl);
-       
+
         long mapped_start = getMappedCordinates(start, sortedCDS, pr);
         long mapped_end = getMappedCordinates(end, sortedCDS, pr);
         if (mapped_start == -1) {
             System.out.println("For accession: " + pr.getAccession() + " and a peptide eveidence: " + pr.getPeptideEvidenceID() + " start coordinates couldn't be mapped.");
+            unmmappedAccessions.add(pr.getAccession());
         }
         if (mapped_end == -1) {
             System.out.println("For accession: " + pr.getAccession() + " and a peptide eveidence: " + pr.getPeptideEvidenceID() + " the end coordinates couldn't be mapped.");
             mapped_end = mapped_start + ((end - start) * 3);
             System.out.println("mapped_end modified value= " + mapped_end);
+            unmmappedAccessions.add(pr.getAccession());
 
         }
 
@@ -632,23 +696,19 @@ public class AddGenomeCoordinatesForPeptides {
         return cdsColl;
 
     }
-    
+
     List<CDS_Information> sortCDSAccordingToStartPositionTemp(List<CDS_Information> cdsCollection) {
 
         List<CDS_Information> cdsColl = new ArrayList<CDS_Information>(cdsCollection);
 
-        
-
-      
-            for (int i = cdsColl.size() - 1; i >= 0; i--) {
-                int j = cdsColl.size() - 1 - i;
-                if (j < i) {
-                    CDS_Information temp = cdsColl.get(i);
-                    cdsColl.set(i, cdsColl.get(j));
-                    cdsColl.set(j, temp);
-                }
+        for (int i = cdsColl.size() - 1; i >= 0; i--) {
+            int j = cdsColl.size() - 1 - i;
+            if (j < i) {
+                CDS_Information temp = cdsColl.get(i);
+                cdsColl.set(i, cdsColl.get(j));
+                cdsColl.set(j, temp);
             }
-        
+        }
 
         return cdsColl;
 

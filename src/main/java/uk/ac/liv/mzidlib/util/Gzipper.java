@@ -61,13 +61,11 @@ public class Gzipper {
 //        }
 //
 //    }
-  
-
     public static void compressFile(File file) throws InterruptedException {
         try {
             DateFormat format = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
             String timeStamp = format.format(new Date());
-            OutputStream fos = new FileOutputStream(file +"_"+timeStamp+ ".gz");
+            OutputStream fos = new FileOutputStream(file + "_" + timeStamp + ".gz");
             GZIPOutputStream gzos = new GZIPOutputStream(fos);
 
             InputStream fin = new FileInputStream(file);
@@ -78,7 +76,6 @@ public class Gzipper {
                 gzos.write(buffer, 0, i);
             }
             System.out.println("the file is in now gzip format");
-
 
             in.close();
             in = null;
@@ -98,7 +95,6 @@ public class Gzipper {
             // delete the input file.
 
             //Thread.sleep(1000);
-
             file.deleteOnExit();
         } catch (IOException e) {
             String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();

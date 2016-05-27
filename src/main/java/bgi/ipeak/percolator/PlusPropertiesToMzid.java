@@ -47,10 +47,10 @@ public class PlusPropertiesToMzid {
     /**
      * Constructors for AddFeaturesToMzid.
      *
-     * @param mzid
-     * @param ff
-     * @param of
-     * @throws IOException
+     * @param mzid mzIdentML file.
+     * @param per_file Percolator file.
+     * @param outfile Output file.
+     * @throws IOException Exception thrown by the constructor.
      */
     public PlusPropertiesToMzid(String mzid, String per_file, String outfile) throws IOException {
         this.mzid = mzid;
@@ -72,10 +72,8 @@ public class PlusPropertiesToMzid {
     /**
      * Add features to mzid.
      *
-     * @param mzid
-     * @param feature
-     * @param newMzid
-     * @throws IOException
+     * @param args Arguments to the main method.
+     * @throws IOException IOException thrown by main method.
      */
     public static void main(String[] args) throws IOException {
         PlusPropertiesToMzid ad = new PlusPropertiesToMzid();

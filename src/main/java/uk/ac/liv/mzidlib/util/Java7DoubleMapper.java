@@ -10,5 +10,6 @@ package uk.ac.liv.mzidlib.util;
  * @author SPerkins
  */
 public interface Java7DoubleMapper<T> {
+
     Double map(T t);
 }

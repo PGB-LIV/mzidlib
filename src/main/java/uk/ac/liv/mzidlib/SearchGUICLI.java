@@ -93,7 +93,7 @@ public class SearchGUICLI {
         try {
             System.out.println("Running SearchGUI decoy function using the following command:");
             out.println("Running SearchGUI decoy function using the following command:");
-            String args[] = {"java","-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.FastaCLI", "-in", in, "-decoy"};
+            String args[] = {"java", "-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.FastaCLI", "-in", in, "-decoy"};
             for (int i = 0; i < args.length; i++) {
                 System.out.print(args[i] + " ");
                 out.print(args[i] + " ");
@@ -137,7 +137,7 @@ public class SearchGUICLI {
         try {
             System.out.println("Running SearchGUI ParameterFileCLI function using the following command:");
             out.println("Running SearchGUI ParameterFileCLI function using the following command:");
-            String javaCLI[] = {"java","-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.IdentificationParametersCLI", "-db", decoyFasta, "-out", outputParameterFile};
+            String javaCLI[] = {"java", "-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.IdentificationParametersCLI", "-db", decoyFasta, "-out", outputParameterFile};
 
             BufferedReader br1 = new BufferedReader(new FileReader(paramters));
             String everything = "";
@@ -201,7 +201,7 @@ public class SearchGUICLI {
         try {
             System.out.println("Running SearchGUI search function using the following command:");
             out.println("Running SearchGUI search function using the following command:");
-            String javaCLI[] = {"java", "-Djava.awt.headless=true","-Xmx4G", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.SearchCLI"};
+            String javaCLI[] = {"java", "-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.SearchCLI"};
             String[] args = (String[]) ArrayUtils.addAll(javaCLI, searchParamters);
 
             for (int i = 0; i < args.length; i++) {

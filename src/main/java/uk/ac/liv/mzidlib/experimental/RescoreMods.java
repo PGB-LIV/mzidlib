@@ -66,7 +66,7 @@ public class RescoreMods {
     private String inputIPRG2012Answer = "/resources/iprg_answer_key_nd.txt";
 
     private String inputIPRG2012AnswerSpiked = "/resources/iprg_answer_key_spiked_nd.txt";
-    private static String inputUnimod =  "/resources/unimod.xml";
+    private static String inputUnimod = "/resources/unimod.xml";
     private Map<String, String> iprgAnswerMap = new HashMap<>();
     private Map<String, String> iprgAnswerSpikedMap = new HashMap<>();
     private Map<String, Peptide> peptideIDMap = new HashMap<>();
@@ -107,24 +107,24 @@ public class RescoreMods {
         rescoreMods.init();
     }
 
-    public RescoreMods(){
-        
+    public RescoreMods() {
+
     }
-    
-    public RescoreMods(String inputFileName, String outputFileName, String cvAccForScoreToAdapt,  double commonModificationWeight, double mediumModificationWeight, double rareModificationWeight, double generalModificationWeight, double pairedModificationAndUnmodWeight, double multipleVariableModWeight){
-        
+
+    public RescoreMods(String inputFileName, String outputFileName, String cvAccForScoreToAdapt, double commonModificationWeight, double mediumModificationWeight, double rareModificationWeight, double generalModificationWeight, double pairedModificationAndUnmodWeight, double multipleVariableModWeight) {
+
         inputMzid = inputFileName;
         outputMzid = outputFileName;
-        
+
         commonModWeight = commonModificationWeight;
         mediumModWeight = mediumModificationWeight;
         rareModWeight = rareModificationWeight;
-        generalModWeight = generalModificationWeight;        
+        generalModWeight = generalModificationWeight;
         pairedModAndUnmodWeight = pairedModificationAndUnmodWeight;
         cvAccForBaseScore = cvAccForScoreToAdapt;
         //logTransformScore = logTransformPSMScore;
         multipleVarModWeight = multipleVariableModWeight;
-        
+
         System.out.println("We will score with accession ID: " + cvAccForScoreToAdapt);
         System.out.println("Code assumes we are working off an e-value type score, ordered low to high, log transform has not been implemented");
         System.out.println(newCvName + " for all PSMs with common mods will be multiplied by " + commonModWeight);
@@ -132,17 +132,17 @@ public class RescoreMods {
         System.out.println(newCvName + " for all PSMs with rare mods will be multiplied by " + rareModWeight);
         System.out.println(newCvName + " for all PSMs with any type of variable mod will be multiplied by " + generalModWeight);
         System.out.println(newCvName + " for all PSMs with with a mod for which unmodified paired peptides has also been identified will be multiplied by " + pairedModAndUnmodWeight);
-        
+
         init();
     }
-    
+
     private void init() {
 
         System.out.println("Note: code assumes threshold has been run to set passThreshold=true sensibly e.g. FDR < 0.01. "
                 + "This is needed so that we can profile high-quality unmodifed PSMs");
 
         populateModMaps();
-        
+
         System.out.println("currently hard-coded to read IPRG_2012_ND answer key and insert into results ");
         readIPRGAnswers(inputIPRG2012Answer, inputIPRG2012AnswerSpiked);
         readPSMs(inputMzid);
@@ -154,7 +154,7 @@ public class RescoreMods {
         try {
 
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(inputAnswerFile);
-            
+
             // Get the object of DataInputStream
             DataInputStream in = new DataInputStream(stream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -195,12 +195,11 @@ public class RescoreMods {
         commonUnimodIDs.put("UNIMOD:7@Q", "Anywhere");
         commonUnimodIDs.put("UNIMOD:7@N", "Anywhere");
         commonUnimodIDs.put("UNIMOD:385@C", "Pep N-term");
-        
+
         System.out.println("Assuming common variable mods:");
-        for(String unimodID: commonUnimodIDs.keySet()){
+        for (String unimodID : commonUnimodIDs.keySet()) {
             System.out.println(unimodID + " " + commonUnimodIDs.get(unimodID));
         }
-                
 
         mediumCommonUnimodIDs.put("UNIMOD:21@S", "Anywhere");
         mediumCommonUnimodIDs.put("UNIMOD:21@T", "Anywhere");
@@ -211,7 +210,7 @@ public class RescoreMods {
         mediumCommonUnimodIDs.put("UNIMOD:1@S", "Anywhere");
 
         System.out.println("Assuming \"medium\" mods:");
-        for(String unimodID: mediumCommonUnimodIDs.keySet()){
+        for (String unimodID : mediumCommonUnimodIDs.keySet()) {
             System.out.println(unimodID + " " + mediumCommonUnimodIDs.get(unimodID));
         }
     }
@@ -228,8 +227,6 @@ public class RescoreMods {
             allSearchMods.add(searchMod);
         }
 
-
-
         Iterator<Peptide> iterPeptide = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
 
         int countVarMods = 0;
@@ -240,8 +237,6 @@ public class RescoreMods {
             peptideIDMap.put(pep.getId(), pep);
 
             boolean hasVarMods = false;
-
-
 
             if (pep.getModification() != null && !pep.getModification().isEmpty()) {
                 for (Modification mod : pep.getModification()) {
@@ -256,8 +251,6 @@ public class RescoreMods {
         }
 
         System.out.println("Var mods:" + countVarMods + " fixed mods: " + countFixMods);
-
-
 
         Iterator<SpectrumIdentificationItem> iterSII = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationItem);
 
@@ -293,7 +286,6 @@ public class RescoreMods {
 
         }
 
-
         for (String id : siiIDMap.keySet()) {
             SpectrumIdentificationItem sii = siiIDMap.get(id);
             Peptide pep = peptideIDMap.get(sii.getPeptideRef());
@@ -327,20 +319,19 @@ public class RescoreMods {
                             sii.getCvParam().add(utils.makeCvParam("MS:1XYZ", "Modification classification", psiCV, "Multiple"));
                         } else {
                             if (varMod != null) {                                   //This peptide has one var mod
-                                
+
                                 String modRes = "";
-                                if(varMod.getLocation()>0){
-                                    modRes = ""+pepSeq.charAt(varMod.getLocation()-1);
+                                if (varMod.getLocation() > 0) {
+                                    modRes = "" + pepSeq.charAt(varMod.getLocation() - 1);
+                                } else {
+                                    modRes = "" + pepSeq.charAt(0);
                                 }
-                                else{
-                                    modRes = ""+pepSeq.charAt(0);
-                                }
-                                
+
                                 boolean isCommonMod = false;
                                 boolean isMediumMod = false;
 
-                                for (CvParam param : varMod.getCvParam()) {                                  
-                                    
+                                for (CvParam param : varMod.getCvParam()) {
+
                                     String modKey = param.getAccession() + "@" + modRes;
                                     if (commonUnimodIDs.get(modKey) != null) {    //present in common mods                                        
                                         String res = commonUnimodIDs.get(param.getAccession());
@@ -367,7 +358,6 @@ public class RescoreMods {
                     sii.getCvParam().add(utils.makeCvParam(newCvAcc, newCvName, psiCV, "" + newEvalue));  //Add new score to SII                        
                 }
             }
-
 
             if (!scoreFound) {
                 System.out.println("Error - SII without required score found, accession:" + cvAccForBaseScore + " on " + sii.getId());
@@ -478,8 +468,6 @@ public class RescoreMods {
                 writer.write(marshaller.createMzIdentMLStartTag("12345") + "\n");
             }
 
-
-
             if (cvList != null) {
                 marshaller.marshal(cvList, writer);
             }
@@ -487,9 +475,10 @@ public class RescoreMods {
             if (analysisSoftwareList != null) {
                 AnalysisSoftware analysisSoftware = new AnalysisSoftware();
                 analysisSoftware.setName(this.getClass().getSimpleName());
-            Date date = new Date() ;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss") ;
-            analysisSoftware.setName(this.getClass().getSimpleName()+"_"+dateFormat.format(date)); analysisSoftware.setId(this.getClass().getSimpleName()+"_"+dateFormat.format(date));
+                Date date = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+                analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
+                analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
                 analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
 
                 marshaller.marshal(analysisSoftwareList, writer);
@@ -512,7 +501,6 @@ public class RescoreMods {
 
             writer.write("\n");
 
-
             String spectrumIdentificationListRef = "";
             if (analysisCollection.getSpectrumIdentification().size() > 0) {
                 spectrumIdentificationListRef = analysisCollection.getSpectrumIdentification().get(0).getSpectrumIdentificationListRef();
@@ -528,7 +516,6 @@ public class RescoreMods {
                 FragmentationTable fr = iterFragmentationTable.next();
                 siList.setFragmentationTable(fr);
             }
-
 
             Iterator<SpectrumIdentificationResult> sirIter = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
             while (sirIter.hasNext()) {
@@ -559,7 +546,6 @@ public class RescoreMods {
                         newSpecTitle = cycleValue + "." + expValue;
 
                         //System.out.println(newSpecTitle);
-
                         if (iprgAnswerMap.containsKey(newSpecTitle)) {
                             iprgInsert = iprgAnswerMap.get(newSpecTitle);
                         } else {
@@ -610,8 +596,6 @@ public class RescoreMods {
 
                 siList.getSpectrumIdentificationResult().add(sr);
 
-
-
             }
 
             if (analysisCollection != null) {
@@ -624,7 +608,6 @@ public class RescoreMods {
             }
             writer.write("\n");
 
-
             writer.write(marshaller.createDataCollectionStartTag() + "\n");
 
             writer.write("\n");
@@ -635,7 +618,6 @@ public class RescoreMods {
             writer.write("\n");
 
             writer.write(marshaller.createAnalysisDataStartTag() + "\n");
-
 
             marshaller.marshal(siList, writer);
             writer.write("\n");

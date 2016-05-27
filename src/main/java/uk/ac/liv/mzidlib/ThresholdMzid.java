@@ -229,10 +229,10 @@ public class ThresholdMzid {
             }
             writer.write("\n");
             AnalysisSoftware analysisSoftware = new AnalysisSoftware();
-            Date date = new Date() ;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss") ;
-            analysisSoftware.setName(this.getClass().getSimpleName()+"_"+dateFormat.format(date)); 
-            analysisSoftware.setId(this.getClass().getSimpleName()+"_"+dateFormat.format(date));
+            Date date = new Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+            analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
+            analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             Param param = new Param();
             Cv psiCV;
             psiCV = utils.getpsiCV(mzIdentMLUnmarshaller);
@@ -336,7 +336,7 @@ public class ThresholdMzid {
                     siList.getSpectrumIdentificationResult().add(sr);
                 }
             }
-            
+
             SequenceCollection sequenceCollection = new SequenceCollection();
 
             Iterator<Entry<String, DBSequence>> itDbSeq = dbSequenceHashMap.entrySet().iterator();
@@ -407,7 +407,7 @@ public class ThresholdMzid {
                         }
                     }
                 } else if (!psmThreshold && scoreLevel.equals("PAG")) {
-                    
+
                     for (CvParam cvParam : pag.getCvParam()) {
                         if (cvParam.getAccession().equals(cvAccessionScoreThreshold)) {
 
@@ -448,7 +448,7 @@ public class ThresholdMzid {
 
                     }
                 }
-                if (!deleteUnderThreshold||setPassThreshold) {
+                if (!deleteUnderThreshold || setPassThreshold) {
                     pdList.getProteinAmbiguityGroup().add(pag);
                 }
             }
@@ -506,7 +506,7 @@ public class ThresholdMzid {
 
             writer.write(marshaller.createAnalysisDataStartTag() + "\n");
             // Added by FG 12/11/2014 avoiding empty SIL, invalid mzid file
-            if (siList.getSpectrumIdentificationResult().size()==0){
+            if (siList.getSpectrumIdentificationResult().size() == 0) {
                 throw new RuntimeException("SIL is empty!");
             }
             marshaller.marshal(siList, writer);
@@ -539,6 +539,5 @@ public class ThresholdMzid {
         }
 
     }
-
 
 }

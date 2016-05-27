@@ -10,7 +10,7 @@ import uk.ac.ebi.jmzidml.model.mzidml.Modification;
 public class CompareModification {
 
     public static boolean compareModification(Modification m1, Modification m2) {
-        if ((m1.getMonoisotopicMassDelta()== null && m2.getMonoisotopicMassDelta() != null)
+        if ((m1.getMonoisotopicMassDelta() == null && m2.getMonoisotopicMassDelta() != null)
                 || (m1.getMonoisotopicMassDelta() != null && m2.getMonoisotopicMassDelta() == null)
                 || (m1.getMonoisotopicMassDelta() != null && m2.getMonoisotopicMassDelta() != null && m1.getMonoisotopicMassDelta().doubleValue() != m2.getMonoisotopicMassDelta().doubleValue())) {
             return false;

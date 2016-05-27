@@ -229,9 +229,9 @@ public class CombinedSearchEngines2Mzid {
         cvParam.setAccession(accession);
         cvParam.setName(name);
         Cv psiCV = new Cv();
-        psiCV.setUri("http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo");
+        psiCV.setUri("https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo");
         psiCV.setId("PSI-MS");
-        psiCV.setVersion("2.25.0");
+//        psiCV.setVersion("2.25.0");
         psiCV.setFullName("PSI-MS");
         cvParam.setCv(psiCV);
         cvParam.setValue(value);
@@ -291,7 +291,6 @@ public class CombinedSearchEngines2Mzid {
                 }
 
                 //write code to compare next by alphabetical order ... complete putting PDHs into correct PAGs etc...PAGs
-
                 return i;
             }
         });
@@ -315,9 +314,7 @@ public class CombinedSearchEngines2Mzid {
                 innerRankCounter++;
             }
 
-
         }
-
 
     }
 

@@ -54,7 +54,7 @@ public class CombinePSMMzidFiles {
     private Inputs combinedInputs = new Inputs();
     private AnalysisData combinedAnalysisData = new AnalysisData();
     private final boolean combineFractions;
-    long startTime, stopTime,elapsedTime;
+    long startTime, stopTime, elapsedTime;
 
     private boolean verbose = true;
 
@@ -105,14 +105,28 @@ public class CombinePSMMzidFiles {
         if (verbose) {
             System.out.println("-----------------------------------------------");
             System.out.println("Writing time " + elapsedTime / 1000 + " Seconds");
-            System.out.println("-----------------------------------------------");        }
+            System.out.println("-----------------------------------------------");
+        }
     }
 
     private void readMzid(MzIdentMLUnmarshaller mzIdentMLUnmarshaller, int i) {
         try {
             combineMetaData(mzIdentMLUnmarshaller, i);
             combineSequenceCollection(mzIdentMLUnmarshaller, i);
-            combineSpectrumIdentification(mzIdentMLUnmarshaller, i);
+            // Handle inputs by combining spectraData after changing the id
+            Inputs inputs = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Inputs);
+            List<SpectraData> spectraDataList = inputs.getSpectraData();
+            for (SpectraData spectraData : spectraDataList) {
+                String newKey = spectraData.getId() + "_combined_" + i;
+                spectraData.setId(newKey);
+                combinedSpectraData.add(spectraData);
+                if (i == 0) {
+                    combinedInputs.getSourceFile().addAll(inputs.getSourceFile());
+                    combinedInputs.getSearchDatabase().addAll(inputs.getSearchDatabase());
+                }
+            }
+            combinedInputs.getSpectraData().addAll(combinedSpectraData);
+            combineSpectrumIdentification1(mzIdentMLUnmarshaller, i);
 
         } catch (OutOfMemoryError error) {
             String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
@@ -120,7 +134,10 @@ public class CombinePSMMzidFiles {
             String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + error.getMessage() + "."
                     + "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     public void writeMzidFile(String csvFileName) {
@@ -205,6 +222,9 @@ public class CombinePSMMzidFiles {
             String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + e.getMessage() + "."
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
+        } catch (Exception e) {
+
+            System.out.println(e);
         }
     }
 
@@ -381,6 +401,7 @@ public class CombinePSMMzidFiles {
             }
             combinedSpectrumIdentification.add(spectrumIdentification);
         }
+
         if (combineFractions) {
             combinedAnalysisCollection.getSpectrumIdentification().addAll(combinedSpectrumIdentification);
         } else {
@@ -395,6 +416,122 @@ public class CombinePSMMzidFiles {
         }
 
         combinedSpectraData.clear();
+        combinedSpectrumIdentification.clear();
+
+    }
+
+    private void combineSpectrumIdentification1(MzIdentMLUnmarshaller mzIdentMLUnmarshaller, int i) {
+        AnalysisCollection ac = (AnalysisCollection) mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisCollection);
+        List<SpectrumIdentification> spectrumIdentificationList = ac.getSpectrumIdentification();
+        AnalysisData ad = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisData);
+        // Handle AnalysisCollection
+
+        List<SpectrumIdentificationList> spectrumIdentificationListList = ad.getSpectrumIdentificationList();
+        SpectrumIdentification spectrumIdentification1 = null;
+        for (SpectrumIdentificationList spectrumIdentificationList1 : spectrumIdentificationListList) {
+            String oldID = spectrumIdentificationList1.getId();
+
+            for (SpectrumIdentification spectrumIdentification : spectrumIdentificationList) {
+                String oldIDRef = spectrumIdentification.getSpectrumIdentificationListRef();
+                if (oldID.equals(oldIDRef)) {
+                    String newId = spectrumIdentification.getId() + "_combined_" + i;
+                    spectrumIdentification.setId(newId);
+
+                    // Handle InputSpectra 
+                    List<InputSpectra> inputSpectraList = spectrumIdentification.getInputSpectra();
+                    for (InputSpectra inputSpectra : inputSpectraList) {
+                        String newKeyRef = inputSpectra.getSpectraDataRef() + "_combined_" + i;
+                        for (SpectraData spectraData : combinedSpectraData) {
+                            if (spectraData.getId().equals(newKeyRef)) {
+                                inputSpectra.setSpectraData(spectraData);
+                                break;
+                            }
+                        }
+                    }
+                    spectrumIdentification1 = spectrumIdentification;
+                }
+            }
+
+            // Handle SpectrumIdentificationList
+            String newSilID = spectrumIdentification1.getSpectrumIdentificationListRef() + "_combined_" + i;
+
+            String newID = spectrumIdentificationList1.getId() + "_combined_" + i;
+            spectrumIdentificationList1.setId(newID);
+
+            FragmentationTable fragmentationTable = spectrumIdentificationList1.getFragmentationTable();
+            if (fragmentationTable != null) {
+                List<Measure> measureList = fragmentationTable.getMeasure();
+                for (Measure measure : measureList) {
+                    String measureNewID = measure.getId() + "_combined_" + i;
+                    measure.setId(measureNewID);
+                }
+            }
+            List<SpectrumIdentificationResult> spectrumIdentificationResultList = spectrumIdentificationList1.getSpectrumIdentificationResult();
+            for (SpectrumIdentificationResult spectrumIdentificationResult : spectrumIdentificationResultList) {
+                String newSIRID = spectrumIdentificationResult.getId() + "_combined_" + i;
+                spectrumIdentificationResult.setId(newSIRID);
+                String newSpectraDataRef = spectrumIdentificationResult.getSpectraDataRef() + "_combined_" + i;
+                for (SpectraData spectraData : combinedSpectraData) {
+                    if (spectraData.getId().equals(newSpectraDataRef)) {
+                        spectrumIdentificationResult.setSpectraData(spectraData);
+                        break;
+                    }
+
+                }
+                List<SpectrumIdentificationItem> spectrumIdentificationItemList = spectrumIdentificationResult.getSpectrumIdentificationItem();
+                for (SpectrumIdentificationItem spectrumIdentificationItem : spectrumIdentificationItemList) {
+                    String newSIIID = spectrumIdentificationItem.getId() + "_combined_" + i;
+                    spectrumIdentificationItem.setId(newSIIID);
+
+                    // Update old PE with new PE
+                    List<PeptideEvidenceRef> oldPeptideEvidenceRefList = spectrumIdentificationItem.getPeptideEvidenceRef();
+                    List<PeptideEvidenceRef> newPeptideEvidenceRefList = new ArrayList<PeptideEvidenceRef>();
+                    for (int j = 0; j < oldPeptideEvidenceRefList.size(); j++) {
+                        PeptideEvidenceRef peptideEvidenceRef = oldPeptideEvidenceRefList.get(j);
+                        PeptideEvidence pe = inputPEMap.get(peptideEvidenceRef.getPeptideEvidenceRef());
+
+                        String key = pe.getPeptideRef() + "_" + pe.getDBSequenceRef() + "_" + pe.getStart() + "_" + pe.getEnd();
+                        pe.setId(key);
+
+                        if (!outputPEMap.containsKey(key)) {
+                            outputPEMap.put(key, pe);
+
+                        } else {
+                            pe = outputPEMap.get(key);
+                        }
+
+                        PeptideEvidenceRef per = new PeptideEvidenceRef();
+                        per.setPeptideEvidence(pe);
+                        newPeptideEvidenceRefList.add(per);
+
+                    }
+
+                    spectrumIdentificationItem.getPeptideEvidenceRef().clear();
+                    spectrumIdentificationItem.getPeptideEvidenceRef().addAll(newPeptideEvidenceRefList);
+                }
+            }
+            if (newID.equals(newSilID)) {
+                spectrumIdentification1.setSpectrumIdentificationList(spectrumIdentificationList1);
+            }
+            combinedAnalysisData.getSpectrumIdentificationList().add(spectrumIdentificationList1);
+        }
+        combinedSpectrumIdentification.add(spectrumIdentification1);
+
+        if (combineFractions) {
+            combinedAnalysisCollection.getSpectrumIdentification().addAll(combinedSpectrumIdentification);
+        } else {
+            if (combinedAnalysisCollection.getSpectrumIdentification() == null || combinedAnalysisCollection.getSpectrumIdentification().size() == 0) {
+                combinedAnalysisCollection.getSpectrumIdentification().add(combinedSpectrumIdentification.iterator().next());
+            } else {
+                for (SpectrumIdentification si : combinedSpectrumIdentification) {
+                    combinedAnalysisCollection.getSpectrumIdentification().get(0).getInputSpectra().addAll(si.getInputSpectra());
+
+                }
+            }
+        }
+
+        combinedSpectraData.clear();
+
         combinedSpectrumIdentification.clear();
 
     }

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="Cp1252"?>
-<MzIdentML id="12345" version="1.1.0" xmlns="http://psidev.info/psi/pi/mzIdentML/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd" creationDate="2015-10-19T16:27:59" >
+<?xml version="1.0" encoding="UTF-8"?>
+<MzIdentML id="12345" version="1.1.0" xmlns="http://psidev.info/psi/pi/mzIdentML/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd" creationDate="2016-05-17T15:38:38" >
 <cvList xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
-  <cv fullName="PSI-MS" version="2.25.0" uri="http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo" id="PSI-MS"></cv>
+  <cv fullName="PSI-MS" uri="https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo" id="PSI-MS"></cv>
   <cv fullName="UNIMOD" uri="http://www.unimod.org/obo/unimod.obo" id="UNIMOD"></cv>
   <cv fullName="UNIT-ONTOLOGY" uri="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo" id="UO"></cv>
 </cvList>
@@ -11,7 +11,7 @@
       <cvParam cvRef="PSI-MS" accession="MS:1001476" name="X\!Tandem"></cvParam>
     </SoftwareName>
   </AnalysisSoftware>
-  <AnalysisSoftware id="Tandem2mzid_2015-10-19 16-27-59" name="Tandem2mzid_2015-10-19 16-27-59">
+  <AnalysisSoftware id="Tandem2mzid_2016-05-17 15-38-39" name="Tandem2mzid_2016-05-17 15-38-39">
     <SoftwareName>
       <cvParam cvRef="PSI-MS" accession="MS:1002237" name="mzidLib"></cvParam>
     </SoftwareName>
@@ -34,28 +34,28 @@
   </Organization>
 </AuditCollection>
 <SequenceCollection xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
-  <DBSequence length="607" searchDatabase_ref="SearchDB_1" accession="sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" id="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" name="sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2">
-    <Seq>MKWVTFISLLFLFSSAYSRGVFRRDTYKSEIAHRFKDLGEQYFKGLVLIAFSQHLQQCPYEEHVKLVREVTEFAKTCVADESAENCDKSIHTLFGDKLCAIPSLREHYGDLADCCEKEEPERNECFLQHKNDNPDIPKLKPDPVALCADFQEDEQKFWGKYLYEIARRHPYFYAPELLYYAIIYKDVFSECCQAADKAACLLPKIEHLREKVLTSAAKQRLKCASIQKFGERAFKAWSLARLSQRFPKADFTEISKIVTDLAKVHKECCHGDLLECADDRADLAKYICENQDTISTKLKECCDKPLLEKSHCIAEAKRDELPADLNPLEHDFVEDKEVCKNYKEAKHVFLGTFLYEYSRRHPDYSVSLLLRIAKIYEATLEDCCAKEDPPACYATVFDKFQPLVDEPKNLIKQNCELFEKLGEYGFQNALIVRYTKKVPQVSTPTLVEVARKLGLVGSRCCKRPEEERLSCAEDYLSLVLNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYKPKEFVEGTFTFHADLCTLPEDEKQIKKQTALVELLKHKPHATEEQLRTVLGNFAAFVQKCCAAPDHEACFAVEGPKFVIEIRGILA</Seq>
-  </DBSequence>
-  <DBSequence length="610" searchDatabase_ref="SearchDB_1" accession="sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" id="dbseq_sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" name="sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1">
-    <Seq>MKWVVSIFLIVLLNFTESRTMHENAYGIASILDSSQCSAEMNLVDLATIFFAQFVQEATYKEVNQMVKDVLTVIEKSTGSEQPAGCLENQVSVFLEEICHEEEIPEKYGLSHCCSQSGEERHNCFLARKKAAPASIPPFQVPEPVTSCKAYEENRELFMTRYIYEIARRHPFLYAPTILSLAAQYDKIIPPCCKAENAVECFQTKAASITKELRESSLLNQHMCTVMRQFGARTFRAITVTKLSQKFPKANFTEIQKLVLDVAHIHEECCRGNVLECLQDAERVVSYVCSQQDTLSSKIAECCKLPTTLELGQCIIHAENDDKPEGLSPNLNRFLGERDFNQLSSREKDLSMARFTYEYSRRHPKLAVPVILRVAKGYQELLEKCSQSENPLECQDKGEEELEKYIQESQALAKRSCGLFQKLGEYYLQNAFLVAYTKKAPQLTPPELMALTRKMATTGAACCHLSEDRQLACGEGAADLIIGQLCIRHEEMPINPGVGQCCTSSYANRRPCFSSLVLDETYVPPPFSDDKFIFHKDLCQAQGVALQTMKQQFLINLVKQKPQITEEQLEAVIADFSGLLEKCCQGQEQEVCFAEEGPALISKTRASLGV</Seq>
-  </DBSequence>
   <DBSequence length="238" searchDatabase_ref="SearchDB_1" accession="tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1" id="dbseq_tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1" name="tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1">
     <Seq>MKWVVSIFLIVLLNFTESRTMHENAYGIASILDSSQCSAEMNLVDLATIFFAQFVQEATYKEVNQMVKDVLTVIEKSTGSEQPAGCLENQVSVFLEEICHEEEIPEKYGLSHCCSQSGEERHNCFLARKKAAPASIPPFQVPEPVTSCKAYEENRELFMTRYIYEIARRHPFLYAPTILSLAAQYDKIIPPCCKAENAVECFQTKAASITKELRESSLLNQHMCTVMRQFGARTFRAM</Seq>
   </DBSequence>
   <DBSequence length="607" searchDatabase_ref="SearchDB_1" accession="tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" id="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" name="tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1">
     <Seq>MKWVTFISLLFLFSSAYSRGVFRRDTYKSEIAHRFKDLGEQYFKGLVLIAFSQHLQQCPYEEHVKLVREVTEFAKTCVADESAENCDKSIHTLFGDKLCAIPSLREHYGDLADCCEKEEPERNECFLQHKNDNPDIPKLKPDPVALCADFQEDEQKFWGKYLYEIARRHPYFYAPELLYYAIIYKDVFSECCQAADKAACLLPKIEHLREKVLTSAAKQRLKCASIQKFGERAFKAWSLARLSQRFPKADFTEISKIVTDLAKVHKECCHGDLLECADDRADLAKYICENQDTISTKLKECCDKPLLEKSHCIAEAKRDELPADLNPLEHDFVEDKEVCKNYKEAKDVFLGTFLYEYSRRHPDYSVSLLLRIAKIYEATLEDCCAKEDPPACYATVFDKFQPLVDEPKNLIKQNCELFEKLGEYGFQNALIVRYTKKVPQVSTPTLVEVARKLGLVGSRCCKRPEEERLSCAEDYLSLVLNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYKPKEFVEGTFTFHADLCTLPEDEKQIKKQTALVELLKHKPHATEEQLRTVLGNFAAFVQKCCAAPDHEACFAVEGPKFVIEIRGILA</Seq>
   </DBSequence>
-  <Peptide id="YLYEIAR___">
-    <PeptideSequence>YLYEIAR</PeptideSequence>
-  </Peptide>
+  <DBSequence length="607" searchDatabase_ref="SearchDB_1" accession="sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" id="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" name="sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2">
+    <Seq>MKWVTFISLLFLFSSAYSRGVFRRDTYKSEIAHRFKDLGEQYFKGLVLIAFSQHLQQCPYEEHVKLVREVTEFAKTCVADESAENCDKSIHTLFGDKLCAIPSLREHYGDLADCCEKEEPERNECFLQHKNDNPDIPKLKPDPVALCADFQEDEQKFWGKYLYEIARRHPYFYAPELLYYAIIYKDVFSECCQAADKAACLLPKIEHLREKVLTSAAKQRLKCASIQKFGERAFKAWSLARLSQRFPKADFTEISKIVTDLAKVHKECCHGDLLECADDRADLAKYICENQDTISTKLKECCDKPLLEKSHCIAEAKRDELPADLNPLEHDFVEDKEVCKNYKEAKHVFLGTFLYEYSRRHPDYSVSLLLRIAKIYEATLEDCCAKEDPPACYATVFDKFQPLVDEPKNLIKQNCELFEKLGEYGFQNALIVRYTKKVPQVSTPTLVEVARKLGLVGSRCCKRPEEERLSCAEDYLSLVLNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYKPKEFVEGTFTFHADLCTLPEDEKQIKKQTALVELLKHKPHATEEQLRTVLGNFAAFVQKCCAAPDHEACFAVEGPKFVIEIRGILA</Seq>
+  </DBSequence>
+  <DBSequence length="610" searchDatabase_ref="SearchDB_1" accession="sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" id="dbseq_sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" name="sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1">
+    <Seq>MKWVVSIFLIVLLNFTESRTMHENAYGIASILDSSQCSAEMNLVDLATIFFAQFVQEATYKEVNQMVKDVLTVIEKSTGSEQPAGCLENQVSVFLEEICHEEEIPEKYGLSHCCSQSGEERHNCFLARKKAAPASIPPFQVPEPVTSCKAYEENRELFMTRYIYEIARRHPFLYAPTILSLAAQYDKIIPPCCKAENAVECFQTKAASITKELRESSLLNQHMCTVMRQFGARTFRAITVTKLSQKFPKANFTEIQKLVLDVAHIHEECCRGNVLECLQDAERVVSYVCSQQDTLSSKIAECCKLPTTLELGQCIIHAENDDKPEGLSPNLNRFLGERDFNQLSSREKDLSMARFTYEYSRRHPKLAVPVILRVAKGYQELLEKCSQSENPLECQDKGEEELEKYIQESQALAKRSCGLFQKLGEYYLQNAFLVAYTKKAPQLTPPELMALTRKMATTGAACCHLSEDRQLACGEGAADLIIGQLCIRHEEMPINPGVGQCCTSSYANRRPCFSSLVLDETYVPPPFSDDKFIFHKDLCQAQGVALQTMKQQFLINLVKQKPQITEEQLEAVIADFSGLLEKCCQGQEQEVCFAEEGPALISKTRASLGV</Seq>
+  </DBSequence>
   <Peptide id="YIYEIAR___">
     <PeptideSequence>YIYEIAR</PeptideSequence>
   </Peptide>
-  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="YLYEIAR___" start="161" end="167" pre="K" post="R" isDecoy="false" id="PE1_2_0"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" peptide_ref="YIYEIAR___" start="162" end="168" pre="R" post="R" isDecoy="false" id="PE1_3_1"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1" peptide_ref="YIYEIAR___" start="162" end="168" pre="R" post="R" isDecoy="false" id="PE1_3_2"></PeptideEvidence>
-  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="YLYEIAR___" start="161" end="167" pre="K" post="R" isDecoy="false" id="PE1_3_3"></PeptideEvidence>
+  <Peptide id="YLYEIAR___">
+    <PeptideSequence>YLYEIAR</PeptideSequence>
+  </Peptide>
+  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUM3|F1RUM3_PIG Uncharacterized protein OS=Sus scrofa GN=AFP PE=4 SV=1" peptide_ref="YIYEIAR___" start="162" end="168" pre="R" post="R" isDecoy="false" id="PE1_2_0"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_tr|F1RUN2|F1RUN2_PIG Uncharacterized protein OS=Sus scrofa GN=ALB PE=4 SV=1" peptide_ref="YLYEIAR___" start="161" end="167" pre="K" post="R" isDecoy="false" id="PE1_3_1"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_sp|P08835|ALBU_PIG Serum albumin OS=Sus scrofa GN=ALB PE=1 SV=2" peptide_ref="YLYEIAR___" start="161" end="167" pre="K" post="R" isDecoy="false" id="PE1_3_2"></PeptideEvidence>
+  <PeptideEvidence dBSequence_ref="dbseq_sp|Q8MJ76|FETA_PIG Alpha-fetoprotein OS=Sus scrofa GN=AFP PE=2 SV=1" peptide_ref="YIYEIAR___" start="162" end="168" pre="R" post="R" isDecoy="false" id="PE1_3_3"></PeptideEvidence>
 </SequenceCollection>
 <AnalysisCollection xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
   <SpectrumIdentification spectrumIdentificationProtocol_ref="SearchProtocol_1" spectrumIdentificationList_ref="SII_LIST_1" id="SpecIdent_1">
@@ -134,7 +134,7 @@
     </Measure>
   </FragmentationTable>
   <SpectrumIdentificationResult spectrumID="index=998" spectraData_ref="SID_1" id="SIR_1">
-    <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="464.285614" calculatedMassToCharge="464.250138" peptide_ref="YLYEIAR___" rank="1" passThreshold="true" id="SII_1_1">
+    <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="464.285614" calculatedMassToCharge="464.250138" peptide_ref="YIYEIAR___" rank="1" passThreshold="true" id="SII_1_1">
       <PeptideEvidenceRef peptideEvidence_ref="PE1_2_0"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE1_3_3"></PeptideEvidenceRef>
       <Fragmentation>
@@ -172,7 +172,7 @@
       <cvParam cvRef="PSI-MS" accession="MS:1001330" name="X\!Tandem:expect" value="0.023"></cvParam>
       <cvParam cvRef="PSI-MS" accession="MS:1001331" name="X\!Tandem:hyperscore" value="23.6"></cvParam>
     </SpectrumIdentificationItem>
-    <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="464.285614" calculatedMassToCharge="464.250138" peptide_ref="YIYEIAR___" rank="1" passThreshold="true" id="SII_1_2">
+    <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="464.285614" calculatedMassToCharge="464.250138" peptide_ref="YLYEIAR___" rank="1" passThreshold="true" id="SII_1_2">
       <PeptideEvidenceRef peptideEvidence_ref="PE1_3_1"></PeptideEvidenceRef>
       <PeptideEvidenceRef peptideEvidence_ref="PE1_3_2"></PeptideEvidenceRef>
       <Fragmentation>

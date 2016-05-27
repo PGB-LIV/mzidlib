@@ -218,7 +218,7 @@ public class Omssa2mzid {
             System.out.println(message);
         }
 
-    }    
+    }
 
     public void parseFile(OmssaOmxFile omxFile) {
 
@@ -857,9 +857,9 @@ public class Omssa2mzid {
         cvList = new CvList();
         List<Cv> localCvList = cvList.getCv();
         psiCV = new Cv();
-        psiCV.setUri("http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo");
+        psiCV.setUri("https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo");
         psiCV.setId(psiCvID);
-        psiCV.setVersion("2.25.0");
+//        psiCV.setVersion("2.25.0");
         psiCV.setFullName("PSI-MS");
 
         unimodCV = new Cv();
@@ -877,11 +877,6 @@ public class Omssa2mzid {
         localCvList.add(unitCV);
     }
 
-    /**
-     * Helper method to create and return a CvParam from accession, name and CV
-     *
-     * @return CvParam
-     */
     public CvParam makeCvParam(String accession, String name, Cv cv) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -890,11 +885,6 @@ public class Omssa2mzid {
         return cvParam;
     }
 
-    /**
-     * Helper method to create and return a CvParam from accession, name and CV
-     *
-     * @return CvParam
-     */
     public CvParam makeCvParam(String accession, String name, Cv cv, String value) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -904,12 +894,6 @@ public class Omssa2mzid {
         return cvParam;
     }
 
-    /**
-     * Helper method to create and return a CvParam from accession, name, CV,
-     * unitAccession and unitName (unitCV is automatically provided)
-     *
-     * @return CvParam
-     */
     public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -921,12 +905,6 @@ public class Omssa2mzid {
         return cvParam;
     }
 
-    /**
-     * Helper method to create and return a CvParam from accession, name, CV,
-     * unitAccession, unitName and unitCV
-     *
-     * @return CvParam
-     */
     public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName, Cv alternateUnitCV) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -938,14 +916,6 @@ public class Omssa2mzid {
         return cvParam;
     }
 
-    /**
-     *
-     * Aim is to write out set up the analysisSoftwareList following this
-     * structure: <AnalysisSoftware id="ID_software" name="xtandem"
-     * version="2008.12.1.1" > <SoftwareName> <cvParam accession="MS:1001476"
-     * name="xtandem" cvRef="PSI-MS" /> </SoftwareName>
-     *
-     */
     public void handleAnalysisSoftware(String version) {
         analysisSoftwareList = new AnalysisSoftwareList();
         List<AnalysisSoftware> analysisSoftwares = analysisSoftwareList.getAnalysisSoftware();
@@ -971,12 +941,6 @@ public class Omssa2mzid {
 
     }
 
-    /**
-     * Setup Provider element as follows <Provider id="PROVIDER"> <ContactRole
-     * Contact_ref="PERSON_DOC_OWNER"> <role> <cvParam accession="MS:1001271"
-     * name="researcher" cvRef="PSI-MS"/> </role> </ContactRole> </Provider>
-     *
-     */
     public void handleProvider() {
         provider = new Provider();
         provider.setId("PROVIDER");
@@ -992,16 +956,6 @@ public class Omssa2mzid {
 
     }
 
-    /**
-     * TO DO Capture name and email of the user <AuditCollection> <Person
-     * id="PERSON_DOC_OWNER" firstName="Andy" lastName="Jones"
-     * email="someone@someuniversity.com"> <affiliations
-     * Organization_ref="ORG_DOC_OWNER"/> </Person> <Organization
-     * id="ORG_DOC_OWNER" address="Some address" name="Some place" />
-     * </AuditCollection>
-     *
-     *
-     */
     public void handleAuditCollection(String firstName, String lastName, String email, String address, String affiliationName) {
         auditCollection = new AuditCollection();
         //List<Contact> contactList = auditCollection.getContactGroup();
@@ -1040,16 +994,6 @@ public class Omssa2mzid {
 
     }
 
-    /**
-     * <AnalysisCollection> <SpectrumIdentification id="SI_1"
-     * SpectrumIdentificationProtocol_ref="SearchProtocol"
-     * SpectrumIdentificationList_ref="siiListID"
-     * activityDate="2008-02-27T08:22:12"> <InputSpectra
-     * SpectraData_ref="SD_1"/> <SearchDatabase
-     * SearchDatabase_ref="search_database"/> </SpectrumIdentification>
-     * </AnalysisCollection>
-     *
-     */
     public void handleAnalysisCollection(String activityDate) {
         analysisCollection = new AnalysisCollection();
         List<SpectrumIdentification> specIdentList = analysisCollection.getSpectrumIdentification();
@@ -1071,40 +1015,6 @@ public class Omssa2mzid {
 
     }
 
-    /**
-     * <AnalysisProtocolCollection> <SpectrumIdentificationProtocol
-     * id="SearchProtocol" AnalysisSoftware_ref="ID_software"> <SearchType>
-     * <cvParam accession="MS:1001083" name="ms-ms search" cvRef="PSI-MS"/>
-     * </SearchType> <AdditionalSearchParams> <cvParam accession="MS:1001211"
-     * name="parent mass type mono" cvRef="PSI-MS"/> <cvParam
-     * accession="MS:1001256" name="fragment mass type mono" cvRef="PSI-MS"/>
-     * </AdditionalSearchParams> <ModificationParams> <SearchModification
-     * fixedMod="true"> <ModParam massDelta="57.021464" residues="C"> <cvParam
-     * accession="UNIMOD:4" name="Carbamidomethyl" cvRef="UNIMOD" /> </ModParam>
-     * </SearchModification> <SearchModification fixedMod="false"> <ModParam
-     * massDelta="15.994919" residues="M"> <cvParam accession="UNIMOD:35"
-     * name="Oxidation" cvRef="UNIMOD" /> </ModParam> </SearchModification>
-     * </ModificationParams> <Enzymes independent="0"> <Enzyme id="ENZ_1"
-     * CTermGain="OH" NTermGain="H" missedCleavages="1" semiSpecific="0">
-     * <EnzymeName> <cvParam accession="MS:1001251" name="Trypsin"
-     * cvRef="PSI-MS" /> </EnzymeName> </Enzyme> </Enzymes> <MassTable id="0"
-     * msLevel="2"> </MassTable> <FragmentTolerance> <cvParam
-     * accession="MS:1001412" name="search tolerance plus value" value="0.5"
-     * cvRef="PSI-MS" unitAccession="UO:0000221" unitName="dalton"
-     * unitCvRef="UO" /> <cvParam accession="MS:1001413" name="search tolerance
-     * minus value" value="0.5" cvRef="PSI-MS" unitAccession="UO:0000221"
-     * unitName="dalton" unitCvRef="UO" /> </FragmentTolerance>
-     * <ParentTolerance> <cvParam accession="MS:1001412" name="search tolerance
-     * plus value" value="0.5" cvRef="PSI-MS" unitAccession="UO:0000221"
-     * unitName="dalton" unitCvRef="UO" /> <cvParam accession="MS:1001413"
-     * name="search tolerance minus value" value="0.5" cvRef="PSI-MS"
-     * unitAccession="UO:0000221" unitName="dalton" unitCvRef="UO" />
-     * </ParentTolerance> <Threshold> <cvParam accession="MS:1001494" name="no
-     * threshold" cvRef="PSI-MS" /> </Threshold>
-     * </SpectrumIdentificationProtocol> </AnalysisProtocolCollection>
-     *
-     *
-     */
     public void handleAnalysisProtocolCollection() {
 
         //Boolean (parentIsMono, Boolean fragmentIsMono, SearchModification[] searchMods, String enzymeName, Double parTolPlus, Double parTolMinus, Double fragTolPlus, Double fragTolMinus);
@@ -1326,9 +1236,6 @@ public class Omssa2mzid {
 
     }
 
-    /*
-     * Helper class for converting Omssa mods to mzid mods
-     */
     private SearchModification handleOmssaMod(OmssaModification omod, boolean isFixed) {
         SearchModification searchMod = new SearchModification();
         double monoMass = omod.getModMonoMass();
@@ -1471,7 +1378,6 @@ public class Omssa2mzid {
          */
     }
 
-    // updated by f. ghali
     public void writeMzidFile(String output) {
         try {
             FileWriter writer = null;
@@ -1599,11 +1505,6 @@ public class Omssa2mzid {
 
     }
 
-    /**
-     * Helper method to setup a CvParam with CVRef, with either Daltons or ppm
-     * as units
-     *
-     */
     public CvParam getCvParamWithMassUnits(Boolean isDaltonUnit) {
         CvParam cvParam = new CvParam();
 
@@ -1776,11 +1677,6 @@ public class Omssa2mzid {
         return cvParam;
     }
 
-    /*
-     * Returns a double array containing the MZ and intensity of the closest
-     * peak in the spectrum to the matched ion MZ
-     *
-     */
     public double[] getMatchedIon(MSSpectrum spectrum, double ion_mz) {
 
         double[] matchedPeak = new double[2];

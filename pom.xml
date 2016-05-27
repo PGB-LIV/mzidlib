@@ -263,7 +263,7 @@
                     </execution>
                 </executions>
             </plugin>
-          <!--  TO BE ADDED: Fawaz<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9.1</version>
@@ -276,7 +276,6 @@
                     </execution>
                 </executions>
             </plugin>
--->
             <!-- Assembly plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -312,7 +311,26 @@
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <suppressionsLocation>/src/main/resources/checkstyle-suppressions.xml</suppressionsLocation>
+                    <suppressionsFileExpression>checkstyle.suppresions.file</suppressionsFileExpression>
+                </configuration>
+            </plugin>
             
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.3</version>
+                <configuration>
+                    <excludeFilterFile>src/main/resources/findbugs-exclude.xml</excludeFilterFile>
+                    <findbugsXmlOutput>true</findbugsXmlOutput>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+            </plugin>   
         </plugins>
         
         <extensions>
@@ -324,7 +342,31 @@
         </extensions>
     </build>
     
-    
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                    <suppressionsFileExpression>checkstyle.suppresions.file</suppressionsFileExpression>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.6</version>
+                <configuration>
+                    <excludes>
+                        <exclude>bgi</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting> 
     <repositories>
         <!-- EBI repo -->
         <repository>
@@ -349,6 +391,7 @@
             <snapshots>
             </snapshots>
         </repository>
+   
         <repository>
             <id>genesis-maven2-repository</id>
             <name>Genesis maven2 repository</name>
@@ -356,7 +399,6 @@
             <layout>default</layout>
         </repository>
 
-        
         <repository>            
             <id>maven2-repository.dev.java.net</id>            
             <name>Java.net Repository for Maven</name>            

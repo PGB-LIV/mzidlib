@@ -112,9 +112,6 @@ public class FalseDiscoveryRate {
     public static void main(String args[]) {
     }
 
-    /**
-     * Extract all this data from XML
-     */
     public Map<String, List<List<String>>> getFromXMLPeptideModificationHash() {
         return peptideModificationHash;
     }
@@ -127,9 +124,6 @@ public class FalseDiscoveryRate {
         return spectrumInformationHash;
     }
 
-    /**
-     * **************
-     */
     public FalseDiscoveryRate(String mzid, String searchEngine, String decoyRatio, String decoy) {
 
         this.decoyRatio = Integer.valueOf(decoyRatio);
@@ -155,9 +149,6 @@ public class FalseDiscoveryRate {
         }
     }
 
-    /**
-     * **************
-     */
     public FalseDiscoveryRate(String mzid, String searchEngine, String decoyRatio, String decoy, String cvTerm, boolean betterScore) {
 //        this.decoyRatio = Integer.valueOf(decoyRatio);
 //        this.decoy = decoy;
@@ -239,13 +230,13 @@ public class FalseDiscoveryRate {
             analysisCollection = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisCollection);
             //inputs = mzIdentML.getDataCollection().getInputs();
             inputs = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Inputs);
-            
+
             HashMap<String, String> spectraDataHaspMap = new HashMap();
             List<SpectraData> spectraDataList = inputs.getSpectraData();
             for (int i = 0; i < spectraDataList.size(); i++) {
                 SpectraData spectraData = spectraDataList.get(i);
                 spectraDataHaspMap.put(spectraData.getId(), spectraData.getLocation());
-                
+
             }
             searchDatabase_Ref = inputs.getSearchDatabase().get(0).getId();
 
@@ -287,7 +278,7 @@ public class FalseDiscoveryRate {
             int pepStart = 0, pepEnd = 0;
             String pepDBSequence_Ref = new String();
             //boolean isDecoy = false;
-             // NOTE - This also has to be a Arraylist, as there can be many peptides
+            // NOTE - This also has to be a Arraylist, as there can be many peptides
             List<List<Object>> peptideEvd = new ArrayList<List<Object>>();
 
             List<Object> singlePeptideEvd = new ArrayList<Object>();
@@ -1137,14 +1128,6 @@ public class FalseDiscoveryRate {
         this(new File(mzid), Integer.parseInt(decoyRatio), decoy, cvTerm, betterScoresAreLower);
     }
 
-    /**
-     * Return the computed result structure. The elements in all the following
-     * lists are arranged to be in correspondence with each other according to
-     * their indices. Eg - sorted_spectrumResult[i] has sorted_evalues[i] and
-     * estimated_simpleFDR[i] etc. etc. We can pull whatever information we want
-     * individually and create a matrix like structure when needed, for further
-     * processing.
-     */
     public List<String> getSorted_spectrumResult() {
         return sorted_spectrumResult;
     }
@@ -1287,5 +1270,4 @@ public class FalseDiscoveryRate {
         return spectraData_ref;
     }
 
-  
 }

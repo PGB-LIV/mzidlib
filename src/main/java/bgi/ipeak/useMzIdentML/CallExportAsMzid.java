@@ -13,7 +13,6 @@ import org.kohsuke.args4j.Option;
 import uk.ac.liv.mzidlib.converters.Omssa2mzid;
 import uk.ac.liv.mzidlib.converters.Tandem2mzid;
 
-
 /**
  * @author Administrator
  *
@@ -63,21 +62,21 @@ public class CallExportAsMzid {
     private String spectrum_fileformat;
     @Option(name = "-bc", required = false, usage = "The coordinates for spectra. Turn on for 0-based, mzML searched. Otherwise, off.")
     private boolean bc;
-	//private String mods=getClass().getClassLoader().getResource("resources/mods.xml").getPath();;
+    //private String mods=getClass().getClassLoader().getResource("resources/mods.xml").getPath();;
 
     private String mod_file = Properties.getModFile_path();
 
     /**
      *
-     * @param aFile
-     * @param out_mzid_file
-     * @param usermod
-     * @param reg
+     * @param aFile Input result file.
+     * @param out_mzid_file Output mzid file.
+     * @param usermod User mod.
+     * @param reg Decoy regex.
      */
     public CallExportAsMzid(String aFile, String out_mzid_file, String usermod, String reg) {
         this.input_result_file = aFile;
         this.search_engineID = 0;
-        this.out_mzidfilepath = out_mzid_file;        
+        this.out_mzidfilepath = out_mzid_file;
         this.umod = usermod;
         this.decoy_regrex = reg;
         //this.mod_file=mod;
@@ -86,13 +85,13 @@ public class CallExportAsMzid {
 
     /**
      *
-     * @param aFile
-     * @param out_mzid_file
-     * @param reg
-     * @param df
-     * @param accessionSplitRegex
-     * @param mf
-     * @param b0
+     * @param aFile Input result file.
+     * @param out_mzid_file Output mzid file.
+     * @param reg Decoy regex.
+     * @param df Database format.
+     * @param accessionSplitRegex Accession Split regex.
+     * @param mf Spectrum file format.
+     * @param b0 Spectra coordinates.
      */
     public CallExportAsMzid(String aFile, String out_mzid_file, String reg, String df, String accessionSplitRegex, String mf, boolean b0) {
         this.input_result_file = aFile;
@@ -108,7 +107,7 @@ public class CallExportAsMzid {
 
     /**
      *
-     * @throws Exception
+     * @throws Exception Exception thrown by method.
      */
     public void convert() throws Exception {
         if (search_engineID == 1) {
@@ -116,12 +115,12 @@ public class CallExportAsMzid {
                     bc, decoy_regrex, accessionSplitRegex, output_fraginfor);
         } else if (search_engineID == 0) {
             //System.out.println("mod file="+mod_file+"\t"+input_result_file+"\t");
-            Omssa2mzid omssa2mzid = new Omssa2mzid(input_result_file, 
-                                                   out_mzidfilepath, 
-                                                   output_fraginfor, 
-                                                   decoy_regrex, 
-                                                   mod_file, 
-                                                   umod);
+            Omssa2mzid omssa2mzid = new Omssa2mzid(input_result_file,
+                    out_mzidfilepath,
+                    output_fraginfor,
+                    decoy_regrex,
+                    mod_file,
+                    umod);
         }
     }
 
