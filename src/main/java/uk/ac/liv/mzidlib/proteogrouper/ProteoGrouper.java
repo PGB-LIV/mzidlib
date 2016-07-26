@@ -1066,9 +1066,9 @@ public class ProteoGrouper {
 
 //        System.out.println("Number of PDHs assigned to groups:" + pdhAssignedToGroupCount);
 //        System.out.println("Total PDH:" + proteinDetectionHypothesisList.size());
-        if (!isV11) {
+        //if (!isV11) {
             proteinDetectionList.getCvParam().add(utils.makeCvParam(countProteinsCvAcc, countProteinsCvName, psiCV, "" + numPAGsPassThreshold));
-        }
+        //}
         //System.out.println("Total PAGs:" + pagCount);
 
 //        for (ProteinDetectionHypothesis pdh : proteinDetectionHypothesisList) {

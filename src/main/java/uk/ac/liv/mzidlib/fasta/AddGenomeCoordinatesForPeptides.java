@@ -136,7 +136,7 @@ public class AddGenomeCoordinatesForPeptides {
                                 }
                             }
                         }
-
+                        accession = accession.toLowerCase();
                         List<CDS_Information> cdsColl = cdsRecords.get(accession);
 
                         if (cdsColl == null) {
@@ -187,6 +187,7 @@ public class AddGenomeCoordinatesForPeptides {
                     }
 
                     String accession = pr.getAccession();
+                    accession = accession.toLowerCase();
                     List<CDS_Information> cdsColl = cdsRecords.get(accession);
 
                     String feature = "peptide";
@@ -349,6 +350,7 @@ public class AddGenomeCoordinatesForPeptides {
                 } else {
                     throw new RuntimeException("Not generic accession");
                 }
+                accession = accession.toLowerCase();
                 List<CDS_Information> gffData = cdsRecords.get(accession);
                 if (gffData != null && gffData.size() > 0 && !peptideEvidence.isIsDecoy()) {
                     ProteinResults pr = prList.get(peptideEvidence.getId());
@@ -563,7 +565,7 @@ public class AddGenomeCoordinatesForPeptides {
 
         // Get accession from the protein object
         String accession = pr.getAccession();
-
+        accession = accession.toLowerCase();
         // return if no key found
         if (!cdsRecords.containsKey(accession)) {
             return null;

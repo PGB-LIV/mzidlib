@@ -9,4 +9,6 @@
               files="bgi[\\/]"/>
     <suppress checks="LineLengthCheck"
               files=".*"/>  
+     <suppress checks="JavadocVariableCheck"
+              files=".*"/>  
 </suppressions>

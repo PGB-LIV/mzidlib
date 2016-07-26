@@ -657,7 +657,7 @@ public class ProteoAnnotator2 {
                 String file1 = p1.getFileName().toString();
                 String gffOutputFile1 = prefix + file1.substring(0, file1.lastIndexOf(".")) + "_annotated.gff";
                 gffOutputFile1 = outputFolder + File.separator + gffOutputFile1;
-                String[] addGenomeCoordinatesForPeptidesInput = {"AddGenomeCoordinatesForPeptides", thresholdOutputFile, addGenomeCoordinatesForPeptidesOutputFile1, "-inputGff", inputGFF_A, "-outputGff", gffOutputFile1, "-compress", "false"};
+                String[] addGenomeCoordinatesForPeptidesInput = {"", thresholdOutputFile, addGenomeCoordinatesForPeptidesOutputFile1, "-inputGff", inputGFF_A, "-outputGff", gffOutputFile1, "-compress", "false"};
                 startTime = System.currentTimeMillis();
                 mzidLib.init(addGenomeCoordinatesForPeptidesInput);
                 stopTime = System.currentTimeMillis();

@@ -92,7 +92,7 @@ public class CVUtils {
         } else if (spectrumFileName.toLowerCase().contains(".mgf")) {
             //Mascot MGF file
             massSpecFileFormatID = "MS:1001062";
-            massSpecFileFormatName = "Mascot MGF file";
+            massSpecFileFormatName = "Mascot MGF format";
         } else if (spectrumFileName.toLowerCase().contains(".mz5")) {
             //mz5 file format, modeled after mzML
             massSpecFileFormatID = "MS:1001881";
