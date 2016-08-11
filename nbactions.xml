@@ -10,7 +10,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib AddGenomeCoordinatesForPeptides Z:\fawaz\_proteogenomics\PXD000653\output\new\PXD000653_1st_combined_fdr_peptide_threshold.mzid Z:\fawaz\_proteogenomics\PXD000653\output\new\fawaz.mzid -inputGff Z:\fawaz\_proteogenomics\NAS\Homo_sapiens.GRCh38.77.gff3 -outputGff Z:\fawaz\_proteogenomics\PXD000653\output\new\fawaz.gff3 -compress false</exec.args>
+            <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib AddGenomeCoordinatesForPeptides C:\Users\fghali\Desktop\PXD000263_1st_combined_fdr_peptide_threshold.mzid C:\Users\fghali\Desktop\PXD000263_1st_combined_fdr_peptide_threshold_mappedGff.mzid -inputGff C:\Users\fghali\Desktop\db\Homo_sapiens.GRCh38.85.gff3 -outputGff C:\Users\fghali\Desktop\PXD000263_1st_Homo_sapiens.GRCh38.85_annotated.gff -compress false</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>
@@ -24,7 +24,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib AddGenomeCoordinatesForPeptides Z:\fawaz\_proteogenomics\PXD000653\output\new\PXD000653_1st_combined_fdr_peptide_threshold.mzid Z:\fawaz\_proteogenomics\PXD000653\output\new\fawaz.mzid -inputGff Z:\fawaz\_proteogenomics\NAS\Homo_sapiens.GRCh38.77.gff3 -outputGff Z:\fawaz\_proteogenomics\PXD000653\output\new\fawaz.gff3 -compress false</exec.args>
+            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib AddGenomeCoordinatesForPeptides C:\Users\fghali\Desktop\PXD000263_1st_combined_fdr_peptide_threshold.mzid C:\Users\fghali\Desktop\PXD000263_1st_combined_fdr_peptide_threshold_mappedGff.mzid -inputGff C:\Users\fghali\Desktop\db\Homo_sapiens.GRCh38.85.gff3 -outputGff C:\Users\fghali\Desktop\PXD000263_1st_Homo_sapiens.GRCh38.85_annotated.gff -compress false</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
         </properties>
@@ -39,7 +39,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib AddGenomeCoordinatesForPeptides Z:\fawaz\_proteogenomics\PXD000653\output\new\PXD000653_1st_combined_fdr_peptide_threshold.mzid Z:\fawaz\_proteogenomics\PXD000653\output\new\fawaz.mzid -inputGff Z:\fawaz\_proteogenomics\NAS\Homo_sapiens.GRCh38.77.gff3 -outputGff Z:\fawaz\_proteogenomics\PXD000653\output\new\fawaz.gff3 -compress false</exec.args>
+            <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib AddGenomeCoordinatesForPeptides C:\Users\fghali\Desktop\PXD000263_1st_combined_fdr_peptide_threshold.mzid C:\Users\fghali\Desktop\PXD000263_1st_combined_fdr_peptide_threshold_mappedGff.mzid -inputGff C:\Users\fghali\Desktop\db\Homo_sapiens.GRCh38.85.gff3 -outputGff C:\Users\fghali\Desktop\PXD000263_1st_Homo_sapiens.GRCh38.85_annotated.gff -compress false</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>

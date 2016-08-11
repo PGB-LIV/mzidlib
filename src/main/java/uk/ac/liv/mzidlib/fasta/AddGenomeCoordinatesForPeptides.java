@@ -347,6 +347,11 @@ public class AddGenomeCoordinatesForPeptides {
                 if (accession.startsWith("generic")) {
                     accession = accession.split("\\|")[1];
                     accession = accession.substring(2);
+                    // Update by Fawaz Ghali 04/08/2016 fix Ensembl mapping version 85
+                                if (accession.contains(".")){
+                                    
+                                    accession = accession.substring(0, accession.indexOf("."));
+                                }
                 } else {
                     throw new RuntimeException("Not generic accession");
                 }
@@ -822,6 +827,11 @@ public class AddGenomeCoordinatesForPeptides {
                             if (accession.startsWith("generic")) {
                                 accession = accession.split("\\|")[1];
                                 accession = accession.substring(2);
+                                // Update by Fawaz Ghali 04/08/2016 fix Ensembl mapping version 85
+                                if (accession.contains(".")){
+                                    
+                                    accession = accession.substring(0, accession.indexOf("."));
+                                }
                             } else {
                                 throw new RuntimeException("Not a generic accession");
                             }

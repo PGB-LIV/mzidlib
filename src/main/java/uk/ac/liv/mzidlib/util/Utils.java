@@ -99,6 +99,10 @@ public class Utils {
     }
 
     public static File splitMGFsOrReturnSame(String path, File masterMgf, int fileUpperLimit, int spectraUpperLimit) throws IOException {
+        System.out.println("splitMGFsOrReturnSame: ");
+        
+        System.out.println("path: "+path);
+        System.out.println("masterMgf: "+masterMgf);
         int entries = countMgfEntries(masterMgf);
         if (entries < spectraUpperLimit && masterMgf.length() < fileUpperLimit) {
             return masterMgf;

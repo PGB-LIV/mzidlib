@@ -487,6 +487,24 @@ public class ProteoAnnotator2 {
             for (String string : listMGFFiles) {
                 if (string.toLowerCase().endsWith(".mgf")) {
                     String newMGFLocation = outputFolder + File.separator + "mgf";
+                    File n1MGF = new File(newMGFLocation);
+
+                    if (!n1MGF.exists()) {
+                        System.out.println("");
+                        System.out.println("Creating directory: " + newMGFLocation);
+                        System.out.println("");
+                        boolean result = n1MGF.mkdirs();
+
+                        if (!result) {
+                            throw new RuntimeException("Creating the output folder has failed");
+                        }
+                    } else {
+                        // check output folder if empty
+                        if (n1MGF.list().length > 0) {
+                            throw new RuntimeException("The output folder is not empty.");
+                        }
+
+                    }
                     File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(newMGFLocation, new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
 
                     if (mgfFileOrLocation.isDirectory()) {
@@ -657,7 +675,7 @@ public class ProteoAnnotator2 {
                 String file1 = p1.getFileName().toString();
                 String gffOutputFile1 = prefix + file1.substring(0, file1.lastIndexOf(".")) + "_annotated.gff";
                 gffOutputFile1 = outputFolder + File.separator + gffOutputFile1;
-                String[] addGenomeCoordinatesForPeptidesInput = {"", thresholdOutputFile, addGenomeCoordinatesForPeptidesOutputFile1, "-inputGff", inputGFF_A, "-outputGff", gffOutputFile1, "-compress", "false"};
+                String[] addGenomeCoordinatesForPeptidesInput = {"AddGenomeCoordinatesForPeptides", thresholdOutputFile, addGenomeCoordinatesForPeptidesOutputFile1, "-inputGff", inputGFF_A, "-outputGff", gffOutputFile1, "-compress", "false"};
                 startTime = System.currentTimeMillis();
                 mzidLib.init(addGenomeCoordinatesForPeptidesInput);
                 stopTime = System.currentTimeMillis();
