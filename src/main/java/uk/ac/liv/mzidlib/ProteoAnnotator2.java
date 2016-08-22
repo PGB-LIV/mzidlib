@@ -498,13 +498,7 @@ public class ProteoAnnotator2 {
                         if (!result) {
                             throw new RuntimeException("Creating the output folder has failed");
                         }
-                    } else {
-                        // check output folder if empty
-                        if (n1MGF.list().length > 0) {
-                            throw new RuntimeException("The output folder is not empty.");
-                        }
-
-                    }
+                    } 
                     File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(newMGFLocation, new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
 
                     if (mgfFileOrLocation.isDirectory()) {

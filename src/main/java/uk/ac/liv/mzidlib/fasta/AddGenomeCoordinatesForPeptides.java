@@ -82,6 +82,46 @@ public class AddGenomeCoordinatesForPeptides {
                 if (fastaRegionFlag == false) {
 
                     String[] lineArray = line.split("\t");
+                    // Added by Fawaz Ghali 22/08/2016 to handle ab inito gff3
+                    if (inputGffFile.contains("abinitio") && lineArray.length == 9 && lineArray[2].equals("exon")) {
+                        out.write(line + "\n");
+
+                        String[] gffArrayLine = line.split("\t");
+                        //ArrayList<CDS_Information> gffDetails = new ArrayList();
+                        String seqId = gffArrayLine[0];
+                        String source = gffArrayLine[1];
+                        String type = gffArrayLine[2];
+                        String start = gffArrayLine[3];
+                        String end = gffArrayLine[4];
+                        String score = gffArrayLine[5];
+                        String strand = gffArrayLine[6];
+                        String phase = gffArrayLine[7];
+                        String attribute = gffArrayLine[8];
+                        long startPos;
+                        long endPos;
+                        startPos = Long.parseLong(start);
+                        endPos = Long.parseLong(end);
+                        CDS_Information cdsObj = new CDS_Information(seqId, source, startPos, endPos, strand, phase, attribute);
+                        String accession = "";
+
+                        String[] splits = attribute.split(";");
+                        for (int i = 0; i < splits.length; i++) {
+                            String string = splits[i];
+                            if (string.contains("Parent=transcript:")) {
+                                accession = string.replace("Parent=transcript:", "");
+                            }
+                        }
+
+                        accession = accession.toLowerCase();
+
+                        List<CDS_Information> cdsColl = cdsRecords.get(accession);
+
+                        if (cdsColl == null) {
+                            cdsColl = new ArrayList<CDS_Information>();
+                        }
+                        cdsColl.add(cdsObj);
+                        cdsRecords.put(accession, cdsColl);
+                    }
                     if (lineArray.length == 9 && lineArray[2].equals("CDS")) {
                         out.write(line + "\n");
 
@@ -348,10 +388,10 @@ public class AddGenomeCoordinatesForPeptides {
                     accession = accession.split("\\|")[1];
                     accession = accession.substring(2);
                     // Update by Fawaz Ghali 04/08/2016 fix Ensembl mapping version 85
-                                if (accession.contains(".")){
-                                    
-                                    accession = accession.substring(0, accession.indexOf("."));
-                                }
+                    if (accession.contains(".")) {
+
+                        accession = accession.substring(0, accession.indexOf("."));
+                    }
                 } else {
                     throw new RuntimeException("Not generic accession");
                 }
@@ -828,8 +868,8 @@ public class AddGenomeCoordinatesForPeptides {
                                 accession = accession.split("\\|")[1];
                                 accession = accession.substring(2);
                                 // Update by Fawaz Ghali 04/08/2016 fix Ensembl mapping version 85
-                                if (accession.contains(".")){
-                                    
+                                if (accession.contains(".")) {
+
                                     accession = accession.substring(0, accession.indexOf("."));
                                 }
                             } else {
