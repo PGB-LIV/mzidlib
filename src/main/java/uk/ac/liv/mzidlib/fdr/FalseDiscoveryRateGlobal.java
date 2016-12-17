@@ -14,71 +14,88 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.MzIdentMLObject;
-import uk.ac.ebi.jmzidml.model.mzidml.*;
+import uk.ac.ebi.jmzidml.model.mzidml.AnalysisCollection;
+import uk.ac.ebi.jmzidml.model.mzidml.AnalysisProtocolCollection;
+import uk.ac.ebi.jmzidml.model.mzidml.AnalysisSoftware;
+import uk.ac.ebi.jmzidml.model.mzidml.AnalysisSoftwareList;
+import uk.ac.ebi.jmzidml.model.mzidml.AuditCollection;
+import uk.ac.ebi.jmzidml.model.mzidml.Cv;
+import uk.ac.ebi.jmzidml.model.mzidml.CvList;
+import uk.ac.ebi.jmzidml.model.mzidml.CvParam;
+import uk.ac.ebi.jmzidml.model.mzidml.DBSequence;
+import uk.ac.ebi.jmzidml.model.mzidml.FragmentationTable;
+import uk.ac.ebi.jmzidml.model.mzidml.Inputs;
+import uk.ac.ebi.jmzidml.model.mzidml.Param;
+import uk.ac.ebi.jmzidml.model.mzidml.Peptide;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidenceRef;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideHypothesis;
+import uk.ac.ebi.jmzidml.model.mzidml.ProteinAmbiguityGroup;
+import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
+import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionList;
+import uk.ac.ebi.jmzidml.model.mzidml.Provider;
+import uk.ac.ebi.jmzidml.model.mzidml.SequenceCollection;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationItem;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationList;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationResult;
+import uk.ac.ebi.jmzidml.model.mzidml.UserParam;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 import uk.ac.liv.mzidlib.multiplesearch.TreeSortForIndices;
+import uk.ac.liv.mzidlib.util.FileHandler;
 import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
 /**
- *
  * @author Fawaz Ghali, University of Liverpool, 2013
+ * Last updated 2016.
  */
 public class FalseDiscoveryRateGlobal {
 
     // Determine FDR level 1) PSM, 2) Peptide, 3)ProteinGroup
-    String fdrLevel = "PSM";
+    private String fdrLevel = "PSM";
     // PAG or PDH
-    String proteinLevel = "PDH";
+    private String proteinLevel = "PDH";
     private double decoyRatio = 1;
     private String decoy;
-    boolean usingFileDecoyAttribute = false;
-    public String allowedEvalues = "MS:1001330" + ";" + "MS:1001172" + ";" + "MS:1001159" + ";" + "MS:1001328" + ";" + "MS:1002045" + ";" + "MS:1002053";
-    private String cvTerm = "";
+    private boolean usingFileDecoyAttribute = false;
+    //TODO: Make this as an array of possible values than a long string
+    private String allowedEvalues = "MS:1001330" + ";" + "MS:1001172" + ";" + "MS:1001159" + ";" + "MS:1001328" + ";" + "MS:1002045" + ";" + "MS:1002053";
     private boolean betterScoresAreLower = true;
     /*
      * For each Spectrum Result id we need to store :: - peptides associated-
-     * scores - evalue	- decoy = true/false
+     * scores - evalue - decoy = true/false
      */
-    private List<String> spectrumResult = new ArrayList<String>();
-    private List<String> spectrumItem = new ArrayList<String>();
-    private List<String> peptideNames = new ArrayList<String>();
-    private List<Double> evalues = new ArrayList<Double>();
-    private List<String> decoyOrNot = new ArrayList<String>();
-    /*
-     * Once the evalues/scores list is sorted, we need to remember the original
-     * indices of the entries (pre-sorted order) so that we can map back that
-     * which value belongs to which spectrumResult,peptideNames etc.
-     */
-    private Integer[] sortOrderForEvalues;
+    private List<String> spectrumResult = new ArrayList<>();
+    private List<String> spectrumItem = new ArrayList<>();
+    private List<String> peptideNames = new ArrayList<>();
+    private List<Double> evalues = new ArrayList<>();
+    private List<String> decoyOrNot = new ArrayList<>();
 
     /*
      * the above information in sorted order
      */
-    private List<String> sorted_spectrumResult = new ArrayList<String>();
-    private List<String> sorted_spectrumItem = new ArrayList<String>();
-    private List<String> sorted_peptideNames = new ArrayList<String>();
-    private List<Double> sorted_evalues = new ArrayList<Double>();
-    private List<String> sorted_decoyOrNot = new ArrayList<String>();
+    private List<String> sorted_spectrumResult = new ArrayList<>();
+    private List<String> sorted_spectrumItem = new ArrayList<>();
+    private List<String> sorted_peptideNames = new ArrayList<>();
+    private List<Double> sorted_evalues = new ArrayList<>();
+    private List<String> sorted_decoyOrNot = new ArrayList<>();
 
     /*
      * Store the estimated FDR, q-Value, FDR Score here
      */
-    private List<Double> estimated_simpleFDR = new ArrayList<Double>();
-    private List<Double> estimated_qvalue = new ArrayList<Double>();
-    private List<Double> estimated_fdrscore = new ArrayList<Double>();
-    // F. Ghali adding TP and FP 31/08/2011
-    private List<Double> tp = new ArrayList<Double>();
-    private List<Double> fp = new ArrayList<Double>();
+    private List<Double> estimated_simpleFDR = new ArrayList<>();
+    private List<Double> estimated_qvalue = new ArrayList<>();
+    private List<Double> estimated_fdrscore = new ArrayList<>();
+    private List<Double> tp = new ArrayList<>();
+    private List<Double> fp = new ArrayList<>();
     /*
      * MzIdentML elements
      */
     // private MzIdentML mzIdentML;
     private MzIdentMLUnmarshaller mzIdentMLUnmarshaller;
-    private List<DBSequence> dBSequenceList = new ArrayList<>();
-    private List<Peptide> peptideList = new ArrayList<>();
     private Map<String, DBSequence> dBSequenceMap = new HashMap<>();
     private Map<String, PeptideEvidence> peptideEvidenceMap = new HashMap<>();
     private Map<String, Peptide> peptideMap = new HashMap<>();
@@ -86,9 +103,9 @@ public class FalseDiscoveryRateGlobal {
     /*
      * The data read from MzIdentML file after parsing
      */
-    public Map<String, String> peptideIdAndSequence = new HashMap<String, String>();
-    ;
-    //metadata
+    private Map<String, String> peptideIdAndSequence = new HashMap<>();
+
+    // metadata
     private AnalysisSoftwareList analysisSoftwareList;
     private AuditCollection auditCollection;
     private Provider provider;
@@ -97,27 +114,81 @@ public class FalseDiscoveryRateGlobal {
     private AnalysisCollection analysisCollection;
     private Inputs inputs;
     private String searchDatabase_Ref;
-    private String spectraData_ref;
-    // Store all PSM related to a specific peptide
-    Map<String, List<String>> peptidePSMMap = new HashMap<>();
-    // Store all PSM related to a specific peptide
-    Map<String, Integer> peptidePSMCount = new HashMap<>();
-    // Store best scored PSM for a specific peptide
-    Map<String, String> bestScorePSM = new HashMap<>();
+
+    // Store all PSM related information to a specific peptide
+    private Map<String, List<String>> peptidePSMMap = new HashMap<>();
+    private Map<String, Integer> peptidePSMCount = new HashMap<>();
+    private Map<String, String> bestScorePSM = new HashMap<>();
 
     private MzidLibUtils mzidLibUtils;
 
-    public static void main(String args[]) {
+
+
+    public static void main(String args[])
+    {
+        if (args.length < 8) {
+            System.err.println("Missing parameters. Parameters are: \n" +
+                    " InputFile,\n decoyRatio,\n decoyValue,\n cvTerm,\n Beter Scores are Lower of Not (true/false),\n fdrLevel,\n ProteinLevel,\n OutputFile");
+            return;
+        }
         FalseDiscoveryRateGlobal fdrGlobal = new FalseDiscoveryRateGlobal(args[0], args[1], args[2], args[3], Boolean.valueOf(args[4]), args[5], args[6]);
         fdrGlobal.computeFDRusingJonesMethod();
         fdrGlobal.writeToMzIdentMLFile(args[7]);
     }
 
-    public Map<String, String> getFromXMLPeptideSequenceHash() {
-        return peptideIdAndSequence;
+    public FalseDiscoveryRateGlobal(String mzid, String decoyRatio, String decoy, String cvTerm, boolean betterScoresAreLower, String fdrLevel, String proteinLevel)
+    {
+        this.decoyRatio = Double.valueOf(decoyRatio);
+        this.decoy = decoy;
+        this.fdrLevel = fdrLevel;
+        this.proteinLevel = proteinLevel;
+
+        if (!cvTerm.isEmpty()) {
+            allowedEvalues = cvTerm;
+        }
+
+        this.betterScoresAreLower = betterScoresAreLower;
+        if (decoy == null || decoy.isEmpty()) {
+            usingFileDecoyAttribute = true;
+        }
+        
+        try {
+            File mzidFile = FileHandler.handleFile(mzid, true);
+            mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(mzidFile);
+            readMzIdentML();
+        } catch (OutOfMemoryError error) {
+            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String className = this.getClass().getName();
+            String message = "The task \"" + methodName + "\" in the class \"" + className
+                    + "\" was not completed because of " + error.getMessage() + "."
+                    + "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
+            System.out.println(message);
+        }
+
     }
 
-    private void readMetaData() {
+    /**
+     * Compute FDR score and q value etc using the method described in Jones et
+     * al. Proteomics, 2009,9, 1220-1229
+     */
+    public void computeFDRusingJonesMethod()
+    {
+        getEvalueSortedPeptideList();
+        computeSimpleFDR();
+        computeQValues();
+        computeFDRScore();
+    }
+
+
+    // Write the sorted data into a file
+    public void writeToMzIdentMLFile(String fileName)
+    {
+        writeMzidFile(fileName);
+    }
+
+
+    private void readMetaData()
+    {
         mzidLibUtils = new MzidLibUtils();
         cvList = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.CvList);
         analysisSoftwareList = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisSoftwareList);
@@ -127,19 +198,15 @@ public class FalseDiscoveryRateGlobal {
         analysisCollection = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisCollection);
         inputs = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Inputs);
         searchDatabase_Ref = inputs.getSearchDatabase().get(0).getId();
-
     }
 
-    private void readSequenceCollection() {
+    private void readSequenceCollection()
+    {
         Iterator<DBSequence> iterDBSequence = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.DBSequence);
         while (iterDBSequence.hasNext()) {
-            dBSequenceList.add(iterDBSequence.next());
-        }
-
-        for (DBSequence dBSequence : dBSequenceList) {
+            DBSequence dBSequence = iterDBSequence.next();
             dBSequenceMap.put(dBSequence.getId(), dBSequence);
         }
-
         getPeptideEvidenceMap().clear();
         Iterator<PeptideEvidence> iterPeptideEvidence = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.PeptideEvidence);
         while (iterPeptideEvidence.hasNext()) {
@@ -149,18 +216,34 @@ public class FalseDiscoveryRateGlobal {
         Iterator<Peptide> iterPeptide = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
         while (iterPeptide.hasNext()) {
             Peptide peptide = iterPeptide.next();
-            peptideList.add(peptide);
+            peptideMap.put(peptide.getId(), peptide);
             String pepId = peptide.getId();
             String pepSeq = peptide.getPeptideSequence();
             peptideIdAndSequence.put(pepId, pepSeq);
         }
-        for (Peptide peptide1 : peptideList) {
-            peptideMap.put(peptide1.getId(), peptide1);
-        }
-
     }
 
-    private void readMzIdentMLPeptide() {
+    private void readMzIdentML()
+    {
+        readMetaData();
+        readSequenceCollection();
+        switch (fdrLevel) {
+            case "Peptide":
+                readMzIdentMLPeptide();
+                break;
+            case "ProteinGroup":
+                readMzIdentMLProteinGroup();
+                break;
+            case "PSM":
+                readMzIdentMLPSM();
+            default:
+                System.err.println("Unknown FDR Level:" + fdrLevel);
+                break;
+        }
+    }
+
+    private void readMzIdentMLPeptide()
+    {
         try {
 
             Iterator<MzIdentMLObject> iterSpectrumIdentificationResult = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
@@ -198,7 +281,7 @@ public class FalseDiscoveryRateGlobal {
                         String accession = cvParam.getAccession();
 
                         if (allowedEvalues.contains(accession)) {
-                            combinedFDR = Double.valueOf(cvParam.getValue()).doubleValue();
+                            combinedFDR = Double.valueOf(cvParam.getValue());
 
                         }
                     }
@@ -224,7 +307,7 @@ public class FalseDiscoveryRateGlobal {
                         String value = bestScorePSM.get(peptideRef);
                         if (value != null && value.contains(":_:")) {
                             String[] psm_fdr = value.split(":_:");
-                            if (combinedFDR < Double.valueOf(psm_fdr[1]).doubleValue()) {
+                            if (combinedFDR < Double.valueOf(psm_fdr[1])) {
                                 bestScorePSM.remove(peptideRef);
                                 String newKey = spectrumIdentItem.getId() + ":_:" + combinedFDR + ":_:" + Boolean.valueOf(isdecoy).toString() + ":_:" + spectrumResultId;
                                 bestScorePSM.put(peptideRef, newKey);
@@ -255,92 +338,19 @@ public class FalseDiscoveryRateGlobal {
         } catch (OutOfMemoryError error) {
             String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + error.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \"" + className
+                    + "\" was not completed because of " + error.getMessage() + "."
                     + "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
     }
 
-    private void readMzIdentMLProteinGroup() {
-
-//        try {
-//
-//            Iterator<ProteinAmbiguityGroup> iterProteinAmbiguityGroup = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.ProteinAmbiguityGroup);
-//            while (iterProteinAmbiguityGroup.hasNext()) {
-//                ProteinAmbiguityGroup proteinAmbiguityGroup = iterProteinAmbiguityGroup.next();
-//                boolean anchorProtein = false;
-//                String proteinAmbiguityGroupId = proteinAmbiguityGroup.getId();
-//                double combinedFDR = 0;
-//                String pdhId = null;
-//                boolean isdecoy = false;
-//                //
-//                String dbSeqRef = null;
-//                for (ProteinDetectionHypothesis proteinDetectionHypothesis : proteinAmbiguityGroup.getProteinDetectionHypothesis()) {
-//                    List<CvParam> cvParamListproteinDetectionHypothesis = proteinDetectionHypothesis.getCvParam();
-//                    List<PeptideHypothesis> peptideHypothesisList = proteinDetectionHypothesis.getPeptideHypothesis();
-//                    pdhId = proteinDetectionHypothesis.getId();
-//                    dbSeqRef = proteinDetectionHypothesis.getDBSequenceRef();
-//
-//                    for (PeptideHypothesis peptideHypothesis : peptideHypothesisList) {
-//                        PeptideEvidence peptideEvidence1 = getPeptideEvidenceMap().get(peptideHypothesis.getPeptideEvidenceRef());
-//                        if (peptideEvidence1 != null) {
-//                            isdecoy = peptideEvidence1.isIsDecoy();
-//                            if (usingFileDecoyAttribute) {
-//                                if (peptideEvidence1.isIsDecoy()) {
-//                                    isdecoy = true;
-//                                    break;
-//                                }
-//                            } else {
-//                                if (decoy != null && !decoy.equals("") && (decoy.length() > 1)) {
-//                                    if (dBSequenceMap.get(peptideEvidence1.getDBSequenceRef()).getAccession().contains(decoy)) {
-//                                        isdecoy = true;
-//                                        break;
-//                                    }
-//                                } else {
-//                                    System.out.println("Error - no decoy value set, need to use alternative constructor");
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    for (CvParam cvParam : cvParamListproteinDetectionHypothesis) {
-//                        String accession = cvParam.getAccession();
-//
-//                        if (accession.equals("MS:1001591")) {
-//                            anchorProtein = true;
-//                            
-//                        }
-//                        if (allowedEvalues.contains(accession) ) {
-//                            combinedFDR = Double.valueOf(cvParam.getValue()).doubleValue();
-//                            System.out.println("FDR 0");
-//                        }
-//
-//                    }
-//
-//                }
-//                if (!anchorProtein) {
-//                    System.out.println("Error - no anchor protein found");
-//                } else if (combinedFDR == 0) {
-//                    System.out.println("Error - evalue cannot be zero");
-//                } else {
-//                    spectrumResult.add(proteinAmbiguityGroupId);
-//                    spectrumItem.add(pdhId);
-//                    peptideNames.add(dbSeqRef);
-//                    evalues.add(combinedFDR);
-//                    decoyOrNot.add(String.valueOf(isdecoy));
-//                }
-//            }
-//
-//        } catch (OutOfMemoryError error) {
-//            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-//            String className = this.getClass().getName();
-//            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + error.getMessage() + "."
-//                    + "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
-//            System.out.println(message);
-//        }
+    private void readMzIdentMLProteinGroup()
+    {
         try {
 
-            Iterator<ProteinAmbiguityGroup> iterProteinAmbiguityGroup = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.ProteinAmbiguityGroup);
+            Iterator<ProteinAmbiguityGroup> iterProteinAmbiguityGroup = mzIdentMLUnmarshaller
+                    .unmarshalCollectionFromXpath(MzIdentMLElement.ProteinAmbiguityGroup);
             while (iterProteinAmbiguityGroup.hasNext()) {
                 ProteinAmbiguityGroup proteinAmbiguityGroup = iterProteinAmbiguityGroup.next();
                 boolean anchorProtein = false;
@@ -350,13 +360,13 @@ public class FalseDiscoveryRateGlobal {
                 double combinedFDR = 0;
                 boolean isdecoy = false;
                 //
-                String dbSeqRef = null;
+                String dbSeqRef;
 
                 for (int j = 0; j < proteinAmbiguityGroup.getProteinDetectionHypothesis().size(); j++) {
-                    ProteinDetectionHypothesis proteinDetectionHypothesis = proteinAmbiguityGroup.getProteinDetectionHypothesis().get(j);
+                    ProteinDetectionHypothesis proteinDetectionHypothesis = proteinAmbiguityGroup
+                            .getProteinDetectionHypothesis().get(j);
                     List<CvParam> cvParamListproteinDetectionHypothesis = proteinDetectionHypothesis.getCvParam();
-                    for (int s = 0; s < cvParamListproteinDetectionHypothesis.size(); s++) {
-                        CvParam cvParam = cvParamListproteinDetectionHypothesis.get(s);
+                    for (CvParam cvParam : cvParamListproteinDetectionHypothesis) {
                         String accession = cvParam.getAccession();
                         if (accession.equals("MS:1001591")) {
                             anchorProteinDetectionHypothesis = proteinDetectionHypothesis;
@@ -369,12 +379,12 @@ public class FalseDiscoveryRateGlobal {
                     anchorProteinDetectionHypothesis = proteinAmbiguityGroup.getProteinDetectionHypothesis().get(0);
 
                 }
-                //    for (ProteinDetectionHypothesis proteinDetectionHypothesis : proteinAmbiguityGroup.getProteinDetectionHypothesis()) {
                 List<PeptideHypothesis> peptideHypothesisList = anchorProteinDetectionHypothesis.getPeptideHypothesis();
                 dbSeqRef = anchorProteinDetectionHypothesis.getDBSequenceRef();
 
                 for (PeptideHypothesis peptideHypothesis : peptideHypothesisList) {
-                    PeptideEvidence peptideEvidence1 = getPeptideEvidenceMap().get(peptideHypothesis.getPeptideEvidenceRef());
+                    PeptideEvidence peptideEvidence1 = getPeptideEvidenceMap()
+                            .get(peptideHypothesis.getPeptideEvidenceRef());
                     if (peptideEvidence1 != null) {
                         isdecoy = peptideEvidence1.isIsDecoy();
                         if (usingFileDecoyAttribute) {
@@ -384,7 +394,8 @@ public class FalseDiscoveryRateGlobal {
                             }
                         } else {
                             if (decoy != null && !decoy.equals("") && (decoy.length() > 1)) {
-                                if (dBSequenceMap.get(peptideEvidence1.getDBSequenceRef()).getAccession().contains(decoy)) {
+                                if (dBSequenceMap.get(peptideEvidence1.getDBSequenceRef()).getAccession()
+                                        .contains(decoy)) {
                                     isdecoy = true;
                                     break;
                                 }
@@ -395,12 +406,12 @@ public class FalseDiscoveryRateGlobal {
                     }
                 }
 
-                //         }
+
                 if (proteinLevel.equals("PAG")) {
                     for (CvParam cvParam : proteinAmbiguityGroup.getCvParam()) {
                         String accession = cvParam.getAccession();
                         if (allowedEvalues.contains(accession)) {
-                            combinedFDR = Double.valueOf(cvParam.getValue()).doubleValue();
+                            combinedFDR = Double.valueOf(cvParam.getValue());
                         }
                     }
                 }
@@ -408,7 +419,7 @@ public class FalseDiscoveryRateGlobal {
                     for (CvParam cvParam : anchorProteinDetectionHypothesis.getCvParam()) {
                         String accession = cvParam.getAccession();
                         if (allowedEvalues.contains(accession)) {
-                            combinedFDR = Double.valueOf(cvParam.getValue()).doubleValue();
+                            combinedFDR = Double.valueOf(cvParam.getValue());
                         }
                     }
 
@@ -425,102 +436,95 @@ public class FalseDiscoveryRateGlobal {
         } catch (OutOfMemoryError error) {
             String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + error.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \"" + className
+                    + "\" was not completed because of " + error.getMessage() + "."
                     + "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
 
     }
 
-    private void readMzIdentML() {
-        readMetaData();
-        readSequenceCollection();
-        //Determine FDR level 1) PSM, 2) Peptide, 3)ProteinGroup
-        if (fdrLevel.equals("Peptide")) {
-            readMzIdentMLPeptide();
-        } else if (fdrLevel.equals("ProteinGroup")) {
-            readMzIdentMLProteinGroup();
-        } else {
-
-            try {
-
-                Iterator<SpectrumIdentificationResult> iterSpectrumIdentificationResult = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
-                while (iterSpectrumIdentificationResult.hasNext()) {
-                    SpectrumIdentificationResult spectrumIdentificationResult = iterSpectrumIdentificationResult.next();
-                    String spectrumResultId = spectrumIdentificationResult.getSpectrumID();
-
-                    for (SpectrumIdentificationItem spectrumIdentItem : spectrumIdentificationResult.getSpectrumIdentificationItem()) {
-                        String peptideRef = spectrumIdentItem.getPeptideRef();
-                        List<CvParam> cvParamListSpectrumIdentificationItem = spectrumIdentItem.getCvParam();
-                        List<PeptideEvidenceRef> peptideEvidenceRefList = spectrumIdentItem.getPeptideEvidenceRef();
-                        boolean isdecoy = false;
-                        for (PeptideEvidenceRef peptideEvidenceRef1 : peptideEvidenceRefList) {
-                            PeptideEvidence peptideEvidence1 = getPeptideEvidenceMap().get(peptideEvidenceRef1.getPeptideEvidenceRef());
-                            if (peptideEvidence1 != null) {
-                                isdecoy = peptideEvidence1.isIsDecoy();
-                                if (usingFileDecoyAttribute) {
-                                    if (peptideEvidence1.isIsDecoy()) {
+    private void readMzIdentMLPSM()
+    {
+        try {
+            Iterator<SpectrumIdentificationResult> iterSpectrumIdentificationResult = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
+            while (iterSpectrumIdentificationResult.hasNext()) {
+                SpectrumIdentificationResult spectrumIdentificationResult = iterSpectrumIdentificationResult.next();
+                String spectrumResultId = spectrumIdentificationResult.getSpectrumID();
+                for (SpectrumIdentificationItem spectrumIdentItem : spectrumIdentificationResult.getSpectrumIdentificationItem()) {
+                    String peptideRef = spectrumIdentItem.getPeptideRef();
+                    List<CvParam> cvParamListSpectrumIdentificationItem = spectrumIdentItem.getCvParam();
+                    List<PeptideEvidenceRef> peptideEvidenceRefList = spectrumIdentItem.getPeptideEvidenceRef();
+                    boolean isdecoy = false;
+                    for (PeptideEvidenceRef peptideEvidenceRef1 : peptideEvidenceRefList) {
+                        PeptideEvidence peptideEvidence1 = getPeptideEvidenceMap().get(peptideEvidenceRef1.getPeptideEvidenceRef());
+                        if (peptideEvidence1 != null) {
+                            isdecoy = peptideEvidence1.isIsDecoy();
+                            if (usingFileDecoyAttribute) {
+                                if (peptideEvidence1.isIsDecoy()) {
+                                    isdecoy = true;
+                                    break;
+                                }
+                            } else {
+                                if (decoy != null && !decoy.equals("") && (decoy.length() > 1)) {
+                                    if (dBSequenceMap.get(peptideEvidence1.getDBSequenceRef()).getAccession().contains(decoy)) {
                                         isdecoy = true;
                                         break;
                                     }
                                 } else {
-                                    if (decoy != null && !decoy.equals("") && (decoy.length() > 1)) {
-                                        if (dBSequenceMap.get(peptideEvidence1.getDBSequenceRef()).getAccession().contains(decoy)) {
-                                            isdecoy = true;
-                                            break;
-                                        }
-                                    } else {
-                                        System.out.println("Error - no decoy value set, need to use alternative constructor");
-                                    }
+                                    System.out.println("Error - no decoy value set, need to use alternative constructor");
                                 }
                             }
-                        } // end of for (int k = 0; k < peptideEvidenceRefList.size(); k++) {
-                        if (isdecoy == true) {
-                            decoyOrNot.add("true");
-                        } else {
-                            decoyOrNot.add("false");
-
                         }
-                        spectrumResult.add(spectrumResultId);
-                        peptideNames.add(peptideRef);
-                        spectrumItem.add(spectrumIdentItem.getId());
-                        for (int s = 0; s < cvParamListSpectrumIdentificationItem.size(); s++) {
-                            CvParam cvParam = cvParamListSpectrumIdentificationItem.get(s);
-                            String accession = cvParam.getAccession();
-                            if (allowedEvalues.contains(accession)) {
-                                evalues.add(new Double(cvParam.getValue()));
-                            }
+                    } // end of for each
 
+                    if (isdecoy) {
+                        decoyOrNot.add("true");
+                    } else {
+                        decoyOrNot.add("false");
+
+                    }
+                    spectrumResult.add(spectrumResultId);
+                    peptideNames.add(peptideRef);
+                    spectrumItem.add(spectrumIdentItem.getId());
+                    for (CvParam cvParam : cvParamListSpectrumIdentificationItem) {
+                        String accession = cvParam.getAccession();
+                        if (allowedEvalues.contains(accession)) {
+                            evalues.add(new Double(cvParam.getValue()));
                         }
+
                     }
                 }
-            } catch (OutOfMemoryError error) {
-                String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-                String className = this.getClass().getName();
-                String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + error.getMessage() + "."
-                        + "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
-                System.out.println(message);
             }
+        } catch (OutOfMemoryError error) {
+            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String className = this.getClass().getName();
+            String message = "The task \"" + methodName + "\" in the class \"" + className
+                    + "\" was not completed because of " + error.getMessage() + "."
+                    + "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
+            System.out.println(message);
         }
     }
 
     /**
+     * Sort the data using evalue
      * Make simple arrayLists from complicated data structures returned after
      * reading mzIdentML file. These simple arrayLists will be used for further
      * calculations of various scores.
      */
-    private void getEvalueSortedPeptideList() {
+    private void getEvalueSortedPeptideList()
+    {
         try {
-            // RK
             // Call the sorting routine to find the indices of sorted evalues
             TreeSortForIndices sortClass = new TreeSortForIndices();
-            sortOrderForEvalues = sortClass.sortTheValueColumn(evalues.toArray(), betterScoresAreLower);
+            Integer[] sortOrderForEvalues = sortClass.sortTheValueColumn(evalues.toArray(), betterScoresAreLower);
 
-            // Arrange the values in the order determined by the sorting operation, such that, each index an arraylist can be map to
+            // Arrange the values in the order determined by the sorting
+            // operation, such that, each index an arraylist can be map to
             // the entries in other arraylists for the "same" index
             int index;
-            for (int i = 0; i < sortOrderForEvalues.length; i++) {
-                index = sortOrderForEvalues[i];
+            for (Integer sortOrderForEvalue : sortOrderForEvalues) {
+                index = sortOrderForEvalue;
                 sorted_spectrumResult.add(spectrumResult.get(index));
                 sorted_spectrumItem.add(spectrumItem.get(index));
                 sorted_peptideNames.add(peptideNames.get(index));
@@ -541,41 +545,9 @@ public class FalseDiscoveryRateGlobal {
 
     }
 
-    // RK - Write the sorted data into a file
-    public void writeTheSortedDataToFile(String fileName) throws Exception {
 
-        // Basic check to see that each peptide has a evalue
-        if (sorted_peptideNames.size() != sorted_evalues.size()) {
-            throw (new Exception("Number of entries = " + sorted_peptideNames.size()
-                    + "in sorted_peptideNames don't match with the number of entries = " + sorted_evalues.size() + "in sorted_evalues"));
-        }
-
-        Writer out = new BufferedWriter(new FileWriter(fileName));
-
-        for (int i = 0; i < sorted_peptideNames.size(); i++) {
-
-//            String outStr = sorted_spectrumResult.get(i) + "\t"
-//                    + sorted_peptideNames.get(i) + "\t" + sorted_decoyOrNot.get(i) + "\t"
-//                    + sorted_evalues.get(i).toString() + "\t"
-//                    + estimated_simpleFDR.get(i) + "\t" + estimated_qvalue.get(i) + "\t"
-//                    + // "\n";
-//                    estimated_fdrscore.get(i) + "\n";
-            String outStr = sorted_spectrumResult.get(i) + "\t" + sorted_spectrumItem.get(i) + "\t"
-                    + sorted_peptideNames.get(i) + "\t" + sorted_decoyOrNot.get(i) + "\t"
-                    + sorted_evalues.get(i).toString() + "\n";
-
-            out.write(outStr);
-        }
-
-//        out.write("\n\n The Peptide Map");
-//        for (String key : peptideIdAndSequence.keySet()) {
-//            String seq = peptideIdAndSequence.get(key);
-//            out.write(key + "\t" + seq + "\n");
-//        }
-        out.close();
-    }
-
-    private void writeUnchangedPart(Writer writer, MzIdentMLMarshaller marshaller) {
+    private void writeUnchangedPart(Writer writer, MzIdentMLMarshaller marshaller)
+    {
         try {
 
             writer.write(marshaller.createXmlHeader() + "\n");
@@ -625,30 +597,23 @@ public class FalseDiscoveryRateGlobal {
             Iterator<Peptide> iterPeptide = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
             while (iterPeptide.hasNext()) {
                 Peptide pe = iterPeptide.next();
-
                 sequenceCollection.getPeptide().add(pe);
             }
-
             Iterator<PeptideEvidence> iterPeptideEvidence = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.PeptideEvidence);
             while (iterPeptideEvidence.hasNext()) {
                 PeptideEvidence pe = iterPeptideEvidence.next();
-
                 if (fdrLevel.equals("Peptide")) {
                     String peptideRef = pe.getPeptideRef();
                     int psmCount = 0;
                     if (peptidePSMCount.get(peptideRef) != null) {
                         psmCount = peptidePSMCount.get(peptideRef);
                     }
-
                     pe.getUserParam().add(makeUserParam("psm_count", String.valueOf(psmCount)));
-
                 }
                 sequenceCollection.getPeptideEvidence().add(pe);
             }
 
-            if (sequenceCollection != null) {
-                marshaller.marshal(sequenceCollection, writer);
-            }
+            marshaller.marshal(sequenceCollection, writer);
             writer.write("\n");
 
             if (analysisCollection != null) {
@@ -658,54 +623,54 @@ public class FalseDiscoveryRateGlobal {
 
             if (analysisProtocolCollection != null) {
                 Cv cv = mzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
-                // Added by Fawaz Ghali: update to mzid 1.2 20/01/2015
                 CvParam peptideLevelScoring = new CvParam();
                 peptideLevelScoring.setAccession("MS:1002490");
                 peptideLevelScoring.setName("peptide-level scoring");
                 peptideLevelScoring.setCv(cv);
-                analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams().getCvParam().add(peptideLevelScoring);
+                analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams()
+                        .getCvParam().add(peptideLevelScoring);
                 CvParam groupPSMsBySequence = new CvParam();
                 groupPSMsBySequence.setAccession("MS:1002496");
                 groupPSMsBySequence.setName("group PSMs by sequence");
                 groupPSMsBySequence.setCv(cv);
-                analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams().getCvParam().add(groupPSMsBySequence);
+                analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams()
+                        .getCvParam().add(groupPSMsBySequence);
                 marshaller.marshal(analysisProtocolCollection, writer);
 
             }
             writer.write("\n");
-
             writer.write(marshaller.createDataCollectionStartTag() + "\n");
-
             writer.write("\n");
-
             if (inputs != null) {
                 marshaller.marshal(inputs, writer);
             }
             writer.write("\n");
-
             writer.write(marshaller.createAnalysisDataStartTag() + "\n");
 
         } catch (IOException e) {
             String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + e.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \"" + className
+                    + "\" was not completed because of " + e.getMessage() + "."
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
     }
 
-    public void writeMzidFile(String csvFileName) {
+    //TODO: This method has to be broken into PSM, Peptide or ProteinGroup-specific functions
+    //Not only to increase the readability, but to avoid if-conditions inside loops. Grrr.
+    //Can't justify a function with 200 lines of code!
+    private void writeMzidFile(String csvFileName)
+    {
         try {
-            String outFile = csvFileName;
-            Writer writer = new FileWriter(outFile);
+            Writer writer = new FileWriter(csvFileName);
 
             MzIdentMLMarshaller marshaller;
             marshaller = new MzIdentMLMarshaller();
 
             writeUnchangedPart(writer, marshaller);
 
-            SpectrumIdentificationList siList;
-            siList = new SpectrumIdentificationList();
+            SpectrumIdentificationList siList = new SpectrumIdentificationList();
             String spectrumIdentificationListRef = "";
             if (analysisCollection.getSpectrumIdentification().size() > 0) {
                 spectrumIdentificationListRef = analysisCollection.getSpectrumIdentification().get(0).getSpectrumIdentificationListRef();
@@ -714,43 +679,41 @@ public class FalseDiscoveryRateGlobal {
 
             Iterator<SpectrumIdentificationList> iterSpectrumIdentificationList = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationList);
             while (iterSpectrumIdentificationList.hasNext()) {
-
                 SpectrumIdentificationList sr = iterSpectrumIdentificationList.next();
                 siList.getCvParam().addAll(sr.getCvParam());
             }
 
             Iterator<FragmentationTable> iterFragmentationTable = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.FragmentationTable);
             while (iterFragmentationTable.hasNext()) {
-
                 FragmentationTable fr = iterFragmentationTable.next();
                 siList.setFragmentationTable(fr);
             }
 
             Map<String, String> sorted_stringMap = new HashMap<>();
-            if (fdrLevel.equals("PSM")) {
-                for (int i = 0; i < sorted_spectrumItem.size(); i++) {
-                    sorted_stringMap.put(sorted_spectrumItem.get(i), estimated_simpleFDR.get(i).toString() + ":"
-                            + String.valueOf(estimated_qvalue.get(i)) + ":"
-                            + estimated_fdrscore.get(i).toString());
-                }
-            } else if (fdrLevel.equals("Peptide")) {
-                for (int i = 0; i < sorted_peptideNames.size(); i++) {
-                    sorted_stringMap.put(sorted_peptideNames.get(i), estimated_simpleFDR.get(i).toString() + ":"
-                            + String.valueOf(estimated_qvalue.get(i)) + ":"
-                            + estimated_fdrscore.get(i).toString());
-                }
-            } else {
-                for (int i = 0; i < sorted_spectrumItem.size(); i++) {
-                    sorted_stringMap.put(sorted_spectrumResult.get(i), estimated_simpleFDR.get(i).toString() + ":"
-                            + String.valueOf(estimated_qvalue.get(i)));
-                }
+            switch (fdrLevel) {
+                case "PSM":
+                    for (int i = 0; i < sorted_spectrumItem.size(); i++) {
+                        sorted_stringMap.put(sorted_spectrumItem.get(i), estimated_simpleFDR.get(i).toString() + ":"
+                                + String.valueOf(estimated_qvalue.get(i)) + ":" + estimated_fdrscore.get(i).toString());
+                    }
+                    break;
+                case "Peptide":
+                    for (int i = 0; i < sorted_peptideNames.size(); i++) {
+                        sorted_stringMap.put(sorted_peptideNames.get(i), estimated_simpleFDR.get(i).toString() + ":"
+                                + String.valueOf(estimated_qvalue.get(i)) + ":" + estimated_fdrscore.get(i).toString());
+                    }
+                    break;
+                default:
+                    for (int i = 0; i < sorted_spectrumItem.size(); i++) {
+                        sorted_stringMap.put(sorted_spectrumResult.get(i),
+                                estimated_simpleFDR.get(i).toString() + ":" + String.valueOf(estimated_qvalue.get(i)));
+                    }
+                    break;
             }
 
             Iterator<SpectrumIdentificationResult> iterSpectrumIdentificationResult = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
             while (iterSpectrumIdentificationResult.hasNext()) {
-
                 SpectrumIdentificationResult sr = iterSpectrumIdentificationResult.next();
-
                 for (SpectrumIdentificationItem sii : sr.getSpectrumIdentificationItem()) {
                     String sortedValue = null;
                     if (fdrLevel.equals("PSM")) {
@@ -840,9 +803,6 @@ public class FalseDiscoveryRateGlobal {
             writer.write("\n");
 
             if (fdrLevel.equals("PSM") || fdrLevel.equals("Peptide")) {
-                // Update by Fawaz Ghali 17/02/2015 for mzid 1.2 valdiation 
-                //writer.write(marshaller.createProteinDetectionListStartTag("PDL_1", null) + "\n");
-                //writer.write(marshaller.createProteinDetectionListClosingTag() + "\n");
                 writer.write(marshaller.createAnalysisDataClosingTag() + "\n");
                 writer.write(marshaller.createDataCollectionClosingTag() + "\n");
 
@@ -850,11 +810,13 @@ public class FalseDiscoveryRateGlobal {
             } else {
                 ProteinDetectionList pdList = new ProteinDetectionList();
                 pdList.setId("PDL_1");
-                Iterator<ProteinAmbiguityGroup> iterProteinAmbiguityGroup = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.ProteinAmbiguityGroup);
+                Iterator<ProteinAmbiguityGroup> iterProteinAmbiguityGroup = mzIdentMLUnmarshaller
+                        .unmarshalCollectionFromXpath(MzIdentMLElement.ProteinAmbiguityGroup);
                 while (iterProteinAmbiguityGroup.hasNext()) {
                     ProteinAmbiguityGroup proteinAmbiguityGroup = iterProteinAmbiguityGroup.next();
 
-                    for (ProteinDetectionHypothesis proteinDetectionHypothesis : proteinAmbiguityGroup.getProteinDetectionHypothesis()) {
+                    for (ProteinDetectionHypothesis proteinDetectionHypothesis : proteinAmbiguityGroup
+                            .getProteinDetectionHypothesis()) {
                         List<CvParam> cvParamListproteinDetectionHypothesis = proteinDetectionHypothesis.getCvParam();
                         for (CvParam cvParam : cvParamListproteinDetectionHypothesis) {
                             String accession = cvParam.getAccession();
@@ -863,7 +825,6 @@ public class FalseDiscoveryRateGlobal {
                                 String sortedValue = sorted_stringMap.get(proteinAmbiguityGroup.getId());
                                 CvParam cvParamestimated_simpleFDR = new CvParam();
                                 CvParam cvParamestimated_qvalue = new CvParam();
-                                CvParam cvParamfdrscore = new CvParam();
                                 String[] sii_arr = sortedValue.split(":");
                                 Cv cv = mzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
                                 cvParamestimated_simpleFDR.setAccession("MS:1002370");
@@ -879,12 +840,6 @@ public class FalseDiscoveryRateGlobal {
                                 cvParamestimated_qvalue.setCv(cv);
 
                                 proteinAmbiguityGroup.getCvParam().add(cvParamestimated_qvalue);
-
-//                                cvParamfdrscore.setAccession("MS:1002374");
-//                                cvParamfdrscore.setName("protein group-level FDRScore");
-//                                cvParamfdrscore.setValue(sii_arr[2]);
-//                                cvParamfdrscore.setCv(cv);
-//                                proteinAmbiguityGroup.getCvParam().add(cvParamfdrscore);
                             }
                         }
                     }
@@ -902,100 +857,32 @@ public class FalseDiscoveryRateGlobal {
             }
             writer.close();
 
-            System.out.println("Output written to " + outFile);
+            System.out.println("Output written to " + csvFileName);
 
         } catch (IOException e) {
             String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + e.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \"" + className
+                    + "\" was not completed because of " + e.getMessage() + "."
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
     }
 
-    // Write the sorted data into a file
-    public void writeToMzIdentMLFile(String fileName) {
 
-        writeMzidFile(fileName);
 
-    }
 
-    // Write the sorted data into a file
-    public void writeToCsvFile(String fileName) throws Exception {
-
-        Writer out = new BufferedWriter(new FileWriter(fileName));
-        String outStrHead = "sorted_spectrumResult.get(i),sorted_peptideNames.get(i) , sorted_decoyOrNot.get(i) ,  sorted_evalues.get(i).toString() , + sorted_scores.get(i).toString() , estimated_simpleFDR.get(i) , estimated_qvalue.get(i) , estimated_fdrscore.get(i) \n";
-
-        for (int i = 0; i < sorted_peptideNames.size(); i++) {
-
-            String outStr = sorted_spectrumResult.get(i) + ","
-                    + sorted_peptideNames.get(i) + "," + sorted_decoyOrNot.get(i) + ","
-                    + sorted_evalues.get(i).toString() + "," //+ sorted_scores.get(i).toString() + ","
-                    + estimated_simpleFDR.get(i) + "," + estimated_qvalue.get(i) + ","
-                    + estimated_fdrscore.get(i) + "\n";
-
-            out.write(outStr);
-        }
-        out.close();
-    }
-
-    // Write the sorted data into a file
-    public void writeToTsvFile(String fileName) throws Exception {
-
-        Writer out = new BufferedWriter(new FileWriter(fileName));
-        String outStrHead = "sorted_spectrumResult.get(i)\tsorted_peptideNames.get(i) \t sorted_decoyOrNot.get(i) \t  sorted_evalues.get(i).toString() \t + sorted_scores.get(i).toString() \t estimated_simpleFDR.get(i) \t estimated_qvalue.get(i) \t estimated_fdrscore.get(i) \n";
-        String outStr;
-        for (int i = 0; i < sorted_peptideNames.size(); i++) {
-
-            outStr = sorted_spectrumResult.get(i) + "\t"
-                    + sorted_peptideNames.get(i) + "\t" + sorted_decoyOrNot.get(i) + "\t"
-                    //                    + sorted_evalues.get(i).toString() + "\t" + sorted_scores.get(i).toString() + "\t"
-                    + estimated_simpleFDR.get(i) + "\t" + estimated_qvalue.get(i) + "\t"
-                    + estimated_fdrscore.get(i) + "\n";
-
-            out.write(outStr);
-        }
-        out.close();
-    }
-
-    /**
-     * Compute FDR score and q value etc using the method described in Jones et
-     * al. Proteomics, 2009,9, 1220-1229
-     */
-    public void computeFDRusingJonesMethod() {
-        try {
-
-            // Sort the data using evalue
-            getEvalueSortedPeptideList();
-            //writeTheSortedDataToFile("E:\\proteogalaxy\\pipeline\\output\\debug.txt");
-            computeSimpleFDR(); // Step 1
-            if (fp.size() == 0) {
-                System.out.println("No decoys found for search engine Mascot|Omssa|tandem - likely caused by: wrong decoy regex, database doesn't contain decoys or the search reported only identifications for stringent e-values - please allow identifications up to e-value = 10 for omssa and tandem. See omssa and tandem documentation for how to do change this setting");
-            } else if (fp.get(fp.size() - 1) == 0) {
-                System.out.println("No decoys found for search engine Mascot|Omssa|tandem - likely caused by: wrong decoy regex, database doesn't contain decoys or the search reported only identifications for stringent e-values - please allow identifications up to e-value = 10 for omssa and tandem. See omssa and tandem documentation for how to do change this setting");
-            }
-            computeQValues();   // Step 2
-
-            // Added by Fawaz Ghali 14/5/2013
-            // Don't computeFDRScore when FDR level is
-            if (!fdrLevel.equals("ProteinGroup")) {
-                computeFDRScore();  // Step 3
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-    }
 
     /**
      * Compute simple FDR
-     *
      */
-    private void computeSimpleFDR() {
+    private void computeSimpleFDR()
+    {
         int falsePositiveCount = 0;
         int allTargets = 0;
         double falsePositiveDivRatio;
         double simpleFDR;
+
         for (int i = 0; i < sorted_peptideNames.size(); i++) {
             if (sorted_decoyOrNot.get(i).equals("true")) {
                 falsePositiveCount++;
@@ -1003,27 +890,26 @@ public class FalseDiscoveryRateGlobal {
                 allTargets++;
             }
 
-            falsePositiveDivRatio = (double) falsePositiveCount / decoyRatio; 	//FP = decoy_count / decoy_ratio
+            falsePositiveDivRatio = (double) falsePositiveCount / decoyRatio;
 
             simpleFDR = falsePositiveDivRatio / (double) allTargets;
-            estimated_simpleFDR.add(simpleFDR);					//FDR = FP / (FP + TP)		 TP = all_targets - FP	FP + TP = all_targets - FP  + FP		FP + TP = all_targets		FDR = FP / all_targets
+            estimated_simpleFDR.add(simpleFDR);
             estimated_qvalue.add(0d);
 
-            // fghali
             fp.add(falsePositiveDivRatio);
             double tpValue = allTargets - falsePositiveDivRatio;
             tp.add(tpValue);
-
-            //System.out.println(tpValue + " " + falsePositiveDivRatio + " " + simpleFDR);
+        }
+        if (fp.size() == 0 || (fp.get(fp.size() - 1) == 0)) {
+            System.out.println("No decoys found for search engine Mascot|Omssa|tandem - likely caused by: wrong decoy regex, database doesn't contain decoys or the search reported only identifications for stringent e-values - please allow identifications up to e-value = 10 for omssa and tandem. See omssa and tandem documentation for how to do change this setting");
         }
     }
 
     /**
      * Compute q-value
-     *
      */
-    private void computeQValues() {
-
+    private void computeQValues()
+    {
         double immediateMinFdr = estimated_simpleFDR.get(estimated_simpleFDR.size() - 1);
         estimated_qvalue.set(estimated_qvalue.size() - 1, immediateMinFdr);
         double currentFDR;
@@ -1035,34 +921,37 @@ public class FalseDiscoveryRateGlobal {
             }
 
             estimated_qvalue.set(i - 1, immediateMinFdr);
-
         }
     }
 
     /**
      * Compute FDR Score
-     *
      */
-    private void computeFDRScore() {
-        // Initialize the estimated_fdrscore by adding elements containing 0. This needs to be
-        // done because of back tracking involved in the algorithm, so simple .add() wouldn't work
+    private void computeFDRScore()
+    {
+        // This method cannot be used for ProteinGroup FDRLevels
+        if (fdrLevel.equals("ProteinGroup")) {
+            return;
+        }
+        // Initialize the estimated_fdrscore by adding elements containing 0.
+        // This needs to be
+        // done because of back tracking involved in the algorithm, so simple
+        // .add() wouldn't work
         for (int i = 0; i < sorted_peptideNames.size(); i++) {
             estimated_fdrscore.add(0d);
 
         }
 
-        //float prev_evalue = sorted_evalues.get(0); 			// RK 21-10-10
-        //float prev_qvalue = estimated_qvalue.get(0);
-        //float prev_prev_evalue =  sorted_evalues.get(0); // previous to previous evalue in case of straight vertical rise in q value without any change in evalue
-        double prev_evalue = 0f;	    // RK 21-10-10
-        double prev_qvalue = 0f;     // RK 21-10-10
-        double prev_prev_evalue = 0f;// RK 21-10-10
+        // previous evalue in case of straight vertical rise in q value without
+        // any change in evalue
+        double prev_evalue = 0f;
+        double prev_qvalue = 0f;
+        double prev_prev_evalue = 0f;
 
-        int counter_backwardStep = 0; // RK 21-10-10
-        //int counter_backwardStep = 1; // First time, the counter is 1 to account for the origin
+        int counter_backwardStep = 0;
 
-        //int i = 1;// RK 21-10-10
-        int i = 0; // RK 21-10-10
+        int lastNonZeroScoreIdx = -1;
+        int i=0;
         for (; i < sorted_peptideNames.size(); i++) {
             double current_evalue = sorted_evalues.get(i);
             double current_qvalue = estimated_qvalue.get(i);
@@ -1072,42 +961,33 @@ public class FalseDiscoveryRateGlobal {
                 double slope;
                 double intercept;
 
-                int id = 0;
+                // Work out the slope and the intercept
+                // Tells us which co-ordinates to use for
                 if (current_evalue != prev_evalue) {
                     slope = (current_qvalue - prev_qvalue) / (current_evalue - prev_evalue);
-                    id = 1; //RK 22-10-10
-                } else {
-                    slope = (current_qvalue - prev_qvalue) / (current_evalue - prev_prev_evalue);
-                    id = 2; //RK 22-10-10
-                }
-
-                //intercept = current_qvalue - slope * current_evalue; //RK 22-10-10
-                //RK 22-10-10 - Tells us which co-ordinates to use for calculating intercepts.
-                if (id == 1) {
                     intercept = prev_qvalue - slope * prev_evalue;
                 } else {
+                    slope = (current_qvalue - prev_qvalue) / (current_evalue - prev_prev_evalue);
                     intercept = prev_qvalue - slope * prev_prev_evalue;
                 }
 
                 if (counter_backwardStep > 0) { // compute the FDR score for flat q-value region
                     for (int k = 0; k <= counter_backwardStep; k++) {
                         int index = i - counter_backwardStep + k;
-                        //System.out.println("i = " + i + "Count = " + counter_backwardStep +  " k = " + k + " index = " + index);
                         double fdrScore = slope * sorted_evalues.get(index) + intercept;
                         estimated_fdrscore.set(index, fdrScore);
-
-                        //System.out.println("i = " + i + "Count = " + counter_backwardStep +  " k = " + k + " index::1 = " + index + " slope = " + slope + " intercept = " + intercept + " e-val = " + sorted_evalues.get(index) + " FDR = " + fdrScore);
+                        lastNonZeroScoreIdx = fdrScore>0 && index > lastNonZeroScoreIdx?index:lastNonZeroScoreIdx;
                     }
-                } else { 							// In case an immediate increment in q value is found
+                } else { // In case an immediate increment in q value is found
                     double fdrScore = slope * current_evalue + intercept;
                     estimated_fdrscore.set(i, fdrScore);
-
-                    //System.out.println("index::2 i = " + i + " FDR = " + fdrScore);
+                    lastNonZeroScoreIdx = fdrScore>0 && i > lastNonZeroScoreIdx?i:lastNonZeroScoreIdx;
                 }
 
                 // Re-initialise the variables
                 counter_backwardStep = 0;
-                if (current_evalue > prev_evalue) { // the previous e-value will change only if the current e-value is different
+                if (current_evalue > prev_evalue) { // the previous e-value will
+                    // change only if the current e-value is different
                     prev_prev_evalue = prev_evalue;
                     prev_evalue = current_evalue;
                 }
@@ -1118,98 +998,100 @@ public class FalseDiscoveryRateGlobal {
             }
         }
 
-        // In case if we miss to update the very last values in estimated_fdrscore because
+        // In case if we miss to update the very last values in
+        // estimated_fdrscore because
         // current_qvalue == prev_qvalue
+        //TODO: Pretty dangerous tactic here in terms of manipulating an expired loop trip count.
+        //TODO: Fix this please! Seriously who on the earth would write a code like this? Must be sacked!
         if (estimated_fdrscore.get(i - 1) == 0) {
-            double lastFdrValue = 0;
+            double lastFdrValue;
             i = i - 1;
+            // TODO: Appears totally novel tactic to locate a last occuring, non-zero estimated score.
+            // TODO: Record the index while putting values! IOOOOO!
             while (estimated_fdrscore.get(i) == 0 && i > 0) {
                 i--;
             }
             if (i == 0) {
-                throw new RuntimeException("\n Can't compute FDR. Likely that all the hits are corrects, so nothing to do.");
+                throw new RuntimeException(
+                        "\n Can't compute FDR. Likely that all the hits are corrects, so nothing to do.");
             } else {
+                System.out.println("Last FDR Value Found at " + i + " and pre-recorded version is: " + lastNonZeroScoreIdx);
                 lastFdrValue = estimated_fdrscore.get(i);
                 while (i < estimated_fdrscore.size()) {
                     estimated_fdrscore.set(i, lastFdrValue);
-
                     i++;
                 }
             }
         }
-    }
 
-    // Added by FG  for sending the specific CV term to use as an alternative mode, also we need a Boolean for -betterScoresAreLower = true or false
-    public FalseDiscoveryRateGlobal(String mzid, String decoyRatio, String decoy, String cvTerm, boolean betterScoresAreLower, String fdrLevel, String proteinLevel) {
-        this.decoyRatio = Double.valueOf(decoyRatio);
-        this.decoy = decoy;
-        this.cvTerm = cvTerm;
-        this.fdrLevel = fdrLevel;
-        this.proteinLevel = proteinLevel;
 
-        if (!cvTerm.equals("") && cvTerm != null) {
-            allowedEvalues = cvTerm;
-        }
-
-        this.betterScoresAreLower = betterScoresAreLower;
-        if (decoy == null || decoy.equals("")) {
-            usingFileDecoyAttribute = true;
-        }
-        try {
-            mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(new File(mzid));
-            System.out.println("Reading: " + mzid);
-            readMzIdentML();
-        } catch (OutOfMemoryError error) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-            String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + error.getMessage() + "."
-                    + "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
-            System.out.println(message);
-        }
+//        double lastFdrValue = estimated_fdrscore.get(lastNonZeroScoreIdx);
+//        for (int i=lastNonZeroScoreIdx; i < estimated_fdrscore.size(); i++) {
+//            estimated_fdrscore.set(i, lastFdrValue);
+//        }
 
     }
 
-    public List<String> getSorted_spectrumResult() {
+    @SuppressWarnings("unused")
+    public List<String> getSorted_spectrumResult()
+    {
         return sorted_spectrumResult;
     }
 
-    public List<String> getSorted_peptideNames() {
+    @SuppressWarnings("unused")
+    public List<String> getSorted_peptideNames()
+    {
         return sorted_peptideNames;
     }
 
-    public List<Double> getSorted_evalues() {
+    @SuppressWarnings("unused")
+    public List<Double> getSorted_evalues()
+    {
         return sorted_evalues;
     }
 
-    public List<String> getSorted_decoyOrNot() {
+    @SuppressWarnings("unused")
+    public List<String> getSorted_decoyOrNot()
+    {
         return sorted_decoyOrNot;
     }
 
-    public List<Double> getSorted_simpleFDR() {
+    @SuppressWarnings("unused")
+    public List<Double> getSorted_simpleFDR()
+    {
         return estimated_simpleFDR;
     }
 
-    public List<Double> getSorted_qValues() {
+    @SuppressWarnings("unused")
+    public List<Double> getSorted_qValues()
+    {
         return estimated_qvalue;
     }
 
-    public List<Double> getSorted_estimatedFDR() {
+    @SuppressWarnings("unused")
+    public List<Double> getSorted_estimatedFDR()
+    {
         return estimated_fdrscore;
     }
 
-    // F Ghali
-    public List<Double> getTP() {
+    @SuppressWarnings("unused")
+    public List<Double> getTP()
+    {
         return tp;
     }
 
-    public List<Double> getFP() {
+    @SuppressWarnings("unused")
+    public List<Double> getFP()
+    {
         return fp;
     }
 
     /**
      * Clear all the data structures in the class to release all the memory
      */
-    public void clearAllData() {
+    @SuppressWarnings("unused")
+    public void clearAllData()
+    {
         sorted_spectrumResult.clear();
         sorted_peptideNames.clear();
         sorted_evalues.clear();
@@ -1221,72 +1103,164 @@ public class FalseDiscoveryRateGlobal {
         tp.clear();
     }
 
-    public Map<String, DBSequence> getdBSequenceHashMap() {
+    @SuppressWarnings("unused")
+    public Map<String, DBSequence> getdBSequenceHashMap()
+    {
         return dBSequenceMap;
     }
 
-    public void setdBSequenceHashMap(Map<String, DBSequence> dBSequenceMap) {
+    @SuppressWarnings("unused")
+    public void setdBSequenceHashMap(Map<String, DBSequence> dBSequenceMap)
+    {
         this.dBSequenceMap = dBSequenceMap;
     }
 
     @Deprecated
-    public Map<String, PeptideEvidence> getPeptideEvidenceHashMap() {
+    @SuppressWarnings("unused")
+    public Map<String, PeptideEvidence> getPeptideEvidenceHashMap()
+    {
         return peptideEvidenceMap;
     }
 
-    public Map<String, PeptideEvidence> getPeptideEvidenceMap() {
-        return peptideEvidenceMap;
-    }
-
-    public void setPeptideEvidenceHashMap(Map<String, PeptideEvidence> peptideEvidenceMap) {
+    @SuppressWarnings("unused")
+    public void setPeptideEvidenceHashMap(Map<String, PeptideEvidence> peptideEvidenceMap)
+    {
         this.peptideEvidenceMap = peptideEvidenceMap;
     }
 
-    public Map<String, Peptide> getPeptideHashMap() {
+    @SuppressWarnings("unused")
+    private Map<String, PeptideEvidence> getPeptideEvidenceMap()
+    {
+        return peptideEvidenceMap;
+    }
+
+    @SuppressWarnings("unused")
+    public Map<String, Peptide> getPeptideHashMap()
+    {
         return peptideMap;
     }
 
-    public void setPeptideHashMap(Map<String, Peptide> peptideMap) {
+    @SuppressWarnings("unused")
+    public void setPeptideHashMap(Map<String, Peptide> peptideMap)
+    {
         this.peptideMap = peptideMap;
     }
 
-    public AnalysisSoftwareList getAnalysisSoftwareList() {
+    public AnalysisSoftwareList getAnalysisSoftwareList()
+    {
         return analysisSoftwareList;
     }
 
-    public AuditCollection getAuditCollection() {
+    public AuditCollection getAuditCollection()
+    {
         return auditCollection;
     }
 
-    public Provider getProvider() {
+    public Provider getProvider()
+    {
         return provider;
     }
 
-    public AnalysisProtocolCollection getAnalysisProtocolCollection() {
+    public AnalysisProtocolCollection getAnalysisProtocolCollection()
+    {
         return analysisProtocolCollection;
     }
 
-    public CvList getCvList() {
+    public CvList getCvList()
+    {
         return cvList;
     }
 
-    public AnalysisCollection getAnalysisCollection() {
+    public AnalysisCollection getAnalysisCollection()
+    {
         return analysisCollection;
     }
 
-    public Inputs getInputs() {
+    public Inputs getInputs()
+    {
         return inputs;
     }
 
-    public String getSearchDatabase_Ref() {
+    @SuppressWarnings("unused")
+    public Map<String, String> getFromXMLPeptideSequenceHash()
+    {
+        return peptideIdAndSequence;
+    }
+
+    @SuppressWarnings("unused")
+    public String getSearchDatabase_Ref()
+    {
         return searchDatabase_Ref;
     }
 
-    public String getSpectraData_ref() {
-        return spectraData_ref;
+
+    @SuppressWarnings("unused")
+    // Write the sorted data into a file
+    public void writeToTsvFile(String fileName) throws Exception
+    {
+
+        Writer out = new BufferedWriter(new FileWriter(fileName));
+        String outStr;
+        for (int i = 0; i < sorted_peptideNames.size(); i++) {
+
+            outStr = sorted_spectrumResult.get(i) + "\t" + sorted_peptideNames.get(i) + "\t" + sorted_decoyOrNot.get(i)
+                    + "\t"
+                    + estimated_simpleFDR.get(i) + "\t" + estimated_qvalue.get(i) + "\t" + estimated_fdrscore.get(i)
+                    + "\n";
+
+            out.write(outStr);
+        }
+        out.close();
     }
 
-    public UserParam makeUserParam(String name, String value) {
+    // Write the sorted data into a file
+    @SuppressWarnings("unused")
+    public void writeToCsvFile(String fileName) throws Exception
+    {
+
+        Writer out = new BufferedWriter(new FileWriter(fileName));
+        String outStrHead = "sorted_spectrumResult.get(i),sorted_peptideNames.get(i) , sorted_decoyOrNot.get(i) ,  sorted_evalues.get(i).toString() , + sorted_scores.get(i).toString() , estimated_simpleFDR.get(i) , estimated_qvalue.get(i) , estimated_fdrscore.get(i) \n";
+
+        for (int i = 0; i < sorted_peptideNames.size(); i++) {
+
+            String outStr = sorted_spectrumResult.get(i) + "," + sorted_peptideNames.get(i) + ","
+                    + sorted_decoyOrNot.get(i) + "," + sorted_evalues.get(i).toString() + ","
+                    + estimated_simpleFDR.get(i) + "," + estimated_qvalue.get(i) + "," + estimated_fdrscore.get(i)
+                    + "\n";
+
+            out.write(outStr);
+        }
+        out.close();
+    }
+
+    //  Write the sorted data into a file
+    @SuppressWarnings("unused")
+    public void writeTheSortedDataToFile(String fileName) throws Exception
+    {
+
+        // Basic check to see that each peptide has a evalue
+        if (sorted_peptideNames.size() != sorted_evalues.size()) {
+            throw (new Exception("Number of entries = " + sorted_peptideNames.size()
+                    + "in sorted_peptideNames don't match with the number of entries = " + sorted_evalues.size()
+                    + "in sorted_evalues"));
+        }
+
+        Writer out = new BufferedWriter(new FileWriter(fileName));
+
+        for (int i = 0; i < sorted_peptideNames.size(); i++) {
+            String outStr = sorted_spectrumResult.get(i) + "\t" + sorted_spectrumItem.get(i) + "\t"
+                    + sorted_peptideNames.get(i) + "\t" + sorted_decoyOrNot.get(i) + "\t"
+                    + sorted_evalues.get(i).toString() + "\n";
+
+            out.write(outStr);
+        }
+
+        out.close();
+    }
+
+
+    private UserParam makeUserParam(String name, String value)
+    {
         UserParam userParam = new UserParam();
         userParam.setName(name);
         userParam.setValue(value);
