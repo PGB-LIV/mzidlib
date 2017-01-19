@@ -49,6 +49,7 @@ public class MzIdentMLToCSV {
     private String psmHeader = "PSM_ID" + sep + "rank" + sep + "Pass Threshold" + sep + "Calc m/z" + sep + "Exp m/z" + sep + "Charge" + sep + "Sequence" + sep + "Modifications";
     private String pScoreHeader = "";     //Protein score header will be set only after reading the file
     private String scoreHeader = "";     //This will be set only after reading the file
+    private String proteogenomicsHeader = "";
     // Added by Fawaz Ghali 13/05/2014 exportProteoAnnotator
     private String exportProteoAnnotatorHeader = "countNonA" + sep + "scoreNonA" + sep + "nonAPeptide" + sep + "A genes" + sep + "protein group-level q-value";
     private String endPsmHeader = sep + "proteinacc_start_stop_pre_post_;" + sep + "Is decoy";
@@ -294,6 +295,78 @@ public class MzIdentMLToCSV {
 
                 }
 
+            }// Added by Fawaz Ghali 26/10/2016 to export peptides
+            else if (exportOption.equals("exportProteogenomics")) {
+                proteogenomicsHeader = "Chr" + sep + "start" + sep + "end" + sep + "peptide" + sep + "nucleotide_sizes" + sep + "exon_count" + sep + "start_positions" + sep + "strand" + sep;
+                out.write(proteogenomicsHeader + psmHeader + scoreHeader);
+                out.write(endPsmHeader + "\n");
+
+                Iterator<ProteinAmbiguityGroup> iterPAG = unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.ProteinAmbiguityGroup);
+                List<String> pepRefGroupIDList = new ArrayList();
+                while (iterPAG.hasNext()) {
+                    ProteinAmbiguityGroup pag = iterPAG.next();
+                    List<CvParam> cvParamList = pag.getCvParam();
+                    double qValue = 0;
+                    for (int i = 0; i < cvParamList.size(); i++) {
+                        CvParam cvParam = cvParamList.get(i);
+                        if (cvParam.getAccession().equals("MS:1002373")) {
+                            qValue = Double.valueOf(cvParam.getValue()).doubleValue();
+                            break;
+                        }
+
+                    }
+                    List<SpectrumIdentificationItem> siiList = new ArrayList();
+                    if (qValue < 0.01) {
+                        ProteinDetectionHypothesis repPdh = getRepresentativePDH(pag, representativeProteinAcc);
+                        List<PeptideHypothesis> peptideHypothesisList = repPdh.getPeptideHypothesis();
+                        for (int i = 0; i < peptideHypothesisList.size(); i++) {
+                            PeptideHypothesis peptideHypothesis = peptideHypothesisList.get(i);
+                            List<SpectrumIdentificationItemRef> siiRefList = peptideHypothesis.getSpectrumIdentificationItemRef();
+                            for (int j = 0; j < siiRefList.size(); j++) {
+                                SpectrumIdentificationItemRef spectrumIdentificationItemRef = siiRefList.get(j);
+                                SpectrumIdentificationItem sii = siiIdHashMap.get(spectrumIdentificationItemRef.getSpectrumIdentificationItemRef());
+                                siiList.add(sii);
+
+                            }
+                        }
+                        double bestScore = 0;
+                        double siiqValue = 0;
+                        String peptideRefGroupID = "";
+                        SpectrumIdentificationItem bestSII;
+
+                        for (int i = 0; i < siiList.size(); i++) {
+                            SpectrumIdentificationItem sii = siiList.get(i);
+                            double combinedFDR = 0;
+                            List<CvParam> cvParamList1 = sii.getCvParam();
+                            for (CvParam cvParam : cvParamList1) {
+                                String accession = cvParam.getAccession();
+                                if (accession.equals("MS:1002356")) {
+                                    combinedFDR = Double.valueOf(cvParam.getValue()).doubleValue();
+                                }
+                                if (accession.equals("MS:1001868")) {
+                                    siiqValue = Double.valueOf(cvParam.getValue()).doubleValue();
+                                }
+                                if (accession.equals("MS:1002520")) {
+                                    peptideRefGroupID = cvParam.getValue();
+                                }
+
+                            }
+                            if (combinedFDR < bestScore) {
+                                bestScore = combinedFDR;
+                                bestSII = sii;
+                            }
+                            if (siiqValue < 0.01 && !pepRefGroupIDList.contains(peptideRefGroupID)) {
+                                pepRefGroupIDList.add(peptideRefGroupID);
+
+                                out.write(siiToStringProteogenomics(sii));
+                            }
+
+                        }
+
+                    }
+
+                }
+
             } else if (exportOption.equals("exportProteinGroups")) {
 
                 out.write(pagHeader);
@@ -499,6 +572,125 @@ public class MzIdentMLToCSV {
         }
 
         return pdhString;
+
+    }
+
+    private String siiToStringProteogenomics(SpectrumIdentificationItem sii) {
+// proteogenomicsHeader = "Chr"+sep+ "start"+ sep + "end"+sep+"peptide"+sep+"nucleotide_sizes"+sep+"exon_count"+sep+"start_positions"+sep+"strand"+sep;  
+
+        String siiString = "";
+        List<PeptideEvidenceRef> peptideEvidenceRefList = sii.getPeptideEvidenceRef();
+        for (int j = 0; j < peptideEvidenceRefList.size(); j++) {
+            PeptideEvidenceRef peptideEvidenceRef = peptideEvidenceRefList.get(j);
+            PeptideEvidence peptideEvidence = peptideEvidenceIdHashMap.get(peptideEvidenceRef.getPeptideEvidenceRef());
+
+            DBSequence dbSeq = dbSequenceIdHashMap.get(peptideEvidence.getDBSequenceRef());
+            String chr="";
+            String strand="";
+            if (dbSeq.getAccession().startsWith("generic|C_")) {
+                List<CvParam> cvList= dbSeq.getCvParam();
+                for (int i = 0; i < cvList.size(); i++) {
+                    CvParam cv = cvList.get(i);
+                    if(cv.getAccession().equals("MS:1002637"))
+                        chr=cv.getValue();
+                    if(cv.getAccession().equals("MS:1002638"))
+                        strand=cv.getValue();
+                    
+                }
+                
+                cvList= peptideEvidence.getCvParam();
+                String end="",count="",sizes="",start="";
+                for (int i = 0; i < cvList.size(); i++) {
+                    CvParam cv = cvList.get(i);
+                    if(cv.getAccession().equals("MS:1002640"))
+                        end=cv.getValue();
+                    if(cv.getAccession().equals("MS:1002641"))
+                        count=cv.getValue();
+                    if(cv.getAccession().equals("MS:1002642"))
+                        sizes=cv.getValue();
+                    if(cv.getAccession().equals("MS:1002643"))
+                        start=cv.getValue();
+                    
+                }
+                String st="";
+                if(start.length()>1){
+                    st=start.split(",")[0];
+                }
+                start = start.replaceAll(",", "|");
+                siiString= "\"" + chr+ "\"" + sep +  "\"" + st+ "\"" + sep +  "\"" + end+ "\"" + sep +  "\"" + dbSeq.getAccession()+ "\"" + sep + "\"" + sizes+ "\"" + sep + "\"" + count+ "\"" + sep + "\"" + start +  "\""+sep+"\"" + strand+ "\""+sep;
+                siiString += "\"" + sii.getId() + "\"" + sep + sii.getRank() + sep + sii.isPassThreshold() + sep + sii.getCalculatedMassToCharge() + sep + sii.getExperimentalMassToCharge() + sep + sii.getChargeState();
+                Peptide pep = peptideIdHashMap.get(sii.getPeptideRef());    //get Peptide via the hash for this object
+                siiString += sep + "\"" + pep.getPeptideSequence() + "\"";
+
+                //Handle Mods
+                siiString += sep;
+
+                String modString = "";
+
+                if (pep.getModification() != null) {
+                    int i = 0;
+                    for (Modification mod : pep.getModification()) {
+                        if (i > 0) {
+                            modString += ";"; //Add an extra separator between mods                                        
+                        }
+                        modString += modToString(mod);
+                        i++;
+                    }
+                }
+
+                if (pep.getSubstitutionModification() != null) {
+                    int i = 0;
+                    for (SubstitutionModification subMod : pep.getSubstitutionModification()) {
+                        if (i > 0 || !modString.equals("")) {
+                            modString += ";"; //Add an extra separator between mods                                        
+                        }
+                        modString += subModToString(subMod);
+                        i++;
+                    }
+                }
+
+                siiString += modString;
+
+                Map<String, String> mapNameToValue = new HashMap<>();
+                for (AbstractParam param : sii.getParamGroup()) {
+                    mapNameToValue.put(param.getName(), param.getValue());
+                    //System.out.println("test1" + param.getName() + "-> " + param.getValue());
+                }
+
+                //Handle scores
+                for (int i = 0; i < columnToScoreMap.size(); i++) {
+                    String score = columnToScoreMap.get(i);
+                    //System.out.println("test2" + score);
+                    if (mapNameToValue.containsKey(score)) {
+                        String scoreValue = mapNameToValue.get(score);
+                        //System.out.println("test3" + scoreValue);
+                        siiString += sep + scoreValue;
+                    } else {
+                        siiString += sep;
+                    }
+                }
+
+                //Handle all protein maps
+                siiString += sep + "\"";
+
+                Boolean isDecoy = false;
+                for (int ii = 0; ii < peptideEvidenceRefList.size(); ii++) {
+                    PeptideEvidenceRef peptideEvidenceRefi = peptideEvidenceRefList.get(ii);
+                    PeptideEvidence peptideEvidencei = peptideEvidenceIdHashMap.get(peptideEvidenceRefi.getPeptideEvidenceRef());
+                    if (peptideEvidencei.isIsDecoy()) {
+                        isDecoy = true;
+                    }
+                }
+
+                siiString += dbSeq.getAccession() + "_" + peptideEvidence.getStart() + "_" + peptideEvidence.getEnd() + "_" + peptideEvidence.getPre() + "_" + peptideEvidence.getPost();
+                siiString += "\"";
+
+                siiString += sep + isDecoy;
+                siiString+="\n";
+            }
+        }
+
+        return siiString;
 
     }
 

@@ -302,16 +302,16 @@ public class ProteoAnnotator2 {
             }
             mzidLib.init(combineSearchEnginesInput);
             String falseDiscoveryRateGlobalOutputFile = newOutput + File.separator + prefix + "combined_fdr_peptide.mzid";
-            String[] falseDiscoveryRateGlobalInput = {"FalseDiscoveryRateGlobal", combineSearchEnginesOutputFile, falseDiscoveryRateGlobalOutputFile, "-decoyValue", "2", "-decoyRegex", "REVERSED", "-cvTerm", "MS:1002356", "-betterScoresAreLower", "true", "-fdrLevel", "Peptide", "-proteinLevel", "PAG", "-compress", "false"};
+            String[] falseDiscoveryRateGlobalInput = {"FalseDiscoveryRateGlobal", combineSearchEnginesOutputFile, falseDiscoveryRateGlobalOutputFile, "-decoyValue", "1", "-decoyRegex", "REVERSED", "-cvTerm", "MS:1002356", "-betterScoresAreLower", "true", "-fdrLevel", "Peptide", "-proteinLevel", "PAG", "-compress", "false"};
             mzidLib.init(falseDiscoveryRateGlobalInput);
             String thresholdOutputFile = newOutput + File.separator + prefix + "combined_fdr_peptide_threshold.mzid";
-            String[] thresholdInput = {"Threshold", falseDiscoveryRateGlobalOutputFile, thresholdOutputFile, "-isPSMThreshold", "true", "-cvAccessionForScoreThreshold", "MS:1002360", "-threshValue", peptideThreshValue, "-betterScoresAreLower", "true", "-deleteUnderThreshold", "true", "-compress", "false"};
+            String[] thresholdInput = {"Threshold", falseDiscoveryRateGlobalOutputFile, thresholdOutputFile, "-isPSMThreshold", "true", "-cvAccessionForScoreThreshold", "MS:1002360", "-threshValue", "0.02", "-betterScoresAreLower", "true", "-deleteUnderThreshold", "true", "-compress", "false"};
             mzidLib.init(thresholdInput);
         } catch (Exception ex) {
 
             System.out.println(ex.toString());
-            ex.printStackTrace();
-            throw new RuntimeException(ex.getMessage());
+            //ex.printStackTrace();
+            //throw new RuntimeException(ex.getMessage());
 
         }
 
@@ -498,7 +498,7 @@ public class ProteoAnnotator2 {
                         if (!result) {
                             throw new RuntimeException("Creating the output folder has failed");
                         }
-                    } 
+                    }
                     File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(newMGFLocation, new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
 
                     if (mgfFileOrLocation.isDirectory()) {
@@ -543,7 +543,10 @@ public class ProteoAnnotator2 {
             String combinedInput = "";
             for (int i = 0; i < files2Combine.size(); i++) {
                 String string = files2Combine.get(i);
-                combinedInput = combinedInput + string + ";";
+                File testSize = new File(string);
+                if (testSize.length() != 0) {
+                    combinedInput = combinedInput + string + ";";
+                }
             }
             if (!combinedInput.equals("")) {
                 combinedInput = combinedInput.substring(0, combinedInput.length() - 1);
@@ -597,18 +600,20 @@ public class ProteoAnnotator2 {
 
                         MgfFile mgfFile = new MgfFile(new File(spectraDataLocation));
                         List specturms = spectrumIdHashMap.get(spectraDataID);
+                        //Fawaz: fix bug spectrums object is null
+                        if (specturms != null && specturms.size() > 0) {
+                            for (int j = 1; j <= specturms.size(); j++) {
+                                Spectrum spectrum = mgfFile.getSpectrumByIndex(j);
+                                String spectrumString = spectrum.toString();
 
-                        for (int j = 1; j <= specturms.size(); j++) {
-                            Spectrum spectrum = mgfFile.getSpectrumByIndex(j);
-                            String spectrumString = spectrum.toString();
+                                String result = spectrumString.substring(spectrumString.lastIndexOf("TITLE=") + 6, spectrumString.indexOf(";"));
+                                String oldID = result.split("@")[0];
+                                String oldLocation = result.split("@")[1];
+                                String newID = "index=" + String.valueOf(j);
+                                oldNewIds.put(newID, oldID);
+                                oldNewLocations.put(spectraDataLocation, oldLocation);
 
-                            String result = spectrumString.substring(spectrumString.lastIndexOf("TITLE=") + 6, spectrumString.indexOf(";"));
-                            String oldID = result.split("@")[0];
-                            String oldLocation = result.split("@")[1];
-                            String newID = "index=" + String.valueOf(j);
-                            oldNewIds.put(newID, oldID);
-                            oldNewLocations.put(spectraDataLocation, oldLocation);
-
+                            }
                         }
 
                     }

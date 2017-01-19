@@ -752,7 +752,19 @@ public class FalseDiscoveryRateGlobal {
                     }
 
                     if (sortedValue != null && fdrLevel.equals("Peptide")) {
-
+                         //Check if CVs are already in the file
+                        List<CvParam> listParams = sii.getCvParam();
+                        Iterator<CvParam> i = listParams.iterator();
+                        while (i.hasNext()) {
+                            CvParam get = i.next();
+                            if (get.getAccession().equals("MS:1002359")
+                                    || get.getAccession().equals("MS:1001868")
+                                    || get.getAccession().equals("MS:1002360")
+                                    || get.getAccession().equals("MS:1002500")
+                                    || get.getAccession().equals("MS:1002520")) {
+                                i.remove();
+                            }
+                        }
                         CvParam cvParamestimated_simpleFDR = new CvParam();
                         CvParam cvParamestimated_qvalue = new CvParam();
                         CvParam cvParamfdrscore = new CvParam();
