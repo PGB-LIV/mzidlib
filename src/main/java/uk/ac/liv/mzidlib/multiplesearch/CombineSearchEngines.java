@@ -256,6 +256,7 @@ public class CombineSearchEngines {
      */
     /**
      * Do the container assignment with AFS values for each spectrum + sequence pair
+     * @param rank Minimum peptide rank for combination.
      * @throws java.lang.Exception Exception
      */
     public void combinePeptidesAcrossSearchEngines(int rank) throws Exception {

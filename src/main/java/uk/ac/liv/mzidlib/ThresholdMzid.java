@@ -90,9 +90,7 @@ public class ThresholdMzid {
         this.init();
     }
 
-    /**
-     * Calls ThresholdMzid with scoreLevel = ""
-     */
+
     @Deprecated
     public ThresholdMzid(String inFile, String outFile, boolean psmThresh, String cvAccScoreThreshold, double threshValue, boolean scoresLowHigh, boolean deleteUnderThreshold) {
         this(inFile, outFile, psmThresh, cvAccScoreThreshold, threshValue, scoresLowHigh, deleteUnderThreshold, "");
