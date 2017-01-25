@@ -92,14 +92,6 @@ public class ThresholdMzid {
 
     /**
      * Calls ThresholdMzid with scoreLevel = ""
-     *
-     * @param inFile
-     * @param outFile
-     * @param psmThresh
-     * @param cvAccScoreThreshold
-     * @param threshValue
-     * @param scoresLowHigh
-     * @param deleteUnderThreshold
      */
     @Deprecated
     public ThresholdMzid(String inFile, String outFile, boolean psmThresh, String cvAccScoreThreshold, double threshValue, boolean scoresLowHigh, boolean deleteUnderThreshold) {

@@ -24,6 +24,7 @@ public class LibGui extends javax.swing.JFrame {
 
     /**
      * Creates new form LibGui
+     * @throws java.lang.ClassNotFoundException Class not found exception
      */
     public LibGui() throws ClassNotFoundException {
 

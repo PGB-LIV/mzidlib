@@ -14,8 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.Vector;
+
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 
 import uk.ac.ebi.jmzidml.model.mzidml.*;
@@ -23,7 +23,6 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 import uk.ac.liv.mzidlib.converters.CombinedSearchEngines2Mzid;
 import uk.ac.liv.mzidlib.fdr.FalseDiscoveryRate;
-import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
 public class CombineSearchEngines {
 
@@ -177,17 +176,17 @@ public class CombineSearchEngines {
 
         //m.readMzIdentMLData(xmlToRead, searchEngine);
         //m.computeFDRusingJonesMethod();
-        Map<String, List<List<String>>> pepMod = new HashMap<String, List<List<String>>>(fdr.getFromXMLPeptideModificationHash());
-        Map<String, String> pepSeq = new HashMap<String, String>(fdr.getFromXMLPeptideSequenceHash());
-        Map<String, List<List<Object>>> specInfo = new HashMap<String, List<List<Object>>>(fdr.getFromXMLSpectrumInfoHash());
-        List<String> sorted_spec = new ArrayList<String>(fdr.getSorted_spectrumResult());
-        List<String> sorted_pepID = new ArrayList<String>(fdr.getSorted_peptideNames());
-        List<Double> sorted_evalues = new ArrayList<Double>(fdr.getSorted_evalues());
-        List<Double> sorted_scores = new ArrayList<Double>(fdr.getSorted_scores());
-        List<String> sorted_decoy = new ArrayList<String>(fdr.getSorted_decoyOrNot());
-        List<Double> sortedFDR = new ArrayList<Double>(fdr.getSorted_simpleFDR());
-        List<Double> sorted_qValues = new ArrayList<Double>(fdr.getSorted_qValues());
-        List<Double> sorted_estFDR = new ArrayList<Double>(fdr.getSorted_estimatedFDR());
+        Map<String, List<List<String>>> pepMod = new HashMap<>(fdr.getFromXMLPeptideModificationHash());
+        Map<String, String> pepSeq = new HashMap<>(fdr.getFromXMLPeptideSequenceHash());
+        Map<String, List<List<Object>>> specInfo = new HashMap<>(fdr.getFromXMLSpectrumInfoHash());
+        List<String> sorted_spec = new ArrayList<>(fdr.getSorted_spectrumResult());
+        List<String> sorted_pepID = new ArrayList<>(fdr.getSorted_peptideNames());
+        List<Double> sorted_evalues = new ArrayList<>(fdr.getSorted_evalues());
+        List<Double> sorted_scores = new ArrayList<>(fdr.getSorted_scores());
+        List<String> sorted_decoy = new ArrayList<>(fdr.getSorted_decoyOrNot());
+        List<Double> sortedFDR = new ArrayList<>(fdr.getSorted_simpleFDR());
+        List<Double> sorted_qValues = new ArrayList<>(fdr.getSorted_qValues());
+        List<Double> sorted_estFDR = new ArrayList<>(fdr.getSorted_estimatedFDR());
 
 //      String fileName= xmlToRead+"_combined.txt";
 //      BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
@@ -256,8 +255,8 @@ public class CombineSearchEngines {
      * sortedFDR, sorted_qValues, sorted_estFDR); }
      */
     /**
-     * Do the container assignment with AFS values for each spectrum + sequence
-     * pair
+     * Do the container assignment with AFS values for each spectrum + sequence pair
+     * @throws java.lang.Exception Exception
      */
     public void combinePeptidesAcrossSearchEngines(int rank) throws Exception {
 
@@ -352,7 +351,7 @@ public class CombineSearchEngines {
     }
 
     String[] findAllSpectrumIdsFromSearchEngines() throws Exception {
-        Map<String, String> tempMap = new HashMap<String, String>();
+        Map<String, String> tempMap = new HashMap<>();
 
         for (int i = 0; i < singleFDRInformation.length; i++) {
             String[] specNames = singleFDRInformation[i].spectrumInfo.keySet().toArray(new String[0]);
@@ -377,7 +376,7 @@ public class CombineSearchEngines {
             List<List<Object>> fdrAndOtherInfo = fdrInfo.get(seq);
 
             //ArrayList<String> infoForThisSeq = new ArrayList<String>();
-            List<Object> infoForThisSeq = new ArrayList<Object>();
+            List<Object> infoForThisSeq = new ArrayList<>();
 
             infoForThisSeq.add(spectrumId);
             for (int i = 0; i < fdrAndOtherInfo.size(); i++) //infoForThisSeq.add(fdrAndOtherInfo.elementAt(i).toString());
@@ -398,7 +397,7 @@ public class CombineSearchEngines {
 
     Map<String, Double> computeAFS_score(Map<String, List<List<Object>>> fdrRelatedInfo) {
 
-        Map<String, Double> afs_score_hash = new HashMap<String, Double>();
+        Map<String, Double> afs_score_hash = new HashMap<>();
 
         Iterator<String> seqSet = fdrRelatedInfo.keySet().iterator();
         while (seqSet.hasNext()) {
@@ -430,13 +429,13 @@ public class CombineSearchEngines {
             String seq = it.next();
             List<Integer> seMap = sequenceSearchEngineMapping.get(seq);
 
-            List<List<Object>> infoForThisSeq = new ArrayList<List<Object>>(1);
+            List<List<Object>> infoForThisSeq = new ArrayList<>(1);
 
             for (int i = 0; i < seMap.size(); i++) {
                 int seIndex = seMap.get(i);
                 // get all the seq from that SE to check for the corresponding index
 
-                List<String> seqValuesForThisSe = new ArrayList<String>(Arrays.asList(peptideSeqs[seIndex]));
+                List<String> seqValuesForThisSe = new ArrayList<>(Arrays.asList(peptideSeqs[seIndex]));
                 // the position of the seq within that array
                 int j = seqValuesForThisSe.indexOf(seq);
                 // the peptide ID corresponding to the sequence
@@ -446,7 +445,7 @@ public class CombineSearchEngines {
                 // We know the SE and the peptide ID. We can extract rest of the information form
                 //singleFDRInformation structure
                 //Vector allThePeptideIdFromThisSe = new Vector(Arrays.asList(singleFDRInformation[seIndex].sorted_peptideID));
-                Vector<String> allThePeptideIdFromThisSe = new Vector<String>(singleFDRInformation[seIndex].sorted_peptideID);
+                Vector<String> allThePeptideIdFromThisSe = new Vector<>(singleFDRInformation[seIndex].sorted_peptideID);
 
                 //RK 19-02-13
                 // There might be repeated peptides for different Spec IDs.
@@ -482,7 +481,7 @@ public class CombineSearchEngines {
                 double qValue = singleFDRInformation[seIndex].sorted_qValues.get(indexOfThisPeptideId);
                 String decoyOrNot = singleFDRInformation[seIndex].sorted_decoyornot.get(indexOfThisPeptideId);
 
-                List<Object> fdrRelatedInfo = new ArrayList<Object>(1);
+                List<Object> fdrRelatedInfo = new ArrayList<>(1);
                 fdrRelatedInfo.add(seIndex);				// The identifier SE
                 fdrRelatedInfo.add(correspondingPeptideId); // the peptide ID
 
@@ -502,11 +501,11 @@ public class CombineSearchEngines {
 
     Map<String, String> createMultipleSeIdentifier(Map<String, List<Integer>> sequenceSearchEngineMap) {
 
-        Map<String, String> seqAndMappedSe = new HashMap<String, String>();
+        Map<String, String> seqAndMappedSe = new HashMap<>();
 
         Iterator<String> sequencesIterator = sequenceSearchEngineMap.keySet().iterator();
         while (sequencesIterator.hasNext()) {
-            String seCombination = new String("");
+            String seCombination = "";
             String sequence = sequencesIterator.next();
             List<Integer> searchEnginesFound = sequenceSearchEngineMap.get(sequence);
             int totalSe = searchEnginesFound.size();
@@ -553,7 +552,7 @@ public class CombineSearchEngines {
                     continue;
                 }
 
-                List<String> pepId = new ArrayList<String>(1);
+                List<String> pepId = new ArrayList<>(1);
                 for (int j = 0; j < dataForThisSpectrumID.size(); j++) {
                     //System.out.println("::Debug 2 - " + dataForThisSpectrumID.get(j).get(1).toString() + "\t" +dataForThisSpectrumID.get(j).get(2).toString() + "\t" + dataForThisSpectrumID.get(j).get(3).toString());
 
@@ -588,7 +587,7 @@ public class CombineSearchEngines {
                     continue;
                 }
 
-                List<String> seqs = new ArrayList<String>(1);
+                List<String> seqs = new ArrayList<>(1);
                 for (int j = 0; j < peptideId[i].length; j++) {
                     seqs.add(singleFDRInformation[i].peptideSequence.get(peptideId[i][j]).trim());
                 }
@@ -608,7 +607,7 @@ public class CombineSearchEngines {
 
     Map<String, List<Integer>> compareSequences(String[][] peptideSeqs) {
 
-        Map<String, List<Integer>> sequenceMap = new HashMap<String, List<Integer>>();
+        Map<String, List<Integer>> sequenceMap = new HashMap<>();
         // extract the unique sequences
         for (int i = 0; i < peptideSeqs.length; i++) {
 
@@ -632,7 +631,7 @@ public class CombineSearchEngines {
                     continue;
                 }
 
-                List<String> v1 = new ArrayList<String>(Arrays.asList(peptideSeqs[i]));
+                List<String> v1 = new ArrayList<>(Arrays.asList(peptideSeqs[i]));
                 if (v1.contains(pepSeq)) {
                     List<Integer> vtemp = sequenceMap.get(pepSeq);
                     vtemp.add(i);
@@ -708,7 +707,7 @@ public class CombineSearchEngines {
         //ArrayList<ArrayList<String>> content = (ArrayList<ArrayList<String>>) combinedResultContainer.get(key);
         List<List<Object>> content = (List<List<Object>>) combinedResultContainer.get(key);
 
-        List<Double> afs_values = new ArrayList<Double>(1);
+        List<Double> afs_values = new ArrayList<>(1);
         for (int i = 0; i < content.size(); i++) //afs_values.add( Double.parseDouble(content.get(i).get(content.get(i).size() - 1)));
         {
             afs_values.add(Double.parseDouble(content.get(i).get(content.get(i).size() - 1).toString()));
@@ -718,15 +717,15 @@ public class CombineSearchEngines {
         TreeSortForIndices sortClass = new TreeSortForIndices();
         Integer[] sortOrderForEvalues = sortClass.sortTheValueColumn(afs_values.toArray(new Double[0]), true);
 
-        List<List<Object>> sort_content = new ArrayList<List<Object>>();
+        List<List<Object>> sort_content = new ArrayList<>();
 
         for (int i = 0; i < sortOrderForEvalues.length; i++) {
             //ArrayList<String> tempRow = content.get(sortOrderForEvalues[i]);
             List<Object> tempRow = content.get(sortOrderForEvalues[i]);
-            sort_content.add(new ArrayList<Object>(tempRow));
+            sort_content.add(new ArrayList<>(tempRow));
         }
 
-        combinedResultContainer.put(key, new ArrayList<List<Object>>(sort_content));
+        combinedResultContainer.put(key, new ArrayList<>(sort_content));
     }
 
     public void sortWholeCombinedResultContainer() {
@@ -751,7 +750,7 @@ public class CombineSearchEngines {
         fake_ds.add("Fake_spectrum");
 
         for (int i = 0; i < key.length(); i++) {
-            List<Object> fake_vec = new ArrayList<Object>();
+            List<Object> fake_vec = new ArrayList<>();
             fake_vec.add(i);
             fake_vec.add("Fake Peptide");
             fake_vec.add(epsilon_afs);
@@ -764,7 +763,7 @@ public class CombineSearchEngines {
         fake_ds.add(fakeAfs);
 
         content.add(fake_ds);
-        combinedResultContainer.put(key, new ArrayList<List<Object>>(content));
+        combinedResultContainer.put(key, new ArrayList<>(content));
     }
 
     public void insertFakeDecoyInWholeCombinedResultContainer() {
@@ -825,7 +824,7 @@ public class CombineSearchEngines {
         int indexForFdrValue = combinedResultContainer.get(key).get(0).size() - 2;
         int indexForQValue = combinedResultContainer.get(key).get(0).size() - 1;
 
-        Double immediateMinFdr = new Double(0.0);
+        Double immediateMinFdr = 0.0;
         //try{
         immediateMinFdr = (Double) combinedResultContainer.get(key).get(combinedResultContainer.get(key).size() - 1).get(indexForFdrValue);
         combinedResultContainer.get(key).get(combinedResultContainer.get(key).size() - 1).set(indexForQValue, immediateMinFdr);
@@ -1019,7 +1018,7 @@ public class CombineSearchEngines {
 
         List<List<Object>> specInfo = singleFDRInformation[searchEngineIndex].spectrumInfo.get(spectrumID);
 
-        List<Object> relevantPepInfo = new ArrayList<Object>();
+        List<Object> relevantPepInfo = new ArrayList<>();
         for (int i = 0; i < specInfo.size(); i++) {
             if (specInfo.get(i).get(1).equals(pepId)) {
                 relevantPepInfo = specInfo.get(i);
@@ -1038,7 +1037,7 @@ public class CombineSearchEngines {
         String expMAss = relevantPepInfo.get(5).toString();
 
         //FG
-        List<List<Object>> peptideEvd = new ArrayList<List<Object>>();
+        List<List<Object>> peptideEvd = new ArrayList<>();
         List<String> improvedPSM = new ArrayList<>();
 
         if (relevantPepInfo.size() > 8) {
@@ -1482,6 +1481,8 @@ public class CombineSearchEngines {
     /**
      * FG The method to call the pipeline from other java programs, in case if
      * we want to tinker around in main()
+     * @param args Input arguments
+     * @throws java.lang.Exception Exception
      */
     public static void runThreeSearchEngines(String[] args) throws Exception {
 
@@ -1526,7 +1527,7 @@ public class CombineSearchEngines {
         csvFileName = args[14];
         //csvFileName = csvFileName + ".txt";
 
-        String debugFileName = new String("");
+        String debugFileName = "";
         if (args[15] != null) {
             debugFileName = args[15];
         }
