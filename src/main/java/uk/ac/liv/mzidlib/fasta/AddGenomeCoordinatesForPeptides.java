@@ -629,10 +629,10 @@ public class AddGenomeCoordinatesForPeptides {
     }
 
     /**
-     *
-     * @param pr
-     * @param cdsColl
-     * @return
+     * Determine the location of sequence on CDs.
+     * @param pr protein results
+     * @param cdsColl CDS column list
+     * @return an array of locations
      */
     long[] determineTheLocationOfSeqOnCds(ProteinResults pr, List<CDS_Information> cdsColl) {
         long[] gffEntry = new long[2];
@@ -665,10 +665,11 @@ public class AddGenomeCoordinatesForPeptides {
     }
 
     /**
-     *
-     * @param number
-     * @param cdsColl
-     * @return
+     * Get mapped coordinate.
+     * @param number number
+     * @param cdsColl CDs column list
+     * @param pr protein results
+     * @return a coordinate
      */
     long getMappedCordinates(long number, List<CDS_Information> cdsColl, ProteinResults pr) {
         long mappedCord = -1;
@@ -701,12 +702,12 @@ public class AddGenomeCoordinatesForPeptides {
      * position. If the CDS is on +ve strand then sort in ascending order,
      * otherwise, sort in descending order.
      *
-     * @param cdsColl
-     * @return
+     * @param cdsColl CDS column list
+     * @return list of CDS information
      */
     List<CDS_Information> sortCDSAccordingToStartPosition(List<CDS_Information> cdsCollection) {
 
-        List<CDS_Information> cdsColl = new ArrayList<CDS_Information>(cdsCollection);
+        List<CDS_Information> cdsColl = new ArrayList<>(cdsCollection);
 
         String strand = cdsCollection.get(0).getStrand();
         boolean sortAscending = false;
@@ -746,7 +747,7 @@ public class AddGenomeCoordinatesForPeptides {
 
     List<CDS_Information> sortCDSAccordingToStartPositionTemp(List<CDS_Information> cdsCollection) {
 
-        List<CDS_Information> cdsColl = new ArrayList<CDS_Information>(cdsCollection);
+        List<CDS_Information> cdsColl = new ArrayList<>(cdsCollection);
 
         for (int i = cdsColl.size() - 1; i >= 0; i--) {
             int j = cdsColl.size() - 1 - i;
@@ -761,11 +762,7 @@ public class AddGenomeCoordinatesForPeptides {
 
     }
 
-    /**
-     *
-     * @param cdsCollection
-     * @return
-     */
+
     long[] cumulativeStartPositions(List<CDS_Information> cdsCollection) {
         long[] cummStartPosition = new long[cdsCollection.size()];
 
@@ -783,12 +780,6 @@ public class AddGenomeCoordinatesForPeptides {
         return cummStartPosition;
     }
 
-    /**
-     *
-     * @param number
-     * @param cummArray
-     * @return
-     */
     int determineTheIndexInCummulativeArray(long number, long[] cummArray) {
         int idx = -1;
 

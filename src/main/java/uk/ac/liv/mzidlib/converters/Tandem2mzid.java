@@ -553,7 +553,7 @@ public class Tandem2mzid {
      * @param foundProts
      * @param domain
      *
-     * @return
+     * @return PeptideEvidence object
      */
     private PeptideEvidence parseNewPeptideEvidence(Domain domain) {
         PeptideEvidence pepEvid = new PeptideEvidence();
@@ -586,13 +586,13 @@ public class Tandem2mzid {
      * is unique so far. This will mean that we have to make a new mzIdentML
      * PeptideEvidence object.
      *
-     * @param domain
+     * @param domain domain
      *
-     * @param protAccession :
+     * @param protAccession protein accession
      * @param peptideKey : as returned by getPeptideKey method
      *
      *
-     * @return
+     * @return key for global peptide evidence
      */
     private String getGlobalPeptideEvidenceKey(Domain domain, String protAccession, String peptideKey) {
         int end = domain.getDomainEnd();

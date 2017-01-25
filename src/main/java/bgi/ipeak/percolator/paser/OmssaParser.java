@@ -556,7 +556,7 @@ public class OmssaParser {
      *
      * @param previous
      * @param next
-     * @return
+     * @return ture if the site is digested by trypsin
      */
     private static boolean isEnzymatic(String previous, String next) {
         if (next == null || previous == null
