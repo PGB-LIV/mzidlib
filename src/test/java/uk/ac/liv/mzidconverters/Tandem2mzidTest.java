@@ -1,5 +1,7 @@
 package uk.ac.liv.mzidconverters;
 
+import org.junit.Ignore;
+
 import junit.framework.TestCase;
 import uk.ac.liv.mzidlib.MzIdentMLLib;
 import uk.ac.liv.mzidlib.converters.Tandem2mzid;
@@ -12,6 +14,7 @@ import uk.ac.liv.mzidlib.converters.Tandem2mzid;
  * @author plukasse
  *
  */
+@Ignore
 public class Tandem2mzidTest extends TestCase {
 
     public void test_basic2() throws Exception {
