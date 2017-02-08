@@ -37,12 +37,12 @@ public class FalseDiscoveryRate {
      * For each Spectrum Result id we need to store :: - peptides associated-
      * scores - evalue	- decoy = true/false
      */
-    private List<String> spectrumResult = new ArrayList<String>();
-    private List<String> spectrumItem = new ArrayList<String>();
-    private List<String> peptideNames = new ArrayList<String>();
-    private List<Double> evalues = new ArrayList<Double>();
+    private List<String> spectrumResult = new ArrayList<>();
+    private List<String> spectrumItem = new ArrayList<>();
+    private List<String> peptideNames = new ArrayList<>();
+    private List<Double> evalues = new ArrayList<>();
     //private ArrayList<Double> scores = new ArrayList<Double>();
-    private List<String> decoyOrNot = new ArrayList<String>();
+    private List<String> decoyOrNot = new ArrayList<>();
     /*
      * Once the evalues/scores list is sorted, we need to remember the original
      * indices of the entries (pre-sorted order) so that we can map back that
@@ -53,22 +53,22 @@ public class FalseDiscoveryRate {
     /*
      * the above information in sorted order
      */
-    private List<String> sorted_spectrumResult = new ArrayList<String>();
-    private List<String> sorted_spectrumItem = new ArrayList<String>();
-    private List<String> sorted_peptideNames = new ArrayList<String>();
-    private List<Double> sorted_evalues = new ArrayList<Double>();
-    private List<Double> sorted_scores = new ArrayList<Double>();
-    private List<String> sorted_decoyOrNot = new ArrayList<String>();
+    private List<String> sorted_spectrumResult = new ArrayList<>();
+    private List<String> sorted_spectrumItem = new ArrayList<>();
+    private List<String> sorted_peptideNames = new ArrayList<>();
+    private List<Double> sorted_evalues = new ArrayList<>();
+    private List<Double> sorted_scores = new ArrayList<>();
+    private List<String> sorted_decoyOrNot = new ArrayList<>();
 
     /*
      * Store the estimated FDR, q-Value, FDR Score here
      */
-    private List<Double> estimated_simpleFDR = new ArrayList<Double>();
-    private List<Double> estimated_qvalue = new ArrayList<Double>();
-    private List<Double> estimated_fdrscore = new ArrayList<Double>();
+    private List<Double> estimated_simpleFDR = new ArrayList<>();
+    private List<Double> estimated_qvalue = new ArrayList<>();
+    private List<Double> estimated_fdrscore = new ArrayList<>();
     // F. Ghali adding TP and FP 31/08/2011
-    private List<Double> tp = new ArrayList<Double>();
-    private List<Double> fp = new ArrayList<Double>();
+    private List<Double> tp = new ArrayList<>();
+    private List<Double> fp = new ArrayList<>();
     /*
      * MzIdentML elements
      */
@@ -149,7 +149,7 @@ public class FalseDiscoveryRate {
         }
     }
 
-    public FalseDiscoveryRate(String mzid, String searchEngine, String decoyRatio, String decoy, String cvTerm, boolean betterScore) {
+//    public FalseDiscoveryRate(String mzid, String searchEngine, String decoyRatio, String decoy, String cvTerm, boolean betterScore) {
 //        this.decoyRatio = Integer.valueOf(decoyRatio);
 //        this.decoy = decoy;
 //        
@@ -197,18 +197,18 @@ public class FalseDiscoveryRate {
 //                "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
 //             System.out.println (message);
 //        } 
-    }
+//    }
 
     private void readMzIdentML() {
         long startTime = System.currentTimeMillis();
         try {
             mzidLibUtils = new MzidLibUtils();
-            peptideIdAndSequenceHash = new HashMap<String, String>();
-            peptideModificationHash = new HashMap<String, List<List<String>>>();
-            spectrumInformationHash = new HashMap<String, List<List<Object>>>();
-            dbReferenceHash = new HashMap<String, String>();
+            peptideIdAndSequenceHash = new HashMap<>();
+            peptideModificationHash = new HashMap<>();
+            spectrumInformationHash = new HashMap<>();
+            dbReferenceHash = new HashMap<>();
 
-            unimodHashmap = new HashMap<String, String>();
+            unimodHashmap = new HashMap<>();
             dBSequenceList.clear();
             dBSequenceHashMap.clear();
             peptideHashMap.clear();
@@ -231,7 +231,8 @@ public class FalseDiscoveryRate {
             //inputs = mzIdentML.getDataCollection().getInputs();
             inputs = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Inputs);
 
-            HashMap<String, String> spectraDataHaspMap = new HashMap();
+            //Stores SpectraData id and location attribute (one to one).
+            HashMap<String, String> spectraDataHaspMap = new HashMap<>();
             List<SpectraData> spectraDataList = inputs.getSpectraData();
             for (int i = 0; i < spectraDataList.size(); i++) {
                 SpectraData spectraData = spectraDataList.get(i);
@@ -264,12 +265,12 @@ public class FalseDiscoveryRate {
             peptideList.clear();
             getPeptideHashMap().clear();
             Iterator<Peptide> iterPeptide = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
-            List<List<String>> modArray = new ArrayList<List<String>>(); // There can be multiple modifications for a peptide
-            List<String> tempSingleMod = new ArrayList<String>();
-            List<Modification> modificationmList = new ArrayList<Modification>();
+            List<List<String>> modArray = new ArrayList<>(); // There can be multiple modifications for a peptide
+            List<String> tempSingleMod = new ArrayList<>();
+            List<Modification> modificationmList = new ArrayList<>();
 
-            List<List<Object>> multiSpectrum = new ArrayList<List<Object>>();
-            List<Object> temp = new ArrayList<Object>();
+            List<List<Object>> multiSpectrum = new ArrayList<>();
+            List<Object> temp = new ArrayList<>();
 
             String spectrumItemId = new String(), peptideRef = new String();
             int rank = 0, chargedState = 0;
@@ -279,9 +280,9 @@ public class FalseDiscoveryRate {
             String pepDBSequence_Ref = new String();
             //boolean isDecoy = false;
             // NOTE - This also has to be a Arraylist, as there can be many peptides
-            List<List<Object>> peptideEvd = new ArrayList<List<Object>>();
+            List<List<Object>> peptideEvd = new ArrayList<>();
 
-            List<Object> singlePeptideEvd = new ArrayList<Object>();
+            List<Object> singlePeptideEvd = new ArrayList<>();
 
             boolean isdecoy = false;
             String proteinAccession = "";
@@ -314,13 +315,13 @@ public class FalseDiscoveryRate {
                         tempSingleMod.add(3, cvParamList.get(0).getName());
                         getUnimodHashmap().put(cvParamList.get(0).getName(), cvParamList.get(0).getAccession());
                     }
-                    modArray.add(new ArrayList<String>(tempSingleMod));
+                    modArray.add(new ArrayList<>(tempSingleMod));
                     tempSingleMod.clear();
                 }
                 // Peptide ID and sequence pair; Peptide ID and Modification arrays
                 // pepId = pepSeq;
                 peptideIdAndSequenceHash.put(pepId, pepSeq);
-                peptideModificationHash.put(pepId, new ArrayList<List<String>>(modArray));
+                peptideModificationHash.put(pepId, new ArrayList<>(modArray));
             }
 
             for (Peptide peptide1 : peptideList) {
@@ -369,18 +370,18 @@ public class FalseDiscoveryRate {
 
                     singlePeptideEvd.clear();
                     isdecoy = false;
-                    String peptideEv;
+                    //String peptideEv;
                     for (PeptideEvidenceRef peptideEvidenceRef : peptideEvidenceRefList) {
                         PeptideEvidence peptideEvidence = getPeptideEvidenceMap().get(peptideEvidenceRef.getPeptideEvidenceRef());
 
                         if (peptideEvidence != null) {
-                            pepStart = peptideEvidence.getStart().intValue();
-                            pepEnd = peptideEvidence.getEnd().intValue();
+                            pepStart = peptideEvidence.getStart();
+                            pepEnd = peptideEvidence.getEnd();
                             pepDBSequence_Ref = peptideEvidence.getDBSequenceRef();
 
                             isdecoy = peptideEvidence.isIsDecoy();
 
-                            peptideEv = peptideEvidence.getId();
+                            //peptideEv = peptideEvidence.getId();
 
                             if (usingFileDecoyAttribute) {
                                 if (peptideEvidence.isIsDecoy()) {
@@ -417,8 +418,8 @@ public class FalseDiscoveryRate {
 
                         if (peptideEvidence != null) {
                             singlePeptideEvd.clear();
-                            pepStart = peptideEvidence.getStart().intValue();
-                            pepEnd = peptideEvidence.getEnd().intValue();
+                            pepStart = peptideEvidence.getStart();
+                            pepEnd = peptideEvidence.getEnd();
                             pepDBSequence_Ref = peptideEvidence.getDBSequenceRef();
                             // Added by FG 09/5/2014 Missing pre post
                             String pre = peptideEvidence.getPre();
@@ -431,7 +432,7 @@ public class FalseDiscoveryRate {
                             //Removed by FG
                             //isdecoy = peptideEvidence2.isIsDecoy();
 
-                            peptideEv = peptideEvidence.getId();
+                            //peptideEv = peptideEvidence.getId();
 
                             singlePeptideEvd.add(0, pepStart);
                             singlePeptideEvd.add(1, pepEnd);
@@ -441,7 +442,7 @@ public class FalseDiscoveryRate {
                             singlePeptideEvd.add(5, post);
                             //Added by FG 13/8/2014 fixing multiple spectra ref
                             singlePeptideEvd.add(6, location);
-                            peptideEvd.add(new ArrayList<Object>(singlePeptideEvd));
+                            peptideEvd.add(new ArrayList<>(singlePeptideEvd));
                         }
                     }
 
@@ -479,18 +480,18 @@ public class FalseDiscoveryRate {
                     temp.add(7, scoreValue);
 
                     if (!peptideEvd.isEmpty()) {
-                        temp.add(8, new ArrayList<List<Object>>(peptideEvd));
+                        temp.add(8, new ArrayList<>(peptideEvd));
                         peptideEvd.clear();
                     }
 
                     if (!temp.isEmpty()) {
-                        multiSpectrum.add(new ArrayList<Object>(temp));
+                        multiSpectrum.add(new ArrayList<>(temp));
                         temp.clear();
                     }
 
                 }
 
-                spectrumInformationHash.put(spectrumResultId, new ArrayList<List<Object>>(multiSpectrum));
+                spectrumInformationHash.put(spectrumResultId, new ArrayList<>(multiSpectrum));
 //                }
 
             }

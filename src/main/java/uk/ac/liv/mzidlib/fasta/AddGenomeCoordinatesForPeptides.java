@@ -39,7 +39,7 @@ public class AddGenomeCoordinatesForPeptides {
     private String outputGff;
     private Cv psiCV;
 
-    private List unmmappedAccessions = new ArrayList();
+    private List unmappedAccessions = new ArrayList();
 
     private Map<String, List<CDS_Information>> cdsRecords = new HashMap<>();
 
@@ -403,7 +403,14 @@ public class AddGenomeCoordinatesForPeptides {
                     long start_map, end_map;
 
                     co_ords = mapToGff(pr);
-                    if (co_ords != null && !unmmappedAccessions.contains(pr.getAccession())) {
+                    
+                    // unmapped peptide
+                    if (co_ords == null || unmappedAccessions.contains(pr.getAccession())){
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002740", "unmapped peptide", gffData.get(0).getSeqID(), psiCV));
+                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002740", "unmapped peptide", gffData.get(0).getSeqID(), psiCV));                    
+                    }
+                    // mapped peptide
+                    else {
                         start_map = Long.parseLong(co_ords[0]);
                         end_map = Long.parseLong(co_ords[1]);
                         if (end_map < start_map) {
@@ -462,7 +469,7 @@ public class AddGenomeCoordinatesForPeptides {
                                 }
                             }
                         }
-                        int pepLen = 3 * (peptideEvidence.getEnd().intValue() - peptideEvidence.getStart().intValue() + 1);
+                        int pepLen = 3 * (peptideEvidence.getEnd() - peptideEvidence.getStart() + 1);
                         int coordLen = 0;
 //                        for (int j = 0; j < outputCDS.size(); j++) {
 //                            CDS_Information cDS_Information = outputCDS.get(j);
@@ -648,13 +655,13 @@ public class AddGenomeCoordinatesForPeptides {
         long mapped_end = getMappedCordinates(end, sortedCDS, pr);
         if (mapped_start == -1) {
             System.out.println("For accession: " + pr.getAccession() + " and a peptide eveidence: " + pr.getPeptideEvidenceID() + " start coordinates couldn't be mapped.");
-            unmmappedAccessions.add(pr.getAccession());
+            unmappedAccessions.add(pr.getAccession());
         }
         if (mapped_end == -1) {
             System.out.println("For accession: " + pr.getAccession() + " and a peptide eveidence: " + pr.getPeptideEvidenceID() + " the end coordinates couldn't be mapped.");
             mapped_end = mapped_start + ((end - start) * 3);
             System.out.println("mapped_end modified value= " + mapped_end);
-            unmmappedAccessions.add(pr.getAccession());
+            unmappedAccessions.add(pr.getAccession());
 
         }
 
