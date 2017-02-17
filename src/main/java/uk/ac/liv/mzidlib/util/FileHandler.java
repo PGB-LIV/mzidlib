@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import org.apache.log4j.Logger;
+
 // The idea is to see whether the underlying file system is one of a
 // network kind (NFS, SMB, CIFS, OpenAFS, GlusterFS) and then to copy
 // the file to the local scratch space for faster processing. 
@@ -20,47 +22,50 @@ import java.nio.file.StandardCopyOption;
 // through masking.
 
 public class FileHandler {
-    
-    private static final String NFSFileSystemPrefix = "nfs";
 
-    private FileHandler()
-    {
+    private static final String NFSFileSystemPrefix = "nfs";
+    private static Logger logger = Logger.getLogger(FileHandler.class);
+    private static Path inputFilePath;
+
+    private FileHandler() {
 
     }
 
     /**
-     * This method copies the given file to a local drive if the given file is
-     * in a network file system. The calling method should check for null object.
+     * This method copies the given file to a local drive if the file resides
+     * on a network file system (primarily NFS). If the copy operation fails
+     * for some reason (insufficient space, path doesn't exist etc), the original
+     * behaviour is retained. The copied file will be purged upon JVM shutdown.
+     *
+     * The calling method should check for null object.
      *
      * @param filePath     as {@link String} the path of the file to be processed
      * @param processLocal decides whether the file should be copied to local drive
-     * @return Locally available {@link File} for the given path
+     * @return The {@link File} object to be processed
      */
-    public static File handleFile(final String filePath, final boolean processLocal)
-    {
+
+    public static File handleFile(final String filePath, final boolean processLocal) {
+        File originalFile = new File(filePath);
         try {
-            File originalFile = new File(filePath);
             if (processLocal) {
                 URI rootURI = new URI("file:///");
                 Path rootPath = Paths.get(rootURI);
                 Path dirPath = rootPath.resolve(filePath);
                 FileStore dirFileStore = Files.getFileStore(dirPath);
-                File mzidFile = new File(originalFile.getName());
-                if (dirFileStore.type().contains(NFSFileSystemPrefix)){
+                if (dirFileStore.type().contains(NFSFileSystemPrefix)) {
+                    File mzidFile = new File(originalFile.getName());
                     Files.copy(originalFile.toPath(), mzidFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                } else {
-                    mzidFile = originalFile;
+                    inputFilePath = mzidFile.toPath().toAbsolutePath();
+                    mzidFile.deleteOnExit();
+                    return mzidFile;
                 }
-                return mzidFile;
-            } else {
-                return originalFile;
             }
-        } catch (URISyntaxException e) {
-            // TODO: Not sure mzid has a builtin  logger. If so, needs logging. 
-            return null;
-        } catch (IOException e) {
-            // TODO: Not sure mzid has a builtin  logger. If so, needs logging. 
-            return null;
+            return originalFile;
+        } catch (URISyntaxException | IOException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error in copying file : " + filePath + " : " + e.getMessage());
+            }
+            return originalFile;
         }
     }
 
