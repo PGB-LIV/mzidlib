@@ -8,8 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import uk.ac.liv.mzidlib.util.FileHandler;
 
 /**
  *
@@ -129,12 +130,15 @@ public class GenericFasta {
     private void createGenericeFastaFromGff() {
         BufferedReader in = null;
         // Variables needed during processing of ##FASTA file
-        File tempFasta = null;
+        File tempFasta;
+        String tempFastaPath = "";
         Writer temp_out = null;
         boolean fastaRegionFlag = false;
         try {
-            System.out.println("Parsing the GFF: " + inputGff);
-            in = new BufferedReader(new FileReader(inputGff));
+            File handledGffFile = FileHandler.handleFile(inputGff, true, true); 
+            String handledGffFilePath = handledGffFile.getAbsolutePath();
+            System.out.println("Parsing the GFF: " + handledGffFilePath);                       
+            in = new BufferedReader(new FileReader(handledGffFile));
             String line;
 
             boolean createFastaFileFlagFromGff = false;
@@ -142,12 +146,12 @@ public class GenericFasta {
             while ((line = in.readLine()) != null) {
                 if (line.equals("##FASTA")) {
                     fastaRegionFlag = true;
-                    System.out.println("The GFF: " + inputGff + " contains FASTA");
+                    System.out.println("The GFF: " + handledGffFilePath + " contains FASTA");
                 }
                 if (fastaRegionFlag) {
                     if (!createFastaFileFlagFromGff) {
-
-                        tempFasta = new File(inputGff.substring(0, inputGff.lastIndexOf('.')) + ".fasta");
+                        tempFastaPath = handledGffFilePath.substring(0, handledGffFilePath.lastIndexOf('.')) + ".fasta";
+                        tempFasta = new File(tempFastaPath);
                         temp_out = new BufferedWriter(new FileWriter(tempFasta));
                         createFastaFileFlagFromGff = true;
                     }
@@ -158,7 +162,7 @@ public class GenericFasta {
                     }
                     if ((line.startsWith(">") && line.contains("cds_")) || (line.startsWith(">") && line.contains("rna_")) || (line.startsWith(">gb|"))) {
                         temp_out.write(line + "\n");
-                        String seq = null;
+                        String seq = "";
                         while ((seq = in.readLine()) != null) {
                             if (!seq.startsWith(">")) {
                                 temp_out.write(seq + "\n");
@@ -175,7 +179,7 @@ public class GenericFasta {
             }
             if (createFastaFileFlagFromGff) {
                 System.out.println("Creating a temp fasta file from the GFF.");
-                inputFasta_A = tempFasta.getAbsolutePath();
+                inputFasta_A = tempFastaPath;
                 createGenericFasta();
             } else if ((inputFasta_A == null) || inputFasta_A.equals("")) {
                 System.out.println("The GFF does not contain FASTA, and no FASTA file is provided.");
@@ -185,7 +189,7 @@ public class GenericFasta {
                 createGenericFasta();
             }
 
-            System.out.println("Parsing " + inputGff + " done.");
+            System.out.println("Parsing " + handledGffFilePath + " done.");
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
