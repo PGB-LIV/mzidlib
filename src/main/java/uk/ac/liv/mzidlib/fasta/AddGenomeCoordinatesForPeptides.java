@@ -117,7 +117,7 @@ public class AddGenomeCoordinatesForPeptides {
                         List<CDS_Information> cdsColl = cdsRecords.get(accession);
 
                         if (cdsColl == null) {
-                            cdsColl = new ArrayList<CDS_Information>();
+                            cdsColl = new ArrayList<>();
                         }
                         cdsColl.add(cdsObj);
                         cdsRecords.put(accession, cdsColl);
@@ -180,7 +180,7 @@ public class AddGenomeCoordinatesForPeptides {
                         List<CDS_Information> cdsColl = cdsRecords.get(accession);
 
                         if (cdsColl == null) {
-                            cdsColl = new ArrayList<CDS_Information>();
+                            cdsColl = new ArrayList<>();
                         }
                         cdsColl.add(cdsObj);
                         cdsRecords.put(accession, cdsColl);
@@ -196,7 +196,7 @@ public class AddGenomeCoordinatesForPeptides {
             } // end of while
 
             // Exit if no CDS found
-            if (cdsRecords.size() == 0) {
+            if (cdsRecords.isEmpty()) {
                 String exMessage = "No CDS field found.....exiting";
                 System.out.println(exMessage);
                 in.close();
@@ -406,7 +406,7 @@ public class AddGenomeCoordinatesForPeptides {
                     
                     // unmapped peptide
                     if (co_ords == null || unmappedAccessions.contains(pr.getAccession())){
-                        dbSeq.getCvParam().add(makeCvParam("MS:1002740", "unmapped peptide", gffData.get(0).getSeqID(), psiCV));
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002741", "unmapped protein", gffData.get(0).getSeqID(), psiCV));
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002740", "unmapped peptide", gffData.get(0).getSeqID(), psiCV));                    
                     }
                     // mapped peptide
@@ -527,6 +527,10 @@ public class AddGenomeCoordinatesForPeptides {
                         peptideEvidence.getCvParam().add(makeCvParam("MS:1002643", "peptide start positions on chromosome", startsList, psiCV));
 
                     }
+                }else if (gffData == null && !peptideEvidence.isIsDecoy()){
+                    dbSeq.getCvParam().add(makeCvParam("MS:1002741", "unmapped protein", psiCV));
+                    peptideEvidence.getCvParam().add(makeCvParam("MS:1002740", "unmapped peptide", psiCV));       
+                    dbSeqHM.put(dbSeq.getId(), dbSeq);
                 }
                 newPeList.add(peptideEvidence);
             }
@@ -608,6 +612,14 @@ public class AddGenomeCoordinatesForPeptides {
         cvParam.setAccession(accession);
         cvParam.setName(name);
         cvParam.setValue(value);
+        cvParam.setCv(cv);
+        return cvParam;
+    }
+    
+    public CvParam makeCvParam(String accession, String name, Cv cv) {
+        CvParam cvParam = new CvParam();
+        cvParam.setAccession(accession);
+        cvParam.setName(name);
         cvParam.setCv(cv);
         return cvParam;
     }
@@ -814,7 +826,7 @@ public class AddGenomeCoordinatesForPeptides {
         Map<String, DBSequence> dBSequenceHashMap = new HashMap<>();
         Map<String, PeptideEvidence> peptideEvidenceHashMap = new HashMap<>();
         Map<String, Peptide> peptideHashMap = new HashMap<>();
-        Map<String, String> peptideIdAndSequenceHash = new HashMap<String, String>();
+        Map<String, String> peptideIdAndSequenceHash = new HashMap<>();
         try {
             MzIdentMLUnmarshaller mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(new File(summaryFile));
             Iterator<DBSequence> iterDBSequence = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.DBSequence);
