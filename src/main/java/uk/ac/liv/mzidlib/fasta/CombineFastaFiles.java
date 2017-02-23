@@ -1,10 +1,13 @@
 package uk.ac.liv.mzidlib.fasta;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import uk.ac.liv.mzidlib.util.FileHandler;
 
 /**
  *
@@ -31,27 +34,30 @@ public class CombineFastaFiles {
 
                 for (int i = 0; i < files.length; i++) {
 
-                    System.out.println("Reading: " + files[i]);
+                    File handledFastaFile = FileHandler.handleFile(files[i], true, true);
+                    String handledFastaFilePath = handledFastaFile.getAbsolutePath();
+                    System.out.println("Reading: " + handledFastaFilePath);
 
-                    BufferedReader bufferedReader = new BufferedReader(new FileReader(files[i]));
-                    String line = bufferedReader.readLine();
-                    while (line != null) {
-                        if (line.startsWith(">")) {
-
-                            String newLine;
-                            if (!enableTwoStageSearch) {
-                                newLine = line.substring(0, 9) + alphabet1.charAt(i) + "_" + line.substring(9);
+                    try (BufferedReader bufferedReader
+                            = new BufferedReader(new FileReader(handledFastaFile))) {
+                        String line = bufferedReader.readLine();
+                        while (line != null) {
+                            if (line.startsWith(">")) {
+                                
+                                String newLine;
+                                if (!enableTwoStageSearch) {
+                                    newLine = line.substring(0, 9) + alphabet1.charAt(i) + "_" + line.substring(9);
+                                } else {
+                                    newLine = line.substring(0, 9) + alphabet2.charAt(i) + "_" + line.substring(9);
+                                }
+                                printWriter.println(newLine);
                             } else {
-                                newLine = line.substring(0, 9) + alphabet2.charAt(i) + "_" + line.substring(9);
+                                printWriter.println(line);
                             }
-                            printWriter.println(newLine);
-                        } else {
-                            printWriter.println(line);
+                            
+                            line = bufferedReader.readLine();
                         }
-
-                        line = bufferedReader.readLine();
                     }
-                    bufferedReader.close();
                 }
                 printWriter.close();
                 System.out.println("Done.");
@@ -62,11 +68,11 @@ public class CombineFastaFiles {
         }
     }
 
-    public static void main(String args[]) {
-
-        CombineFastaFiles combineFastaFiles = new CombineFastaFiles("0");
-        combineFastaFiles.combine(args[0], args[1]);
-
-    }
+//    public static void main(String args[]) {
+//
+//        CombineFastaFiles combineFastaFiles = new CombineFastaFiles("0");
+//        combineFastaFiles.combine(args[0], args[1]);
+//
+//    }
 
 }
