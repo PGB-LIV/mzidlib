@@ -153,8 +153,8 @@ public class FalseDiscoveryRateGlobal {
         }
         
         try {
-            File mzidFile = FileHandler.handleFile(mzid, true, true);
-            mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(mzidFile);
+            //File mzidFile = FileHandler.handleFile(mzid, true, true);
+            mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(new File(mzid));
             readMzIdentML();
         } catch (OutOfMemoryError error) {
             String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();

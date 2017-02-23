@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.bind.JAXBException;
 
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
@@ -23,6 +24,7 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 import uk.ac.liv.mzidlib.compare.CompareDBSequence;
 import uk.ac.liv.mzidlib.compare.ComparePeptide;
 import uk.ac.liv.mzidlib.compare.ComparePeptideEvidence;
+import uk.ac.liv.mzidlib.util.FileHandler;
 
 /**
  *
@@ -68,23 +70,24 @@ public class CombinePSMMzidFiles {
             int j = 0;
             for (int i = 0; i < mzidFiles.length; i++) {
                 if (mzidFiles[i].getAbsolutePath().endsWith(".mzid")) {
-                    MzIdentMLUnmarshaller mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(new File(mzidFiles[i].getAbsolutePath()));
-                    System.out.println("Reading " + mzidFiles[i].getAbsolutePath());
+                    File handledFile = FileHandler.handleFile(mzidFiles[i].getAbsolutePath(), true, true);
+                    MzIdentMLUnmarshaller mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(handledFile);
+                    System.out.println("Reading " + handledFile.getAbsolutePath());
                     readMzid(mzIdentMLUnmarshaller, j);
                     j = j + 1;
-                    System.out.println("Reading " + mzidFiles[i].getAbsolutePath() + " completed.");
+                    System.out.println("Reading " + handledFile.getAbsolutePath() + " completed.");
                 }
             }
         } else {
             String[] mzidFiles = inputs.split(";");
             int j = 0;
             for (int i = 0; i < mzidFiles.length; i++) {
-
-                MzIdentMLUnmarshaller mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(new File(mzidFiles[i]));
-                System.out.println("Reading " + mzidFiles[i]);
+                File handledFile = FileHandler.handleFile(mzidFiles[i], true, true);
+                MzIdentMLUnmarshaller mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(handledFile);
+                System.out.println("Reading " + handledFile.getAbsolutePath());
                 readMzid(mzIdentMLUnmarshaller, j);
                 j = j + 1;
-                System.out.println("Reading " + mzidFiles[i] + " completed.");
+                System.out.println("Reading " + handledFile.getAbsolutePath() + " completed.");
 
             }
 

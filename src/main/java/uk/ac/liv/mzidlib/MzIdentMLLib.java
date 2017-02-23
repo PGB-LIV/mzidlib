@@ -12,7 +12,6 @@ import bgi.ipeak.percolator.OmssaPercolator;
 import bgi.ipeak.percolator.XtandemPercolator;
 
 import java.io.File;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +25,7 @@ import uk.ac.liv.mzidlib.experimental.RescoreMods;
 import uk.ac.liv.mzidlib.fasta.CombineFastaFiles;
 import uk.ac.liv.mzidlib.fasta.AddGenomeCoordinatesForPeptides;
 import uk.ac.liv.mzidlib.fasta.GenericFasta;
+import uk.ac.liv.mzidlib.util.FileHandler;
 
 /**
  *
@@ -236,24 +236,29 @@ public class MzIdentMLLib {
         }
 
         if (args.length > 3) {
-
+ 
             inputFileName = args[1];
             outputFileName = args[2];
             // Added by FG uncompress
             boolean testDir = new File(inputFileName).isDirectory();
-            if (inputFileName.equals(outputFileName) && !testDir) {
+            if (inputFileName != null && inputFileName.equals(outputFileName) && !testDir) {
                 guiFeedback = "Error: input and output file names are same";
 
-            } else {
+            } else if (inputFileName != null) {
                 boolean uncompress = false;
                 File inputFile;
+                // handle the remote files
+                inputFile = FileHandler.handleFile(inputFileName, true, true);
+                inputFileName = inputFile.getAbsolutePath();
+                
                 if (inputFileName.endsWith(".gz")) {
                     inputFile = Gzipper.extractFile(new File(inputFileName));
                     uncompress = true;
 
-                } else {
-                    inputFile = new File(inputFileName);
-                }
+                } 
+//                else {
+//                    inputFile = new File(inputFileName);
+//                }
                 // Added by FG compress file
                 String compress = Utils.getCmdParameter(args, "compress", false);
                 //set default to "false" if compress parameter is not set:
@@ -269,7 +274,7 @@ public class MzIdentMLLib {
                 // Added by FG check if path is folder
 
                 if (args[0].equals("MzIdentMLToMzTab")) {
-                    if (inputFileName != null && outputFileName != null) {
+                    if (outputFileName != null) {
                         MzIdentMLToMzTab mzIdentMLToMzTab = new MzIdentMLToMzTab(inputFileName, outputFileName);
 
                     } else {
@@ -291,7 +296,7 @@ public class MzIdentMLLib {
                         //Removed by ARJ - this is not required here
                         //String compress = Utils.getCmdParameter(args, "compress", true);
                         //boolean compressValue = Boolean.valueOf(compress);
-                        if (inputFileName != null && decoyRegex != null && decoyValue != null) {
+                        if (decoyRegex != null && decoyValue != null) {
                             FalseDiscoveryRate fdr = new FalseDiscoveryRate(inputFile.getAbsolutePath(), decoyValue, decoyRegex, cvTerm, Boolean.valueOf(betterScoresAreLower));
 
                             fdr.computeFDRusingJonesMethod();
@@ -311,7 +316,7 @@ public class MzIdentMLLib {
                     String fdrLevel = Utils.getCmdParameter(args, "fdrLevel", true);
                     String proteinLevel = Utils.getCmdParameter(args, "proteinLevel", true);
 
-                    if (inputFileName != null && decoyRegex != null && decoyValue != null && fdrLevel != null) {
+                    if (decoyRegex != null && decoyValue != null && fdrLevel != null) {
                         FalseDiscoveryRateGlobal fdrGlobal = new FalseDiscoveryRateGlobal(inputFile.getAbsolutePath(), decoyValue, decoyRegex, cvTerm, Boolean.valueOf(betterScoresAreLower), fdrLevel, proteinLevel);
 
                         if (outputFileName != null) {
@@ -329,28 +334,26 @@ public class MzIdentMLLib {
                     if (inputGff == null) {
                         inputGff = "";
                     }
-                    if (inputFileName != null && accession_regex != null) {
+                    if (accession_regex != null) {
                         GenericFasta genericFasta = new GenericFasta(inputFile.getAbsolutePath(), outputFileName, accession_regex, inputGff);
                     }
 
                 } else if (args[0].equals("CombineFastaFiles")) {
                     String enableTwoStageSearch = Utils.getCmdParameter(args, "enableTwoStageSearch", false);
-                    if (inputFileName != null) {
-                        CombineFastaFiles combineFastaFiles = new CombineFastaFiles(enableTwoStageSearch);
-                        combineFastaFiles.combine(inputFileName, outputFileName);
-                    }
+                    CombineFastaFiles combineFastaFiles = new CombineFastaFiles(enableTwoStageSearch);
+                    combineFastaFiles.combine(inputFileName, outputFileName);
 
                 } else if (args[0].equals("AddGenomeCoordinatesForPeptides")) {
                     String inputGff = Utils.getCmdParameter(args, "inputGff", true);
                     String outputGff = Utils.getCmdParameter(args, "outputGff", true);
-                    if (inputFileName != null && inputGff != null) {
+                    if (inputGff != null) {
                         AddGenomeCoordinatesForPeptides addGenomeCoordinatesForPeptides = new AddGenomeCoordinatesForPeptides(inputFile.getAbsolutePath(), outputFileName, inputGff, outputGff);
                         addGenomeCoordinatesForPeptides.writeMappingResults();
                     }
 
                 } else if (args[0].equals("AddRetentionTimeToMzid")) {
                     String inputSourceFile = Utils.getCmdParameter(args, "inputSourceFile", true);
-                    if (inputFileName != null && inputSourceFile != null) {
+                    if (inputSourceFile != null) {
                         AddRetentionTimeToMzid addRetentionTimeToMzid = new AddRetentionTimeToMzid(inputFile.getAbsolutePath(), inputSourceFile, outputFileName);
                     }
                 } //XtandemPercolator, OmssaPercolator, MsgfPercolator 
@@ -361,7 +364,7 @@ public class MzIdentMLLib {
                     if (proteinCodeRegex != null) {
                         System.out.println("Using following regex for extracting the protein codes: " + proteinCodeRegex);
                     }
-                    if (inputFileName != null && decoyRegex != null) {
+                    if (decoyRegex != null) {
                         XtandemPercolator.xtandem_percolator(inputFileName, outputFileName, decoyRegex, proteinCodeRegex);
                     }
 
@@ -370,7 +373,7 @@ public class MzIdentMLLib {
                     String database = Utils.getCmdParameter(args, "database", true);
                     String decoyRegex = Utils.getCmdParameter(args, "decoyRegex", true);
 
-                    if (inputFileName != null && decoyRegex != null) {
+                    if (decoyRegex != null) {
                         OmssaPercolator.omssa_percolator(inputFileName, outputFileName, database, decoyRegex);
                     }
 
@@ -378,7 +381,7 @@ public class MzIdentMLLib {
 
                     String decoyRegex = Utils.getCmdParameter(args, "decoyRegex", true);
 
-                    if (inputFileName != null && decoyRegex != null) {
+                    if (decoyRegex != null) {
                         MsgfPercolator.msgf_percolaotr(inputFileName, outputFileName, decoyRegex);
                     }
 
@@ -392,7 +395,7 @@ public class MzIdentMLLib {
                         verboseOutput = Boolean.valueOf(verboseOutputParam);
                     }
 
-                    if (inputFileName != null && outputFileName != null && options != null) {
+                    if (outputFileName != null && options != null) {
                         MzIdentMLToCSV mzidToCsv = new MzIdentMLToCSV();
                         mzidToCsv.useMzIdentMLToCSV(inputFile.getAbsolutePath(), outputFileName, options, verboseOutput);
                     } else {
@@ -401,7 +404,7 @@ public class MzIdentMLLib {
 
                 } else if (args[0].equals("CreateRestrictedFASTADatabase")) {
 
-                    if (inputFileName != null && outputFileName != null) {
+                    if (outputFileName != null) {
                         CreateRestrictedFASTADatabase createRestrictedFASTADatabase = new CreateRestrictedFASTADatabase();
                         createRestrictedFASTADatabase.use(inputFile.getAbsolutePath(), outputFileName);
                     } else {
@@ -432,7 +435,7 @@ public class MzIdentMLLib {
                     Boolean useProteoAnnotator = Boolean.valueOf(useProteoAnnotatorValue);
 
                     //ARJ 15/03/2013 Removed Boolean bestScoreForPep - not implemented properly
-                    if (inputFileName != null && outputFileName != null && requireSIIsToPassThreshold != null && verboseOutput != null && cvAccForSIIScore != null
+                    if (outputFileName != null && requireSIIsToPassThreshold != null && verboseOutput != null && cvAccForSIIScore != null
                             && logTransScore != null) {
                         if (version1_1) {
                             System.out.println("About to run protein inference and export to version 1.1.0");
@@ -457,7 +460,7 @@ public class MzIdentMLLib {
                     Boolean deleteUnderThreshold = Boolean.valueOf(Utils.getCmdParameter(args, "deleteUnderThreshold", true));
                     String scoreLevel = Utils.getCmdParameter(args, "scoreLevel", false);
 
-                    if (inputFileName != null && outputFileName != null && isPSMThreshold != null && cvAccForScoreThreshold != null && threshValue != null && scoreLowToHigh != null) {
+                    if (outputFileName != null && isPSMThreshold != null && cvAccForScoreThreshold != null && threshValue != null && scoreLowToHigh != null) {
                         ThresholdMzid thresholdMzid = new ThresholdMzid(inputFile.getAbsolutePath(), outputFileName, isPSMThreshold, cvAccForScoreThreshold, threshValue, scoreLowToHigh, deleteUnderThreshold, scoreLevel);
                     } else {
                         System.out.println("Error in parameters\n" + "Usage: " + userFeedback + thresholdUsage);
@@ -468,7 +471,7 @@ public class MzIdentMLLib {
                     String accSplitRegex = Utils.getCmdParameter(args, "accessionSplitRegex", true);
                     accSplitRegex = accSplitRegex.replaceAll("/", "");
 
-                    if (inputFileName != null && outputFileName != null && fastaFile != null && accSplitRegex != null) {
+                    if (outputFileName != null && fastaFile != null && accSplitRegex != null) {
                         InsertMetaDataFromFasta insertMD = new InsertMetaDataFromFasta(inputFile.getAbsolutePath(), outputFileName, fastaFile, accSplitRegex);
                     } else {
                         System.out.println("Error in parameters\n" + "Usage: " + userFeedback + insertMetaDataUsage);
@@ -581,9 +584,9 @@ public class MzIdentMLLib {
                         applyFixedMods = Boolean.parseBoolean(applyFixedModsString);
                     }
 
-                    if (inputFileName != null && outputFileName != null && paramsFile != null && cvAccForPSMOrdering != null && decoyRegex != null) {
+                    if (outputFileName != null && paramsFile != null && cvAccForPSMOrdering != null && decoyRegex != null) {
                         new Csv2mzid(inputFile.getAbsolutePath(), outputFileName, paramsFile, cvAccForPSMOrdering, decoyRegex, applyFixedMods);
-                    } else if (inputFileName != null && outputFileName != null && paramsFile != null && cvAccForPSMOrdering != null) {
+                    } else if (outputFileName != null && paramsFile != null && cvAccForPSMOrdering != null) {
                         new Csv2mzid(inputFile.getAbsolutePath(), outputFileName, paramsFile, cvAccForPSMOrdering, applyFixedMods);
                     } else {
                         System.out.println("Error, usage: " + userFeedback + csv2mzidUsage);
@@ -645,7 +648,7 @@ public class MzIdentMLLib {
                         verbose = Boolean.parseBoolean(verboseMode);
                     }
 
-                    if (inputFileName != null && outputFileName != null && fastaFile != null && accSplitRegex != null) {
+                    if (outputFileName != null && fastaFile != null && accSplitRegex != null) {
                         AddEmpaiToMzid empai = new AddEmpaiToMzid(inputFile.getAbsolutePath(), outputFileName, fastaFile, accSplitRegex, enzRegex, verbose);
                     } else {
                         System.out.println("Error in parameters\n" + "Usage: " + userFeedback + emPAIUsage);
@@ -710,7 +713,7 @@ public class MzIdentMLLib {
                     Double pairedModWeight = Double.parseDouble(Utils.getCmdParameter(args, "pairedModificationAndUnmodWeight", true));
                     Double multipleModWeight = Double.parseDouble(Utils.getCmdParameter(args, "multipleVariableModWeight", true));
 
-                    if (inputFileName != null && outputFileName != null) {
+                    if (outputFileName != null) {
                         System.out.println("Input:" + inputFile.getAbsolutePath());
                         System.out.println("Output:" + outputFileName);
                         RescoreMods rescore = new RescoreMods(inputFile.getAbsolutePath(), outputFileName, cvForScore, commonModWeight, mediumModWeight, rareModWeight, generalModWeight, pairedModWeight, multipleModWeight);

@@ -38,7 +38,7 @@ public class FileHandler {
      *
      * @param fileName The name of the file to be deleted.
      */
-    public static void deleteFiles(final String fileName) {
+    public static void deleteFile(final String fileName) {
         try {
             if (!filePaths.isEmpty()) {
                 Files.deleteIfExists(filePaths.get(fileName));
