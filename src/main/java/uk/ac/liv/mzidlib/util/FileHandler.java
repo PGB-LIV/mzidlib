@@ -12,9 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -26,35 +26,24 @@ import org.apache.log4j.Logger;
 //the one even in the presence of other network enabled file system
 //through masking.
 public class FileHandler {
-    private static final String            NFSFileSystemPrefix = "nfs";
-    private static final Logger            LOGGER              = Logger.getLogger(FileHandler.class);
-    private static final Map<String, Path> filePaths           = new HashMap<>(5);
+
+    private static final String remoteFileSystemPrefix = "nfs:cifs:smb";
+    private static Logger logger = Logger.getLogger(FileHandler.class);
+    private static List<Path> filePaths = new ArrayList<>(5);
 
     private FileHandler() {
+
     }
 
     /**
-     * Deletes the given file from the local drive.
-     *
-     * @param fileName The name of the file to be deleted.
-     */
-    public static void deleteFile(final String fileName) {
-        try {
-            if (!filePaths.isEmpty()) {
-                Files.deleteIfExists(filePaths.get(fileName));
-            }
-        } catch (IOException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Error in deleting file(s) : " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * This method copies the given file to a local drive if the file resides
-     * on a network file system (primarily NFS). If the copy operation fails
-     * for some reason (insufficient space, path doesn't exist etc), the original
-     * behaviour is retained. The copied file will be purged upon JVM shutdown.
+     * Copies the given file to a local drive space if the specified file resides
+     * on a network file system (specified by colon separated string). If the copy
+     * operation fails for some reason (insufficient space, path doesn't exist, etc),
+     * the original behaviour is retained.
+     * <p>
+     * The copied file can either be left to be purged upon JVM shutdown or can
+     * manually be deleted as needed or as a whole.
+     * <p>
      * <p>
      * The calling method should check for null object.
      *
@@ -64,38 +53,65 @@ public class FileHandler {
      *                       else the file is marked for manual deletion. Refer {@link #deleteFiles(String)}
      * @return The {@link File} object to be processed
      */
+
     public static File handleFile(final String filePath, final boolean processLocal, final boolean autoFileDelete) {
         File originalFile = new File(filePath);
-
         try {
             if (processLocal) {
-                URI       rootURI      = new URI("file:///");
-                Path      rootPath     = Paths.get(rootURI);
-                Path      dirPath      = rootPath.resolve(filePath);
+                URI rootURI = new URI("file:///");
+                Path rootPath = Paths.get(rootURI);
+                Path dirPath = rootPath.resolve(filePath);
                 FileStore dirFileStore = Files.getFileStore(dirPath);
-
-                if (dirFileStore.type().contains(NFSFileSystemPrefix)) {
+                if (remoteFileSystemPrefix.contains(dirFileStore.type().toLowerCase())) {
                     File mzidFile = new File(originalFile.getName());
-
                     Files.copy(originalFile.toPath(), mzidFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
                     if (autoFileDelete) {
                         mzidFile.deleteOnExit();
                     } else {
-                        filePaths.put(mzidFile.getName(), mzidFile.toPath().toAbsolutePath());
+                        filePaths.add(mzidFile.toPath().toAbsolutePath());
                     }
-
                     return mzidFile;
                 }
             }
-
             return originalFile;
         } catch (URISyntaxException | IOException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Error in copying file : " + filePath + " : " + e.getMessage());
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error in copying file : " + filePath + " : " + e.getMessage());
             }
-
             return originalFile;
+
+        }
+    }
+
+    /**
+     * Deletes the given file from the local drive.
+     *
+     * @param absoluteFilePath The name of the file to be deleted.
+     */
+
+    public static void deleteFile(final String absoluteFilePath) {
+        try {
+            Files.deleteIfExists(Paths.get(absoluteFilePath));
+        } catch (IOException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error in deleting file : " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Deletes all of the processed / copied files from the local space.
+     */
+
+    public static void deleteProcessedFiles() {
+        try {
+            for (Path path : filePaths) {
+                Files.deleteIfExists(path);
+            }
+        } catch (IOException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error in deleting one or more file(s) : " + e.getMessage());
+            }
         }
     }
 }

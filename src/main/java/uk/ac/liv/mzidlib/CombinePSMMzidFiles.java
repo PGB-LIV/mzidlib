@@ -10,21 +10,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.xml.bind.JAXBException;
 
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
-import uk.ac.liv.mzidlib.compare.CompareDBSequence;
-import uk.ac.liv.mzidlib.compare.ComparePeptide;
-import uk.ac.liv.mzidlib.compare.ComparePeptideEvidence;
+import uk.ac.liv.mzidlib.constants.CvConstants;
 import uk.ac.liv.mzidlib.util.FileHandler;
+import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
 /**
  *
@@ -192,8 +186,27 @@ public class CombinePSMMzidFiles {
             }
             writer.write("\n");
 
-            marshaller.marshal(analysisProtocolCollection, writer);
-            writer.write("\n");
+            if (analysisProtocolCollection != null) {
+                ParamList paramList = analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams();
+                List<CvParam> cvParamList = paramList.getCvParam();
+                boolean exist = false;
+                for (int i = 0; i < cvParamList.size(); i++) {
+                    CvParam get = cvParamList.get(i);
+                    if (get.getAccession().equals("MS:1002635")) {
+                        exist = true;
+                        break;
+                    }
+
+                }
+
+                if (!exist) {
+                    CvParam proGenoCvParam = MzidLibUtils.makeCvParam("MS:1002635","proteogenomics search", CvConstants.PSI_CV);
+                analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams().getCvParam().add(
+                        proGenoCvParam);
+                }                                
+                marshaller.marshal(analysisProtocolCollection, writer);
+                writer.write("\n");
+            }
 
             writer.write(marshaller.createDataCollectionStartTag() + "\n");
 

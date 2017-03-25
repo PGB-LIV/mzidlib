@@ -362,10 +362,10 @@ public class ThresholdMzid {
                 proteinDetectionListRef = analysisCollection.getProteinDetection().getProteinDetectionListRef();
             }
             ProteinDetectionList pdList;
-            pdList = new ProteinDetectionList();
+                pdList = new ProteinDetectionList();
 
-            pdList.setId(proteinDetectionListRef);
-
+                pdList.setId(proteinDetectionListRef);
+                        
             Iterator<ProteinAmbiguityGroup> iterProteinAmbiguityGroup = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.ProteinAmbiguityGroup);
             while (iterProteinAmbiguityGroup.hasNext()) {
 
@@ -496,15 +496,17 @@ public class ThresholdMzid {
 
             writer.write(marshaller.createAnalysisDataStartTag() + "\n");
             // Added by FG 12/11/2014 avoiding empty SIL, invalid mzid file
-            if (siList.getSpectrumIdentificationResult().size() == 0) {
+            if (siList.getSpectrumIdentificationResult().isEmpty()) {
                 throw new RuntimeException("SIL is empty!");
             }
             marshaller.marshal(siList, writer);
             writer.write("\n");
 
-            marshaller.marshal(pdList, writer);
-            writer.write("\n");
-
+            if (!pdList.getProteinAmbiguityGroup().isEmpty()){
+                marshaller.marshal(pdList, writer);
+                writer.write("\n");
+            }
+            
             writer.write(marshaller.createAnalysisDataClosingTag() + "\n");
             writer.write(marshaller.createDataCollectionClosingTag() + "\n");
 

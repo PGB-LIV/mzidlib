@@ -529,7 +529,7 @@ public class MzIdentMLLib {
                     boolean outputFrags = true; //true is the default 
 
                     if (outputFragsValue != null) {
-                        outputFrags = (outputFragsValue.equalsIgnoreCase("true") ? true : false);
+                        outputFrags = outputFragsValue.equalsIgnoreCase("true");
                     }
 
                     //the parameter idsStartAtZero can be used to overrule the default behavior of 

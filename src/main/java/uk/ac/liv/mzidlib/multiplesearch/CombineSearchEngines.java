@@ -21,8 +21,10 @@ import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
+import uk.ac.liv.mzidlib.constants.CvConstants;
 import uk.ac.liv.mzidlib.converters.CombinedSearchEngines2Mzid;
 import uk.ac.liv.mzidlib.fdr.FalseDiscoveryRate;
+import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
 public class CombineSearchEngines {
 
@@ -51,8 +53,8 @@ public class CombineSearchEngines {
     private int sirCounter = 0;
     static String csvFileName;
 
-    private HashMap<String, SpectraData> spectraDataHashMap = new HashMap();
-    private HashMap<String, String> spectraIDLocation = new HashMap();
+    private Map<String, SpectraData> spectraDataHashMap = new HashMap<>();
+    private Map<String, String> spectraIDLocation = new HashMap<>();
 
     private AnalysisProtocolCollection analysisProtocolCollectionTandem;
 
@@ -86,7 +88,7 @@ public class CombineSearchEngines {
 
         String[] namesOfContainers = new String[totalContainersNeeded];
         //	combinedResultContainer = new HashMap<String,ArrayList<ArrayList<String>>>(totalContainersNeeded);
-        combinedResultContainer = new HashMap<String, List<List<Object>>>(totalContainersNeeded);
+        combinedResultContainer = new HashMap<>(totalContainersNeeded);
 
         switch (totalSearchEngines) {
             case 2:
@@ -143,7 +145,7 @@ public class CombineSearchEngines {
             String searchEngine, FdrAndMzIdentInformationContainer fdrObj, int decoyRatio, String decoyRegex, String cvterm, String betterScore) throws Exception {
 
         //fdr = new FalseDiscoveryRate(xmlToRead, searchEngine, String.valueOf(decoyRatio), decoyRegex, cvterm, Boolean.valueOf(betterScore).booleanValue());
-        fdr = new FalseDiscoveryRate(xmlToRead, String.valueOf(decoyRatio), decoyRegex, cvterm, Boolean.valueOf(betterScore).booleanValue());
+        fdr = new FalseDiscoveryRate(xmlToRead, String.valueOf(decoyRatio), decoyRegex, cvterm, Boolean.valueOf(betterScore));
 
         //FG
         this.decoyRegex = decoyRegex;
@@ -1312,10 +1314,10 @@ public class CombineSearchEngines {
 
         for (int i = 0; i < modArray.size(); i++) {
             String forThisMod = new String();
-            if (modArray.get(i).get(3).toString().equals("unknown modification")) {
-                forThisMod = modArray.get(i).get(2).toString() + "_" + modArray.get(i).get(1).toString() + ":" + modArray.get(i).get(0).toString();
+            if (modArray.get(i).get(3).equals("unknown modification")) {
+                forThisMod = modArray.get(i).get(2) + "_" + modArray.get(i).get(1) + ":" + modArray.get(i).get(0);
             } else {
-                forThisMod = modArray.get(i).get(3).toString() + "(" + modArray.get(i).get(1).toString() + "):" + modArray.get(i).get(0).toString();
+                forThisMod = modArray.get(i).get(3) + "(" + modArray.get(i).get(1) + "):" + modArray.get(i).get(0);
             }
 
 //            forThisMod = forThisMod.replaceAll("&gt;", "_");
@@ -1643,16 +1645,16 @@ public class CombineSearchEngines {
 
     }
 
-    public static void main(String[] args) throws Exception {
-        if (args.length == 9) {
-            runTwoSearchEngines(args);
-        } else if (args.length == 11) {
-            runThreeSearchEngines(args);
-        } else {
-            System.out.println("Check the Class arguments");
-        }
-
-    }
+//    public static void main(String[] args) throws Exception {
+//        if (args.length == 9) {
+//            runTwoSearchEngines(args);
+//        } else if (args.length == 11) {
+//            runThreeSearchEngines(args);
+//        } else {
+//            System.out.println("Check the Class arguments");
+//        }
+//
+//    }
 
     public void writeMzidFile() {
 
@@ -1681,13 +1683,7 @@ public class CombineSearchEngines {
             analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             Param param = new Param();
-            Cv psiCV;
-            psiCV = new Cv();
-            psiCV.setUri("https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo");
-            psiCV.setId("PSI-MS");
-//            psiCV.setVersion("2.25.0");
-            psiCV.setFullName("PSI-MS");
-            param.setParam(makeCvParam("MS:1002237", "mzidLib", psiCV));
+            param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib", CvConstants.PSI_CV));
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
             marshaller.marshal(analysisSoftwareList, writer);
@@ -1745,7 +1741,7 @@ public class CombineSearchEngines {
             CvParam cvParam = new CvParam();
             cvParam.setAccession("MS:1002439");
             cvParam.setName("final PSM list UNDER DISCUSSION");
-            cvParam.setCv(psiCV);
+            cvParam.setCv(CvConstants.PSI_CV);
             siList.getCvParam().add(cvParam);
 
             if (analysisCollection != null) {
@@ -1814,14 +1810,6 @@ public class CombineSearchEngines {
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
-    }
-
-    public CvParam makeCvParam(String accession, String name, Cv cv) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
-        return cvParam;
     }
 
     private void checkInputFiles(String[] inputFiles) {

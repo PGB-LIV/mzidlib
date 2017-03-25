@@ -33,7 +33,7 @@ public class Utils {
     public static Map<String, String> getInitializedCVMap() throws IOException {
         //Read resource file and build up map:
         BufferedReader in = null;
-        Map<String, String> resultMap = new HashMap<String, String>();
+        Map<String, String> resultMap = new HashMap<>();
         try {
             //Use the getResourceAsStream trick to read the file packaged in
             //the .jar .  This simplifies usage of the solution as no extra 
@@ -98,6 +98,18 @@ public class Utils {
         return null;
     }
 
+    /**
+     * Split the input mgf file according to fileUpperLimit and spectraUpperLimit.
+     * If the input file is below the size limit, then the original file is output.
+     * Otherwise, the file is split within the limit into several files and saved in the designated path.
+     * 
+     * @param path the folder path for the new files
+     * @param masterMgf the original mgf file
+     * @param fileUpperLimit file size upper limit
+     * @param spectraUpperLimit spectra size upper limit
+     * @return the same file if it is below the fileUpperLimit and spectraUpperLimit, otherwise the folder holding the split files.
+     * @throws IOException 
+     */
     public static File splitMGFsOrReturnSame(String path, File masterMgf, int fileUpperLimit, int spectraUpperLimit) throws IOException {
         System.out.println("splitMGFsOrReturnSame: ");
         
@@ -158,16 +170,17 @@ public class Utils {
     }
 
     private static int countMgfEntries(File mgf) throws IOException {
-        BufferedReader reader = Files.newBufferedReader(Paths.get(mgf.getAbsolutePath()), StandardCharsets.UTF_8);
-        String line = null;
-        int ionCount = 0;
-        while ((line = reader.readLine()) != null) {
-            if (line.trim().equalsIgnoreCase("BEGIN IONS")) {
-                ionCount++;
+        int ionCount;
+        try (BufferedReader reader
+                = Files.newBufferedReader(Paths.get(mgf.getAbsolutePath()), StandardCharsets.UTF_8)) {
+            String line = null;
+            ionCount = 0;
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().equalsIgnoreCase("BEGIN IONS")) {
+                    ionCount++;
+                }
             }
         }
-
-        reader.close();
         return ionCount;
     }
 

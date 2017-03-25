@@ -14,8 +14,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,7 +90,7 @@ public class SearchGUICLI {
         String outputFileName = "";
         try {
             System.out.println("Running SearchGUI decoy function using the following command:");
-            out.println("Running SearchGUI decoy function using the following command:");
+            //out.println("Running SearchGUI decoy function using the following command:");
             String args[] = {"java", "-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.FastaCLI", "-in", in, "-decoy"};
             for (int i = 0; i < args.length; i++) {
                 System.out.print(args[i] + " ");
@@ -123,7 +121,7 @@ public class SearchGUICLI {
             }
             System.out.println("SearchGUI decoy function finished.");
 
-            out.println("SearchGUI decoy function finished.");
+            //out.println("SearchGUI decoy function finished.");
         } catch (IOException ex) {
 
             ex.printStackTrace();
@@ -136,7 +134,7 @@ public class SearchGUICLI {
     void runParameterFileCLI(String decoyFasta, String outputParameterFile, String paramters) {
         try {
             System.out.println("Running SearchGUI ParameterFileCLI function using the following command:");
-            out.println("Running SearchGUI ParameterFileCLI function using the following command:");
+            //out.println("Running SearchGUI ParameterFileCLI function using the following command:");
             String javaCLI[] = {"java", "-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.IdentificationParametersCLI", "-db", decoyFasta, "-out", outputParameterFile};
 
             BufferedReader br1 = new BufferedReader(new FileReader(paramters));
@@ -155,7 +153,7 @@ public class SearchGUICLI {
                 br1.close();
             }
             System.out.println("Search parameters are: " + everything);
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(everything);
             while (m.find()) {
                 list.add(m.group(1)); // Add .replace("\"", "") to remove surrounding quotes.
@@ -165,10 +163,10 @@ public class SearchGUICLI {
             String[] args = (String[]) ArrayUtils.addAll(javaCLI, list.toArray());
             for (int i = 0; i < args.length; i++) {
                 System.out.print(args[i] + " ");
-                out.print(args[i] + " ");
+                //out.print(args[i] + " ");
             }
             System.out.println();
-            out.println();
+            //out.println();
             ProcessBuilder pb = new ProcessBuilder(args);
             pb.redirectErrorStream(true);
             final Process process = pb.start();
@@ -190,7 +188,7 @@ public class SearchGUICLI {
                 ex.printStackTrace();
             }
             System.out.println("SearchGUI ParameterFileCLI function finished.");
-            out.println("SearchGUI ParameterFileCLI function finished.");
+            //out.println("SearchGUI ParameterFileCLI function finished.");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -206,10 +204,10 @@ public class SearchGUICLI {
 
             for (int i = 0; i < args.length; i++) {
                 System.out.print(args[i] + " ");
-                out.print(args[i] + " ");
+                //out.print(args[i] + " ");
             }
             System.out.println();
-            out.println();
+            //out.println();
 
             ProcessBuilder pb = new ProcessBuilder(args);
             pb.redirectErrorStream(true);

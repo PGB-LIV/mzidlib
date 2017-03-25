@@ -581,8 +581,11 @@ public class AddGenomeCoordinatesForPeptides {
             marshaller.marshal(siList, writer);
             writer.write("\n");
 
-            marshaller.marshal(pdList, writer);
-            writer.write("\n");
+            if(!pdList.getProteinAmbiguityGroup().isEmpty()) {
+                marshaller.marshal(pdList, writer);
+                writer.write("\n");
+            }
+            
             writer.write(marshaller.createAnalysisDataClosingTag() + "\n");
             writer.write(marshaller.createDataCollectionClosingTag() + "\n");
             writer.write(marshaller.createMzIdentMLClosingTag());
