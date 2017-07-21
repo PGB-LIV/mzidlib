@@ -266,11 +266,11 @@ public class ProteoAnnotator2 {
             }
             String[] searchParamters;
             String inputFilePath = mgfFileOrLocation + File.separator + string1;
-            File handledMgfFile = FileHandler.handleFile(inputFilePath, true, true);
+
             if (enableMsgf) {
-                searchParamters = new String[]{"-spectrum_files", handledMgfFile.getAbsolutePath(), "-output_folder", newOutput, "-id_params", outputParameterFile, "-comet", "0", "-tide", "0", "-msgf", "1", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0"};
+                searchParamters = new String[]{"-spectrum_files", inputFilePath, "-output_folder", newOutput, "-id_params", outputParameterFile, "-comet", "0", "-tide", "0", "-msgf", "1", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0"};
             } else {
-                searchParamters = new String[]{"-spectrum_files", handledMgfFile.getAbsolutePath(), "-output_folder", newOutput, "-id_params", outputParameterFile, "-comet", "0", "-tide", "0", "-msgf", "0", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0"};
+                searchParamters = new String[]{"-spectrum_files", inputFilePath, "-output_folder", newOutput, "-id_params", outputParameterFile, "-comet", "0", "-tide", "0", "-msgf", "0", "-ms_amanda", "0", "-output_option", "3", "-myrimatch", "0"};
             }
             searchGUICLI.runSearchGUICLI(searchParamters);
             File outputDir = new File(newOutput);
@@ -291,13 +291,13 @@ public class ProteoAnnotator2 {
             // Convert tandem search output file to mzid file
             
             tandemoutputFile = tandemFileName.substring(0, tandemFileName.lastIndexOf(".")) + "_tandem.mzid";
-            String[] tandemInput = {"Tandem2mzid", tandemFileName, tandemoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-databaseFileFormatID", "MS:1001348", "-massSpecFileFormatID", "MS:1001062", "-idsStartAtZero", "false", "-proteinCodeRegex", "\\S+", "-compress", "false"};
+            String[] tandemInput = {"Tandem2mzid", tandemFileName, tandemoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-databaseFileFormatID", "MS:1001348", "-massSpecFileFormatID", "MS:1001062", "-idsStartAtZero", "false", "-proteinCodeRegex", "\\S+", "-mzidVer", "1.2", "-compress", "false"};
             mzidLib.init(tandemInput);
             
             // Convert omssa search output file to mzid file
             
             omssaoutputFile = omssaFileName.substring(0, omssaFileName.lastIndexOf(".")) + "_omssa.mzid";
-            String[] omssaInput = {"Omssa2mzid", omssaFileName, omssaoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-compress", "false"};
+            String[] omssaInput = {"Omssa2mzid", omssaFileName, omssaoutputFile, "-outputFragmentation", "false", "-decoyRegex", "REVERSED", "-mzidVer", "1.2", "-compress", "false"};
             mzidLib.init(omssaInput);
             
             // Combine search engine results
@@ -496,6 +496,7 @@ public class ProteoAnnotator2 {
             String[] listMGFFiles = dirMGF.list();
 
             for (String string : listMGFFiles) {
+                File inputMgfFile = FileHandler.handleFile(spectrum_files + File.separator + string, true, true);
                 if (string.toLowerCase().endsWith(".mgf")) {
                     String newMGFLocation = outputFolder + File.separator + "mgf";
                     File n1MGF = new File(newMGFLocation);
@@ -510,7 +511,7 @@ public class ProteoAnnotator2 {
                             throw new RuntimeException("Creating the output folder has failed");
                         }
                     }
-                    File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(newMGFLocation, new File(spectrum_files + File.separator + string), (int) Math.pow(1024, 3), 25000);
+                    File mgfFileOrLocation = Utils.splitMGFsOrReturnSame(newMGFLocation, inputMgfFile, (int) Math.pow(1024, 3), 25000);
 
                     if (mgfFileOrLocation.isDirectory()) {
                         String[] listMGFFiles1 = mgfFileOrLocation.list();

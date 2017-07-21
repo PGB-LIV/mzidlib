@@ -78,6 +78,9 @@ import de.proteinms.xtandemparser.xtandem.XTandemFile;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import uk.ac.liv.mzidlib.constants.MzidVersion;
+import uk.ac.liv.mzidlib.util.MzidLibUtils;
+
 /**
  *
  * @author jonesar
@@ -137,40 +140,42 @@ public class Tandem2mzid {
     private String massSpecFileFormatName;
     private Pattern proteinCodeRegexPattern = null;
     boolean outputFragmentation = true;
-
-    public Tandem2mzid(String inputfile, String outputfile) throws Exception {
+    MzidVersion mzidVer;
+    
+    public Tandem2mzid(String inputfile, String outputfile, MzidVersion ver) throws Exception {
         //Calling the more detailed initialization method with all optionals set to null:
         XTandemFile xfile = new XTandemFile(inputfile);
         initializeVariables(xfile, null, null, null, null, null, true);
-        convertFile(xfile, inputfile, outputfile);
+        convertFile(xfile, inputfile, outputfile, ver);
     }
 
     public Tandem2mzid(String inputfile, String outputfile,
             String databaseFileFormatID, String massSpecFileFormatID,
-            boolean isMs2SpectrumIdStartingAtZero, boolean outputFragmentation) throws Exception {
+            boolean isMs2SpectrumIdStartingAtZero, boolean outputFragmentation, MzidVersion ver) throws Exception {
         XTandemFile xfile = new XTandemFile(inputfile);
         initializeVariables(xfile, databaseFileFormatID, massSpecFileFormatID, isMs2SpectrumIdStartingAtZero, null, null, outputFragmentation);
-        convertFile(xfile, inputfile, outputfile);
+        convertFile(xfile, inputfile, outputfile, ver);
     }
 
     public Tandem2mzid(String inputfile, String outputfile,
             String databaseFileFormatID, String massSpecFileFormatID,
-            boolean isMs2SpectrumIdStartingAtZero, String decoyRegularExpression, boolean outputFragmentation) throws Exception {
+            boolean isMs2SpectrumIdStartingAtZero, String decoyRegularExpression, boolean outputFragmentation, MzidVersion ver) throws Exception {
         XTandemFile xfile = new XTandemFile(inputfile);
         initializeVariables(xfile, databaseFileFormatID, massSpecFileFormatID, isMs2SpectrumIdStartingAtZero,
                 decoyRegularExpression, null, outputFragmentation);
-        convertFile(xfile, inputfile, outputfile);
+        convertFile(xfile, inputfile, outputfile, ver);
     }
 
     public Tandem2mzid(String inputfile, String outputfile,
             String databaseFileFormatID, String massSpecFileFormatID,
             boolean isMs2SpectrumIdStartingAtZero, String decoyRegularExpression,
             String proteinCodeRegex,
-            boolean outputFragmentation) throws Exception {
+            boolean outputFragmentation,
+            MzidVersion ver) throws Exception {
         XTandemFile xfile = new XTandemFile(inputfile);
         initializeVariables(xfile, databaseFileFormatID, massSpecFileFormatID, isMs2SpectrumIdStartingAtZero,
                 decoyRegularExpression, proteinCodeRegex, outputFragmentation);
-        convertFile(xfile, inputfile, outputfile);
+        convertFile(xfile, inputfile, outputfile, ver);
     }
 
     private void initializeVariables(XTandemFile xfile, String databaseFileFormatID, String massSpecFileFormatID,
@@ -251,9 +256,14 @@ public class Tandem2mzid {
         }
     }
 
-    private void convertFile(XTandemFile xfile, String inputfile, String outputfile) throws Exception {
+    private void convertFile(XTandemFile xfile, String inputfile, String outputfile, MzidVersion ver) throws Exception {
 
         unimodDoc = new ReadUnimod();
+                if (null == ver){
+            mzidVer = MzidVersion.Version1_1;
+        }else{
+            mzidVer = ver;
+        }
         parseFile(xfile, inputfile);
         writeMzidFile(outputfile);
     }
@@ -279,10 +289,10 @@ public class Tandem2mzid {
         //TODO - This only works if the user specified to output the input params - need to document this clearly
         double massError = inputParams.getSpectrumParentMonoIsoMassErrorMinus();
 
-        Map<String, DBSequence> foundProts = new HashMap<String, DBSequence>();
-        Map<String, PeptideEvidence> pepEvidLookup = new HashMap<String, PeptideEvidence>();
+        Map<String, DBSequence> foundProts = new HashMap<>();
+        Map<String, PeptideEvidence> pepEvidLookup = new HashMap<>();
         //peptideLookup= new HashMap<String, uk.ac.ebi.jmzidml.model.mzidml.Peptide>();   //lookup to get a peptide by peptideseq_varmods_fixedmods_start_stop
-        uniquePeps = new HashMap<String, Peptide>();      //lookup to get a peptide by peptideseq_varmods_fixedmods (i.e. uniqueness check)
+        uniquePeps = new HashMap<>();      //lookup to get a peptide by peptideseq_varmods_fixedmods (i.e. uniqueness check)
         sequenceCollection = new SequenceCollection();
 
         siList = new SpectrumIdentificationList();
@@ -316,15 +326,15 @@ public class Tandem2mzid {
             mzMeasure = new Measure();
             mzMeasure.setId(measureMzID);
             List<CvParam> cvParamList = mzMeasure.getCvParam();
-            cvParamList.add(makeCvParam("MS:1001225", "product ion m/z", psiCV, "MS:1000040", "m/z", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001225", "product ion m/z", psiCV, "MS:1000040", "m/z", psiCV));
             intMeasure = new Measure();
             intMeasure.setId(measureIntID);
             cvParamList = intMeasure.getCvParam();
-            cvParamList.add(makeCvParam("MS:1001226", "product ion intensity", psiCV, "MS:1000131", "number of counts", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001226", "product ion intensity", psiCV, "MS:1000131", "number of counts", psiCV));
             errorMeasure = new Measure();
             errorMeasure.setId(measureErrorID);
             cvParamList = errorMeasure.getCvParam();
-            cvParamList.add(makeCvParam("MS:1001227", "product ion m/z error", psiCV, "MS:1000040", "m/z", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001227", "product ion m/z error", psiCV, "MS:1000040", "m/z", psiCV));
             measureList.add(mzMeasure);
             measureList.add(intMeasure);
             measureList.add(errorMeasure);
@@ -525,7 +535,7 @@ public class Tandem2mzid {
             specIdentRes.setId("SIR_" + sirCounter);
             if (label != null && !label.equals("")) {
                 List<CvParam> sir_cvParamList = specIdentRes.getCvParam();
-                CvParam cvp = makeCvParam("MS:1000796", "spectrum title", psiCV, label);
+                CvParam cvp = MzidLibUtils.makeCvParam("MS:1000796", "spectrum title", psiCV, label);
                 sir_cvParamList.add(cvp);
 
             }
@@ -675,8 +685,8 @@ public class Tandem2mzid {
         List<CvParam> cvParamList = sii.getCvParam();
         //<cvParam accession="MS:1001330" name="xtandem:expect" cvRef="PSI-MS"  value="1.1e-003" />
         //<cvParam accession="MS:1001331" name="xtandem:hyperscore" cvRef="PSI-MS"  value="60.4" />
-        cvParamList.add(makeCvParam("MS:1001330", "X\\!Tandem:expect", psiCV, "" + evalue));
-        cvParamList.add(makeCvParam("MS:1001331", "X\\!Tandem:hyperscore", psiCV, "" + hyperscore));
+        cvParamList.add(MzidLibUtils.makeCvParam("MS:1001330", "X\\!Tandem:expect", psiCV, "" + evalue));
+        cvParamList.add(MzidLibUtils.makeCvParam("MS:1001331", "X\\!Tandem:hyperscore", psiCV, "" + hyperscore));
     }
 
     private void parseFragmentationData(List<IonType> ionTypeList, Domain domain,
@@ -980,45 +990,6 @@ public class Tandem2mzid {
         localCvList.add(unitCV);
     }
 
-    public CvParam makeCvParam(String accession, String name, Cv cv) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
-        return cvParam;
-    }
-
-    public CvParam makeCvParam(String accession, String name, Cv cv, String value) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
-        cvParam.setValue(value);
-        return cvParam;
-    }
-
-    public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
-        cvParam.setUnitAccession(unitAccession);
-        cvParam.setUnitCv(unitCV);
-        cvParam.setUnitName(unitName);
-        return cvParam;
-    }
-
-    public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName, Cv alternateUnitCV) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
-        cvParam.setUnitAccession(unitAccession);
-        cvParam.setUnitCv(alternateUnitCV);
-        cvParam.setUnitName(unitName);
-        return cvParam;
-    }
-
     public void handleAnalysisSoftware(String version) {
         analysisSoftwareList = new AnalysisSoftwareList();
         List<AnalysisSoftware> analysisSoftwares = analysisSoftwareList.getAnalysisSoftware();
@@ -1027,7 +998,7 @@ public class Tandem2mzid {
         // analysisSoftware.setSoftwareName(makeCvParam("MS:1001476","xtandem",psiCV));
 
         Param tempParam = new Param();
-        tempParam.setParam(makeCvParam("MS:1001476", "X\\!Tandem", psiCV));
+        tempParam.setParam(MzidLibUtils.makeCvParam("MS:1001476", "X\\!Tandem", psiCV));
         analysisSoftware.setSoftwareName(tempParam);
 
         analysisSoftware.setId(analysisSoftID);
@@ -1054,7 +1025,7 @@ public class Tandem2mzid {
         contactRole.setContact(docOwner);
 
         Role role = new Role();
-        role.setCvParam(makeCvParam("MS:1001271", "researcher", psiCV));
+        role.setCvParam(MzidLibUtils.makeCvParam("MS:1001271", "researcher", psiCV));
         contactRole.setRole(role);
 
         provider.setContactRole(contactRole);
@@ -1069,13 +1040,13 @@ public class Tandem2mzid {
         docOwner.setId("PERSON_DOC_OWNER");
         docOwner.setFirstName(firstName);
         docOwner.setLastName(lastName);
-        docOwner.getCvParam().add(makeCvParam("MS:1000587", "contact address", psiCV, address));
+        docOwner.getCvParam().add(MzidLibUtils.makeCvParam("MS:1000587", "contact address", psiCV, address));
 
         //docOwner.setEmail(email);
         Organization org = new Organization();
         org.setId("ORG_DOC_OWNER");
         org.setName(affiliationName);
-        org.getCvParam().add(makeCvParam("MS:1000586", "contact name", psiCV, address));
+        org.getCvParam().add(MzidLibUtils.makeCvParam("MS:1000586", "contact name", psiCV, address));
 
         //org.setAddress(address);
         List<Affiliation> affList = docOwner.getAffiliation();
@@ -1126,7 +1097,7 @@ public class Tandem2mzid {
         //<cvParam accession="MS:1001083" name="ms-ms search" cvRef="PSI-MS"/>
         //siProtocol.setSearchType(makeCvParam("MS:1001083","ms-ms search",psiCV));
         Param tempParam = new Param();
-        tempParam.setParam(makeCvParam("MS:1001083", "ms-ms search", psiCV));
+        tempParam.setParam(MzidLibUtils.makeCvParam("MS:1001083", "ms-ms search", psiCV));
         siProtocol.setSearchType(tempParam);
 
         ParamList paramList = siProtocol.getAdditionalSearchParams();
@@ -1138,17 +1109,23 @@ public class Tandem2mzid {
 
         boolean parentIsMono = true;  //does not appear to be a way in Tandem of specifying parent mass is average
         if (parentIsMono) {
-            cvParamList.add(makeCvParam("MS:1001211", "parent mass type mono", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001211", "parent mass type mono", psiCV));
         } else {
-            cvParamList.add(makeCvParam("MS:1001212", "parent mass type average", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001212", "parent mass type average", psiCV));
         }
 
         boolean fragmentIsMono = true;
         if ("average".equals(inputParams.getSpectrumFragMassType())) {
             fragmentIsMono = false;
-            cvParamList.add(makeCvParam("MS:1001255", "fragment mass type average", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001255", "fragment mass type average", psiCV));
         } else {
-            cvParamList.add(makeCvParam("MS:1001256", "fragment mass type mono", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001256", "fragment mass type mono", psiCV));
+        }
+        
+        // Add "no special processing" cv term if this is mzid 1.2 version
+        if (mzidVer.equals(MzidVersion.Version1_2)) {
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1002495", "no special processing",
+                                        psiCV));
         }
 
         ModificationParams modParams = new ModificationParams();
@@ -1286,7 +1263,7 @@ public class Tandem2mzid {
             siProtocol.setThreshold(sip_paramList);
         }
         cvParamList = sip_paramList.getCvParam();
-        cvParamList.add(makeCvParam("MS:1001494", "no threshold", psiCV));
+        cvParamList.add(MzidLibUtils.makeCvParam("MS:1001494", "no threshold", psiCV));
         //<cvParam accession="MS:1001494" name="no threshold" cvRef="PSI-MS" />
         sipList.add(siProtocol);
 
@@ -1305,19 +1282,19 @@ public class Tandem2mzid {
         searchMod.setFixedMod(isFixedMod);
 
         if (unimod == null) {
-            searchMod.getCvParam().add(makeCvParam("MS:1001460", "unknown modification", psiCV));
+            searchMod.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001460", "unknown modification", psiCV));
         } else {
 
-            searchMod.getCvParam().add(makeCvParam("UNIMOD:" + unimod.getRecordId(), unimod.getTitle(), unimodCV));
+            searchMod.getCvParam().add(MzidLibUtils.makeCvParam("UNIMOD:" + unimod.getRecordId(), unimod.getTitle(), unimodCV));
         }
         searchMod.setMassDelta(new Float(monoMass));
 
         for (String residue : residues) {
             if (residue.equals("[")) {
-                searchMod.getCvParam().add(makeCvParam("MS:1001189", "modification specificity N-term", psiCV));
+                searchMod.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001189", "modification specificity N-term", psiCV));
                 residue = ".";
             } else if (residue.equals("]")) {
-                searchMod.getCvParam().add(makeCvParam("MS:1001190", "modification specificity C-term", psiCV));
+                searchMod.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001190", "modification specificity C-term", psiCV));
                 residue = ".";     //The any char must be inserted into mzid
             }
             searchMod.getResidues().add(residue);
@@ -1345,7 +1322,7 @@ public class Tandem2mzid {
         searchDB.setLocation(databaselocation);
 
         FileFormat ff = new FileFormat();
-        ff.setCvParam(makeCvParam(this.databaseFileFormatID, this.databaseFileFormatName, psiCV));
+        ff.setCvParam(MzidLibUtils.makeCvParam(this.databaseFileFormatID, this.databaseFileFormatName, psiCV));
         searchDB.setFileFormat(ff);
         searchDBList.add(searchDB);
 
@@ -1354,7 +1331,7 @@ public class Tandem2mzid {
         sourceFile.setLocation(tandemFileLocation);
         sourceFile.setId(sourceFileID);
         ff = new FileFormat();
-        ff.setCvParam(makeCvParam("MS:1001401", "X\\!Tandem xml file", psiCV));
+        ff.setCvParam(MzidLibUtils.makeCvParam("MS:1001401", "X\\!Tandem xml file", psiCV));
         sourceFile.setFileFormat(ff);
         sourceFileList.add(sourceFile);
 
@@ -1362,12 +1339,12 @@ public class Tandem2mzid {
         spectraData = new SpectraData();
 
         SpectrumIDFormat sif = new SpectrumIDFormat();
-        sif.setCvParam(makeCvParam("MS:1000774", "multiple peak list nativeID format", psiCV));
+        sif.setCvParam(MzidLibUtils.makeCvParam("MS:1000774", "multiple peak list nativeID format", psiCV));
         spectraData.setSpectrumIDFormat(sif);
         //spectraData.setSpectrumIDFormat(makeCvParam("MS:1000774","multiple peak list nativeID format",psiCV));
 
         ff = new FileFormat();
-        ff.setCvParam(makeCvParam(this.massSpecFileFormatID, this.massSpecFileFormatName, psiCV));
+        ff.setCvParam(MzidLibUtils.makeCvParam(this.massSpecFileFormatID, this.massSpecFileFormatName, psiCV));
         spectraData.setFileFormat(ff);
         spectraData.setId(spectraDataID);
         spectraData.setLocation(inputSpectraLocation);
@@ -1442,7 +1419,7 @@ public class Tandem2mzid {
             analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             Param param = new Param();
-            param.setParam(makeCvParam("MS:1002237", "mzidLib", psiCV));
+            param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib", psiCV));
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
             m.marshal(analysisSoftwareList, writer);
@@ -1632,7 +1609,7 @@ public class Tandem2mzid {
                 enzyme.setEnzymeName(paramList);
             }
             List<CvParam> cvParamList = paramList.getCvParam();
-            cvParamList.add(makeCvParam("MS:1001251", "Trypsin", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001251", "Trypsin", psiCV));
         } else {
             //TODO
             /*

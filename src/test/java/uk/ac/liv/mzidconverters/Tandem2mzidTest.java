@@ -4,6 +4,7 @@ import org.junit.Ignore;
 
 import junit.framework.TestCase;
 import uk.ac.liv.mzidlib.MzIdentMLLib;
+import uk.ac.liv.mzidlib.constants.MzidVersion;
 import uk.ac.liv.mzidlib.converters.Tandem2mzid;
 
 /**
@@ -24,7 +25,7 @@ public class Tandem2mzidTest extends TestCase {
         String xTandemFile = "src/test/data/tandem_results.2012_02_23_15_24_58.t.xml";
         String resultFile = "src/test/out/tandem_results.2012_02_23_15_24_58.t.xml.mzid";
 
-        new Tandem2mzid(xTandemFile, resultFile);
+        new Tandem2mzid(xTandemFile, resultFile, MzidVersion.Version1_1);
 
     }
 
@@ -36,7 +37,7 @@ public class Tandem2mzidTest extends TestCase {
     public void test_basic() throws Exception {
         String xTandemFile = "src/test/data/55merge_tandem.xml";
         String resultFile = "src/test/data/55merge_tandem.xml.mzid";
-        new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1001062", false, true);
+        new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1001062", false, true, MzidVersion.Version1_1);
 
     }
 
@@ -51,13 +52,13 @@ public class Tandem2mzidTest extends TestCase {
 
     public void test_galaxyFile() throws Exception {
         String xTandemFileFromGalaxyStep = "src/test/data/Galaxy-[X_Tandem_on_data_N].bioml";
-        new Tandem2mzid(xTandemFileFromGalaxyStep, xTandemFileFromGalaxyStep + ".mzid", "MS:1001348", "MS:1000584", true, true);
+        new Tandem2mzid(xTandemFileFromGalaxyStep, xTandemFileFromGalaxyStep + ".mzid", "MS:1001348", "MS:1000584", true, true, MzidVersion.Version1_1);
     }
 
     public void test_debug_File() throws Exception {
         String xTandemFileFromGalaxyStep = "src/test/data/DEBUG_MSMS_XTANDEM.bioml";
         String outMzid = xTandemFileFromGalaxyStep + ".mzid";
-        new Tandem2mzid(xTandemFileFromGalaxyStep, outMzid, "MS:1001348", "MS:1000584", false, true);
+        new Tandem2mzid(xTandemFileFromGalaxyStep, outMzid, "MS:1001348", "MS:1000584", false, true, MzidVersion.Version1_1);
 
         //Possible check if code below would work...:
 		/*
@@ -78,7 +79,7 @@ public class Tandem2mzidTest extends TestCase {
                 false, //isMs2SpectrumIdStartingAtZero 
                 null, //decoyRegularExpression
                 "\\S+", //proteinCodeRegex
-                true); //outputFragmentation
+                true, MzidVersion.Version1_1); //outputFragmentation
     }
 
     public void test_proteinCodeRegex_commandLine() throws Exception {
@@ -96,13 +97,13 @@ public class Tandem2mzidTest extends TestCase {
     public void test_multiple_sii_case() throws Exception {
         String xTandemFileFromGalaxyStep = "src/test/data/20091015_spiking_0_05fmol_CytC_MSMS_XTANDEM.out";
         String outMzid = xTandemFileFromGalaxyStep + ".mzid";
-        new Tandem2mzid(xTandemFileFromGalaxyStep, outMzid, "MS:1001348", "MS:1000584", true, true);
+        new Tandem2mzid(xTandemFileFromGalaxyStep, outMzid, "MS:1001348", "MS:1000584", true, true, MzidVersion.Version1_1);
     }
 
     public void test_modifications() throws Exception {
         String xTandemFile = "src/test/data/S2_depl_spiked_6.mzML_xtandemOut.bioml";
         String resultFile = "src/test/data/S2_depl_spiked_6.mzML_xtandemOut.bioml.mzid";
-        new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1000584", true, true);
+        new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1000584", true, true, MzidVersion.Version1_1);
 
     }
 
@@ -111,7 +112,7 @@ public class Tandem2mzidTest extends TestCase {
         String resultFile = "src/test/data/55merge_tandem_WITH_SUBSTITUTIONS.xml.mzid";
 
         //Also testing different databaseformat and spectrum file formats:
-        new Tandem2mzid(xTandemFile, resultFile, "MS:1001349", "MS:1000584", false, true);
+        new Tandem2mzid(xTandemFile, resultFile, "MS:1001349", "MS:1000584", false, true, MzidVersion.Version1_1);
 
     }
 
@@ -125,7 +126,7 @@ public class Tandem2mzidTest extends TestCase {
         String xTandemFile = "src/test/data/DEBUG_NO_PARAMETERS_IN_OUTPUT_XTANDEM.bioml";
         String resultFile = "src/test/data/DEBUG_NO_PARAMETERS_IN_OUTPUT_XTANDEM.bioml.mzid";
         try {
-            new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1000584", false, true);
+            new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1000584", false, true, MzidVersion.Version1_1);
         } catch (Exception e) {
             assertTrue(e.getMessage().contains("Expected parameter not found in X!Tandem file"));
         }

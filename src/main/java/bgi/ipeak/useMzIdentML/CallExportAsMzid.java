@@ -4,12 +4,15 @@
 package bgi.ipeak.useMzIdentML;
 
 import bgi.ipeak.util.Properties;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.kohsuke.args4j.Option;
+
+import uk.ac.liv.mzidlib.constants.MzidVersion;
 import uk.ac.liv.mzidlib.converters.Omssa2mzid;
 import uk.ac.liv.mzidlib.converters.Tandem2mzid;
 
@@ -112,7 +115,7 @@ public class CallExportAsMzid {
     public void convert() throws Exception {
         if (search_engineID == 1) {
             Tandem2mzid tandem2mzid = new Tandem2mzid(input_result_file, out_mzidfilepath, database_format, spectrum_fileformat,
-                    bc, decoy_regrex, accessionSplitRegex, output_fraginfor);
+                    bc, decoy_regrex, accessionSplitRegex, output_fraginfor, MzidVersion.Version1_1);
         } else if (search_engineID == 0) {
             //System.out.println("mod file="+mod_file+"\t"+input_result_file+"\t");
             Omssa2mzid omssa2mzid = new Omssa2mzid(input_result_file,
@@ -120,7 +123,8 @@ public class CallExportAsMzid {
                     output_fraginfor,
                     decoy_regrex,
                     mod_file,
-                    umod);
+                    umod, 
+                    MzidVersion.Version1_1);
         }
     }
 

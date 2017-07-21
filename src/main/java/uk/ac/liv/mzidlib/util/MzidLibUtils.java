@@ -30,14 +30,25 @@ public class MzidLibUtils {
         cvParam.setValue(value);
         return cvParam;
     }
-
+    
+    public static CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName, Cv alternateUnitCV) {
+        CvParam cvParam = new CvParam();
+        cvParam.setAccession(accession);
+        cvParam.setName(name);
+        cvParam.setCv(cv);
+        cvParam.setUnitAccession(unitAccession);
+        cvParam.setUnitCv(alternateUnitCV);
+        cvParam.setUnitName(unitName);
+        return cvParam;
+    }
+    
     public static UserParam makeUserParam(String name, String value) {
         UserParam userParam = new UserParam();
         userParam.setName(name);
         userParam.setValue(value);
         return userParam;
     }
-
+    
     public static Cv getpsiCV(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 

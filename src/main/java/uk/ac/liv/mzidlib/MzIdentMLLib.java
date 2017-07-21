@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.ac.liv.mzidlib.constants.MzidVersion;
 import uk.ac.liv.mzidlib.converters.Csv2mzid;
 import uk.ac.liv.mzidlib.converters.Omssa2mzid;
 import uk.ac.liv.mzidlib.converters.Tandem2mzid;
@@ -39,19 +40,20 @@ public class MzIdentMLLib {
             + "Local FDR, Q-value and FDRScore [PMID: 19253293] and assign these to every PSM with new CV terms. You must specify the score you wish to order by, using -cvTerm [MS:XXXX] sourced from the PSI-MS CV"
             + "and whether the scores are ordered low to high or vice versa\n. ";
     final public static String fdrUsage = "FalseDiscoveryRate input.mzid output.mzid " + fdrParams + " \n\nDescription:\n" + fdrToolDescription;
+    
     final public static String fdrGlobalParams = "-decoyValue decoyToTargetRatio -decoyRegex decoyRegex -cvTerm cvTerm -betterScoresAreLower true|false -fdrLevel PSM|Peptide|ProteinGroup -proteinLevel PDH|PAG [-compress true|false]";
     final public static String fdrGlobalUsageExample = " -decoyValue 0.01 -decoyRegex REVERSED -cvTerm MS:1002356 -betterScoresAreLower true -fdrLevel Peptide -proteinLevel PAG -compress true";
     final public static String fdrGlobalToolDescription = "The Global FDR module calculates the FDR on one of the three levels. 1) PSM, 2) Peptide, 3) ProteinGroup. If ProteinGroup is chosen, there are two options for protein level PAG or PDH.";
     final public static String fdrGlobalUsage = "FalseDiscoveryRateGlobal input.mzid output.mzid " + fdrGlobalParams + " \n\nDescription:\n" + fdrGlobalToolDescription;
 
-    final public static String omssa2mzidparams = "[-outputFragmentation true|false] -decoyRegex decoyRegex [-omssaModsFile pathToLocalOmssaModsFile] [-userModsFile pathToLocalUserModsFile] [-compress true|false]";
+    final public static String omssa2mzidparams = "[-outputFragmentation true|false] -decoyRegex decoyRegex [-omssaModsFile pathToLocalOmssaModsFile] [-userModsFile pathToLocalUserModsFile] -mzidVer mzidVersion [-compress true|false]";
     final public static String omssa2mzidToolDescription = "This tool converts OMSSA omx (XML) files into mzid. It has optional parameters for inserting fragment ions into mzid (much larger files). If a decoy Regex is specified, the mzid attribute isDecoy will be set correctly for peptides."
             + " No protein inference is done by this tool (no protein list produced). To make valid mzid output, OMSSA must have been run with the option \"-w include spectra and search params in search results\"."
             + " Without this option, search paramaters cannot be extracted from OMSSA. In this case, the OMSSA CSV converter should be used. ";
     final public static String omssa2mzidUsage = "Omssa2mzid input.omx output.mzid " + omssa2mzidparams + " \n\nDescription:\n" + omssa2mzidToolDescription;
     final public static String omssa2mzidUsageExample = " -outputFragmentation false -decoyRegex Rev_ -compress true";
 
-    final public static String tandem2mzidParams = "[-outputFragmentation (true|false)] [-decoyRegex decoyRegex] [-databaseFileFormatID (e.g. MS:1001348 is FASTA format) \"MS:100blah\"] [-massSpecFileFormatID (e.g. MS:1001062 is MGF) \"MS:100blah\"] [-idsStartAtZero (true for mzML searched, false otherwise) [true|false]] [-compress true|false]";
+    final public static String tandem2mzidParams = "[-outputFragmentation (true|false)] [-decoyRegex decoyRegex] [-databaseFileFormatID (e.g. MS:1001348 is FASTA format) \"MS:100blah\"] [-massSpecFileFormatID (e.g. MS:1001062 is MGF) \"MS:100blah\"] [-idsStartAtZero (true for mzML searched, false otherwise) [true|false]] -mzidVer mzidVersion [-compress true|false]";
     final public static String tandem2mzidToolDescription = "This tool converts X!Tandem XML results files into mzid. There are several optional parameters: whether to export fragment ions (makes bigger files), "
             + " and include a decoy regular expression to set the isDecoy attribute in mzid. Valid mzid files require several pieces of metadata that are difficult to extract from mzid files, the format of the database searched and the file format of the input spectra. "
             + " If these parameters are not set, the converter attempts to guess these based on the file extension. In X!Tandem, the numbering of spectra differs dependent upon the input spectra type - the IDs start at zero for mzML files, the IDs start at one for other spectra types e.g. MGF. "
@@ -481,10 +483,11 @@ public class MzIdentMLLib {
 
                     Boolean outputFrags = Boolean.valueOf(Utils.getCmdParameter(args, "outputFragmentation", false));
                     String decoyRegex = Utils.getCmdParameter(args, "decoyRegex", true);
-
+                    String mzidVersionString = Utils.getCmdParameter(args, "mzidVer", true);
+                    MzidVersion mzidVer = MzidVersion.getVersion(mzidVersionString);
                     String omssaModsFile = Utils.getCmdParameter(args, "omssaModsFile", false);
                     String userModsFile = Utils.getCmdParameter(args, "userModsFile", false);
-
+ 
                     if (decoyRegex != null && outputFrags != null) {
                         // Multiple conversion
                         if (inputFile.isDirectory()) {
@@ -495,13 +498,13 @@ public class MzIdentMLLib {
                                 if (file.getAbsolutePath().endsWith("omx")) {
                                     String outputName = file.getName().substring(0, file.getName().lastIndexOf('.'));
                                     String outputFileName1 = outputFileName + "\\" + outputName + ".mzid";
-                                    Omssa2mzid omssa2mzid = new Omssa2mzid(file.getAbsolutePath(), outputFileName1, outputFrags, decoyRegex, omssaModsFile, userModsFile);
+                                    Omssa2mzid omssa2mzid = new Omssa2mzid(file.getAbsolutePath(), outputFileName1, outputFrags, decoyRegex, omssaModsFile, userModsFile, mzidVer);
                                     System.out.println("Searching " + file.getName() + " for decoys containing " + decoyRegex);
                                 }
 
                             }
                         } else {
-                            new Omssa2mzid(inputFile.getAbsolutePath(), outputFileName, outputFrags, decoyRegex, omssaModsFile, userModsFile);
+                            new Omssa2mzid(inputFile.getAbsolutePath(), outputFileName, outputFrags, decoyRegex, omssaModsFile, userModsFile, mzidVer);
                             System.out.println("Searching for decoys containing " + decoyRegex);
                         }
                     } /*
@@ -547,6 +550,8 @@ public class MzIdentMLLib {
 
                     String databaseFileFormatID = Utils.getCmdParameter(args, "databaseFileFormatID", false);
                     String massSpecFileFormatID = Utils.getCmdParameter(args, "massSpecFileFormatID", false);
+                    String mzidVersionString = Utils.getCmdParameter(args, "mzidVer", true);
+                    MzidVersion mzidVer = MzidVersion.getVersion(mzidVersionString);
                     try {
                         // Multiple conversion
                         if (inputFile.isDirectory()) {
@@ -557,14 +562,14 @@ public class MzIdentMLLib {
                                 if (file.getAbsolutePath().endsWith(".t.xml")) {
                                     String outputName = file.getName().substring(0, file.getName().lastIndexOf('.'));
                                     String outputFileName1 = outputFileName + "\\" + outputName + ".mzid";
-                                    Tandem2mzid tandem2mzid = new Tandem2mzid(file.getAbsolutePath(), outputFileName1, databaseFileFormatID, massSpecFileFormatID, idsStartAtZero, decoyRegex, proteinCodeRegex, outputFrags);
+                                    Tandem2mzid tandem2mzid = new Tandem2mzid(file.getAbsolutePath(), outputFileName1, databaseFileFormatID, massSpecFileFormatID, idsStartAtZero, decoyRegex, proteinCodeRegex, outputFrags, mzidVer);
                                     System.out.println("Searching " + file.getName() + " for decoys containing " + decoyRegex);
 
                                 }
 
                             }
                         } else {
-                            Tandem2mzid tandem2mzid = new Tandem2mzid(inputFile.getAbsolutePath(), outputFileName, databaseFileFormatID, massSpecFileFormatID, idsStartAtZero, decoyRegex, proteinCodeRegex, outputFrags);
+                            Tandem2mzid tandem2mzid = new Tandem2mzid(inputFile.getAbsolutePath(), outputFileName, databaseFileFormatID, massSpecFileFormatID, idsStartAtZero, decoyRegex, proteinCodeRegex, outputFrags, mzidVer);
                         }
                     } catch (Exception e) {
                         System.out.println("Error running Tandem2mzid:" + userFeedback + tandem2mzidUsage);
