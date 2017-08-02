@@ -78,7 +78,7 @@ import de.proteinms.xtandemparser.xtandem.XTandemFile;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import uk.ac.liv.mzidlib.constants.MzidVersion;
+import uk.ac.ebi.jmzidml.model.utils.MzIdentMLVersion;
 import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
 /**
@@ -140,9 +140,9 @@ public class Tandem2mzid {
     private String massSpecFileFormatName;
     private Pattern proteinCodeRegexPattern = null;
     boolean outputFragmentation = true;
-    MzidVersion mzidVer;
+    MzIdentMLVersion mzidVer;
     
-    public Tandem2mzid(String inputfile, String outputfile, MzidVersion ver) throws Exception {
+    public Tandem2mzid(String inputfile, String outputfile, MzIdentMLVersion ver) throws Exception {
         //Calling the more detailed initialization method with all optionals set to null:
         XTandemFile xfile = new XTandemFile(inputfile);
         initializeVariables(xfile, null, null, null, null, null, true);
@@ -151,7 +151,7 @@ public class Tandem2mzid {
 
     public Tandem2mzid(String inputfile, String outputfile,
             String databaseFileFormatID, String massSpecFileFormatID,
-            boolean isMs2SpectrumIdStartingAtZero, boolean outputFragmentation, MzidVersion ver) throws Exception {
+            boolean isMs2SpectrumIdStartingAtZero, boolean outputFragmentation, MzIdentMLVersion ver) throws Exception {
         XTandemFile xfile = new XTandemFile(inputfile);
         initializeVariables(xfile, databaseFileFormatID, massSpecFileFormatID, isMs2SpectrumIdStartingAtZero, null, null, outputFragmentation);
         convertFile(xfile, inputfile, outputfile, ver);
@@ -159,7 +159,7 @@ public class Tandem2mzid {
 
     public Tandem2mzid(String inputfile, String outputfile,
             String databaseFileFormatID, String massSpecFileFormatID,
-            boolean isMs2SpectrumIdStartingAtZero, String decoyRegularExpression, boolean outputFragmentation, MzidVersion ver) throws Exception {
+            boolean isMs2SpectrumIdStartingAtZero, String decoyRegularExpression, boolean outputFragmentation, MzIdentMLVersion ver) throws Exception {
         XTandemFile xfile = new XTandemFile(inputfile);
         initializeVariables(xfile, databaseFileFormatID, massSpecFileFormatID, isMs2SpectrumIdStartingAtZero,
                 decoyRegularExpression, null, outputFragmentation);
@@ -171,7 +171,7 @@ public class Tandem2mzid {
             boolean isMs2SpectrumIdStartingAtZero, String decoyRegularExpression,
             String proteinCodeRegex,
             boolean outputFragmentation,
-            MzidVersion ver) throws Exception {
+            MzIdentMLVersion ver) throws Exception {
         XTandemFile xfile = new XTandemFile(inputfile);
         initializeVariables(xfile, databaseFileFormatID, massSpecFileFormatID, isMs2SpectrumIdStartingAtZero,
                 decoyRegularExpression, proteinCodeRegex, outputFragmentation);
@@ -256,11 +256,11 @@ public class Tandem2mzid {
         }
     }
 
-    private void convertFile(XTandemFile xfile, String inputfile, String outputfile, MzidVersion ver) throws Exception {
+    private void convertFile(XTandemFile xfile, String inputfile, String outputfile, MzIdentMLVersion ver) throws Exception {
 
         unimodDoc = new ReadUnimod();
                 if (null == ver){
-            mzidVer = MzidVersion.Version1_1;
+            mzidVer = MzIdentMLVersion.Version_1_1;
         }else{
             mzidVer = ver;
         }
@@ -1123,7 +1123,7 @@ public class Tandem2mzid {
         }
         
         // Add "no special processing" cv term if this is mzid 1.2 version
-        if (mzidVer.equals(MzidVersion.Version1_2)) {
+        if (mzidVer.equals(MzIdentMLVersion.Version_1_2)) {
             cvParamList.add(MzidLibUtils.makeCvParam("MS:1002495", "no special processing",
                                         psiCV));
         }

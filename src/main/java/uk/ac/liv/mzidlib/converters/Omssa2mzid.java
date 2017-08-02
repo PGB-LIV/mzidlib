@@ -25,7 +25,7 @@ import de.proteinms.omxparser.util.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import uk.ac.liv.mzidlib.constants.MzidVersion;
+import uk.ac.ebi.jmzidml.model.utils.MzIdentMLVersion;
 import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
 /**
@@ -106,7 +106,7 @@ public class Omssa2mzid {
     Boolean outputFragmentation = false;
     int response_scale = 100;           // This is the scale to get correct MZ values out - get reset from the omx
     private String defline_regex = " "; //TODO  - current grabs protein accessions from the defline, by space - need to implement other options
-    private MzidVersion mzidVer;
+    private MzIdentMLVersion mzidVer;
 
     public Omssa2mzid(String inputfile) {
 
@@ -154,7 +154,7 @@ public class Omssa2mzid {
     // if ver is NULL, then make it default as mzid 1.1
     public Omssa2mzid(String inputfile, String outputfile, Boolean outputFrags,
                       String decoyRegularExpression, String omssaModsFile,
-                      String omssaUserModsFile, MzidVersion ver) {
+                      String omssaUserModsFile, MzIdentMLVersion ver) {
 
         //for this constructor - we will extract files back out of the jar
         modsFile = omssaModsFile;
@@ -162,7 +162,7 @@ public class Omssa2mzid {
 
         //determin mzid file version
         if (null == ver) {
-            mzidVer = MzidVersion.Version1_1;
+            mzidVer = MzIdentMLVersion.Version_1_1;
         } else {
             mzidVer = ver;
         }
@@ -307,12 +307,12 @@ public class Omssa2mzid {
         // Setup the mzid objects
         handleCVs();
 
-        foundProts = new HashMap<String, DBSequence>();
-        pepProtMap = new HashMap<String, String>();
+        foundProts = new HashMap<>();
+        pepProtMap = new HashMap<>();
         peptideLookup
-                = new HashMap<String, uk.ac.ebi.jmzidml.model.mzidml.Peptide>();   //lookup to get a peptide by peptideseq_varmods_fixedmods
-        pepEvidLookup = new HashMap<String, PeptideEvidence>();
-        uniquePeps = new HashMap<String, Boolean>();
+                = new HashMap<>();   //lookup to get a peptide by peptideseq_varmods_fixedmods
+        pepEvidLookup = new HashMap<>();
+        uniquePeps = new HashMap<>();
         sequenceCollection = new SequenceCollection();
 
         List<PeptideEvidence> peptideEvidenceList = sequenceCollection.
@@ -1136,7 +1136,7 @@ public class Omssa2mzid {
         }
 
         // Add "no special processing" cv term if this is mzid 1.2 version
-        if (mzidVer.equals(MzidVersion.Version1_2)) {
+        if (mzidVer.equals(MzIdentMLVersion.Version_1_2)) {
             cvParamList.add(MzidLibUtils.makeCvParam("MS:1002495", "no special processing",
                                         psiCV));
         }

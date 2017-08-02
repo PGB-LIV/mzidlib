@@ -52,7 +52,7 @@
         <dependency>             
             <groupId>uk.ac.ebi.jmzidml</groupId>             
             <artifactId>jmzidentml</artifactId>             
-            <version>1.2.2</version>         
+            <version>1.2.7-SNAPSHOT</version>         
         </dependency>
         <dependency>             
             <groupId>uk.ac.ebi.pride.tools</groupId>             

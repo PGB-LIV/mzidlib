@@ -19,6 +19,7 @@ import java.util.Vector;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 
 import uk.ac.ebi.jmzidml.model.mzidml.*;
+import uk.ac.ebi.jmzidml.model.utils.MzIdentMLVersion;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 import uk.ac.liv.mzidlib.constants.CvConstants;
@@ -30,6 +31,7 @@ public class CombineSearchEngines {
 
     private static boolean verbose = true;
 
+    private static MzIdentMLVersion mzidVer;
     int noOfSearchEngines = 0;
     //HashMap<String,ArrayList<ArrayList<String>>> combinedResultContainer;
     Map<String, List<List<Object>>> combinedResultContainer;
@@ -347,10 +349,18 @@ public class CombineSearchEngines {
             Map<String, Double> pepSeqAndAFS_score = computeAFS_score(fdrRelatedInfo);
 
             //HashMap<String,ArrayList<ArrayList<String>>> combinedResultContainer;
-            addInformationToCombinedResultContainer(allspectrumIDs[i].toString(),
+            addInformationToCombinedResultContainer(allspectrumIDs[i],
                     seqAndMultipleSeIdentifier, fdrRelatedInfo, pepSeqAndAFS_score);
         }
 
+    }
+
+    /**
+     * Update AnalysisProtocolCollection if write out mzid version 1.2.
+     */
+    private void handleAnalysisProtocolCollection() {
+        List<SpectrumIdentificationProtocol> sipList = this.analysisProtocolCollection.getSpectrumIdentificationProtocol();
+        
     }
 
     String[] findAllSpectrumIdsFromSearchEngines() throws Exception {
@@ -1381,6 +1391,7 @@ public class CombineSearchEngines {
         // Added by FG 8/10/2014
         C.checkInputFiles(inputFiles);
         String decoyRegex = args[12];
+        mzidVer = MzIdentMLVersion.getVersion(args[13]);
         long startTime;
         long stopTime;
         long elapsedTime;
@@ -1547,6 +1558,7 @@ public class CombineSearchEngines {
         // Added by FG 8/10/2014
         C.checkInputFiles(inputFiles);
         String decoyRegex = args[16];
+        mzidVer = MzIdentMLVersion.getVersion(args[17]);
         for (int i = 0; i < searchEngine.length; i++) {
             startTime = System.currentTimeMillis();
 
@@ -1667,6 +1679,9 @@ public class CombineSearchEngines {
 
             MzIdentMLMarshaller marshaller;
             marshaller = new MzIdentMLMarshaller();
+            if (mzidVer == null) {
+                mzidVer = MzIdentMLVersion.Version_1_2;
+            }
 
             writer.write(marshaller.createXmlHeader() + "\n");
 
@@ -1756,6 +1771,9 @@ public class CombineSearchEngines {
             writer.write("\n");
 
             if (analysisProtocolCollection != null) {
+                if (mzidVer.equals(MzIdentMLVersion.Version_1_2)){
+                    handleAnalysisProtocolCollection();
+                }
                 marshaller.marshal(analysisProtocolCollection, writer);
             }
             writer.write("\n");
