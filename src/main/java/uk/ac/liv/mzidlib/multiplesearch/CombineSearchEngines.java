@@ -339,7 +339,7 @@ public class CombineSearchEngines {
 
     /**
      * Update AnalysisProtocolCollection if write out mzid version 1.2.
-     * Adding CV term "peptide-level scoring" to thte AdditionalSearchParams.
+     * Adding CV term "consensus scoring" to the AdditionalSearchParams.
      * Removing CV term "no special processing" if exists.
      */
     private void handleAnalysisProtocolCollection() {
@@ -349,9 +349,9 @@ public class CombineSearchEngines {
         for (SpectrumIdentificationProtocol sip : sipList) {
             List<CvParam> sipCvParamList = sip.getAdditionalSearchParams().
                     getCvParam();
-            boolean flag = false; //flag of existance of the CV term "peptide-level scoring"
+            boolean flag = false; //flag of existance of the CV term "consensus scoring"
             for (CvParam cp : sipCvParamList) {
-                if (cp.getAccession().equals(CvConstants.PEPTIDE_LEVEL_SCORING.
+                if (cp.getAccession().equals(CvConstants.CONSENSUS_SCORING.
                         getAccession())) {
                     flag = true;
                     break;
@@ -359,7 +359,7 @@ public class CombineSearchEngines {
             }
             if (!flag) {
                 sipCvParamList.remove(CvConstants.NO_SPECIAL_PROCESSING);
-                sipCvParamList.add(CvConstants.PEPTIDE_LEVEL_SCORING);
+                sipCvParamList.add(CvConstants.CONSENSUS_SCORING);
             }
         }
     }

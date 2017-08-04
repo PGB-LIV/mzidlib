@@ -40,11 +40,13 @@ import uk.ac.ebi.jmzidml.model.mzidml.Provider;
 import uk.ac.ebi.jmzidml.model.mzidml.SequenceCollection;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationItem;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationList;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationProtocol;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationResult;
 import uk.ac.ebi.jmzidml.model.mzidml.UserParam;
 import uk.ac.ebi.jmzidml.model.utils.MzIdentMLVersion;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
+import uk.ac.liv.mzidlib.constants.CvConstants;
 import uk.ac.liv.mzidlib.multiplesearch.TreeSortForIndices;
 import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
@@ -122,7 +124,6 @@ public class FalseDiscoveryRateGlobal {
     private Map<String, Integer> peptidePSMCount = new HashMap<>();
     private Map<String, String> bestScorePSM = new HashMap<>();
 
-    private MzidLibUtils mzidLibUtils;
     private MzIdentMLVersion version;
 
 //    public static void main(String args[])
@@ -199,7 +200,6 @@ public class FalseDiscoveryRateGlobal {
     }
 
     private void readMetaData() {
-        mzidLibUtils = new MzidLibUtils();
         cvList = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.CvList);
         analysisSoftwareList = mzIdentMLUnmarshaller.unmarshal(
                 MzIdentMLElement.AnalysisSoftwareList);
@@ -335,7 +335,7 @@ public class FalseDiscoveryRateGlobal {
                     if (!bestScorePSM.containsKey(peptideRef)) {
                         String newKey = spectrumIdentItem.getId() + ":_:"
                                 + combinedFDR + ":_:"
-                                + Boolean.valueOf(isdecoy).toString() + ":_:"
+                                + Boolean.toString(isdecoy) + ":_:"
                                 + spectrumResultId;
                         bestScorePSM.put(peptideRef, newKey);
                     } else {
@@ -346,7 +346,7 @@ public class FalseDiscoveryRateGlobal {
                                 bestScorePSM.remove(peptideRef);
                                 String newKey = spectrumIdentItem.getId()
                                         + ":_:" + combinedFDR + ":_:" + Boolean.
-                                        valueOf(isdecoy).toString() + ":_:"
+                                        toString(isdecoy) + ":_:"
                                         + spectrumResultId;
                                 bestScorePSM.put(peptideRef, newKey);
 
@@ -403,7 +403,7 @@ public class FalseDiscoveryRateGlobal {
                 String proteinAmbiguityGroupId = proteinAmbiguityGroup.getId();
                 double combinedFDR = 0;
                 boolean isdecoy = false;
-                //
+
                 String dbSeqRef;
 
                 for (int j = 0; j < proteinAmbiguityGroup.
@@ -428,61 +428,66 @@ public class FalseDiscoveryRateGlobal {
                             getProteinDetectionHypothesis().get(0);
 
                 }
-                List<PeptideHypothesis> peptideHypothesisList
-                        = anchorProteinDetectionHypothesis.
-                        getPeptideHypothesis();
-                dbSeqRef = anchorProteinDetectionHypothesis.getDBSequenceRef();
+                if (anchorProteinDetectionHypothesis != null) {
+                    List<PeptideHypothesis> peptideHypothesisList
+                            = anchorProteinDetectionHypothesis.
+                            getPeptideHypothesis();
+                    dbSeqRef = anchorProteinDetectionHypothesis.
+                            getDBSequenceRef();
 
-                for (PeptideHypothesis peptideHypothesis : peptideHypothesisList) {
-                    PeptideEvidence peptideEvidence1 = getPeptideEvidenceMap()
-                            .get(peptideHypothesis.getPeptideEvidenceRef());
-                    if (peptideEvidence1 != null) {
-                        isdecoy = peptideEvidence1.isIsDecoy();
-                        if (usingFileDecoyAttribute) {
-                            if (peptideEvidence1.isIsDecoy()) {
-                                isdecoy = true;
-                                break;
+                    for (PeptideHypothesis peptideHypothesis
+                            : peptideHypothesisList) {
+                        PeptideEvidence peptideEvidence1
+                                = getPeptideEvidenceMap()
+                                .get(peptideHypothesis.getPeptideEvidenceRef());
+                        if (peptideEvidence1 != null) {
+                            isdecoy = peptideEvidence1.isIsDecoy();
+                            if (usingFileDecoyAttribute) {
+                                if (peptideEvidence1.isIsDecoy()) {
+                                    isdecoy = true;
+                                    break;
+                                }
+                            } else if (decoy != null && !decoy.equals("")
+                                    && (decoy.length() > 1)) {
+                                if (dBSequenceMap.get(peptideEvidence1.
+                                        getDBSequenceRef()).getAccession()
+                                        .contains(decoy)) {
+                                    isdecoy = true;
+                                    break;
+                                }
+                            } else {
+                                System.out.println(
+                                        "Error - no decoy value set, need to use alternative constructor");
                             }
-                        } else if (decoy != null && !decoy.equals("")
-                                && (decoy.length() > 1)) {
-                            if (dBSequenceMap.get(peptideEvidence1.
-                                    getDBSequenceRef()).getAccession()
-                                    .contains(decoy)) {
-                                isdecoy = true;
-                                break;
+                        }
+                    }
+
+                    if (proteinLevel.equals("PAG")) {
+                        for (CvParam cvParam : proteinAmbiguityGroup.
+                                getCvParam()) {
+                            String accession = cvParam.getAccession();
+                            if (allowedEvalues.contains(accession)) {
+                                combinedFDR = Double.valueOf(cvParam.getValue());
                             }
-                        } else {
-                            System.out.println(
-                                    "Error - no decoy value set, need to use alternative constructor");
                         }
                     }
-                }
+                    if (proteinLevel.equals("PDH")) {
+                        for (CvParam cvParam : anchorProteinDetectionHypothesis.
+                                getCvParam()) {
+                            String accession = cvParam.getAccession();
+                            if (allowedEvalues.contains(accession)) {
+                                combinedFDR = Double.valueOf(cvParam.getValue());
+                            }
+                        }
 
-                if (proteinLevel.equals("PAG")) {
-                    for (CvParam cvParam : proteinAmbiguityGroup.getCvParam()) {
-                        String accession = cvParam.getAccession();
-                        if (allowedEvalues.contains(accession)) {
-                            combinedFDR = Double.valueOf(cvParam.getValue());
-                        }
-                    }
-                }
-                if (proteinLevel.equals("PDH")) {
-                    for (CvParam cvParam : anchorProteinDetectionHypothesis.
-                            getCvParam()) {
-                        String accession = cvParam.getAccession();
-                        if (allowedEvalues.contains(accession)) {
-                            combinedFDR = Double.valueOf(cvParam.getValue());
-                        }
                     }
 
+                    spectrumResult.add(proteinAmbiguityGroupId);
+                    spectrumItem.add(anchorProteinDetectionHypothesis.getId());
+                    peptideNames.add(dbSeqRef);
+                    evalues.add(combinedFDR);
+                    decoyOrNot.add(String.valueOf(isdecoy));
                 }
-
-                spectrumResult.add(proteinAmbiguityGroupId);
-                spectrumItem.add(anchorProteinDetectionHypothesis.getId());
-                peptideNames.add(dbSeqRef);
-                evalues.add(combinedFDR);
-                decoyOrNot.add(String.valueOf(isdecoy));
-
             }
 
         } catch (OutOfMemoryError error) {
@@ -616,9 +621,14 @@ public class FalseDiscoveryRateGlobal {
 
     }
 
-    private void writeUnchangedPart(Writer writer,
-                                    MzIdentMLMarshaller marshaller) {
-        try {
+    //TODO: This method has to be broken into PSM, Peptide or ProteinGroup-specific functions
+    //Not only to increase the readability, but to avoid if-conditions inside loops. Grrr.
+    //Can't justify a function with 200 lines of code!
+    private void writeMzidFile(String csvFileName) {
+
+        try (Writer writer = new FileWriter(csvFileName)) {
+            MzIdentMLMarshaller marshaller;
+            marshaller = new MzIdentMLMarshaller(version);
 
             writer.write(marshaller.createXmlHeader() + "\n");
 
@@ -643,8 +653,8 @@ public class FalseDiscoveryRateGlobal {
             analysisSoftware.setId(this.getClass().getSimpleName() + "_"
                     + dateFormat.format(date));
             Param param = new Param();
-            Cv psiCV = mzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
-            param.setParam(mzidLibUtils.makeCvParam("MS:1002237", "mzidLib",
+            Cv psiCV = MzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+            param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib",
                                                     psiCV));
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
@@ -701,21 +711,28 @@ public class FalseDiscoveryRateGlobal {
             writer.write("\n");
 
             if (analysisProtocolCollection != null) {
-                Cv cv = mzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
-                CvParam peptideLevelScoring = new CvParam();
-                peptideLevelScoring.setAccession("MS:1002490");
-                peptideLevelScoring.setName("peptide-level scoring");
-                peptideLevelScoring.setCv(cv);
-                analysisProtocolCollection.getSpectrumIdentificationProtocol().
-                        get(0).getAdditionalSearchParams()
-                        .getCvParam().add(peptideLevelScoring);
-                CvParam groupPSMsBySequence = new CvParam();
-                groupPSMsBySequence.setAccession("MS:1002496");
-                groupPSMsBySequence.setName("group PSMs by sequence");
-                groupPSMsBySequence.setCv(cv);
-                analysisProtocolCollection.getSpectrumIdentificationProtocol().
-                        get(0).getAdditionalSearchParams()
-                        .getCvParam().add(groupPSMsBySequence);
+                List<SpectrumIdentificationProtocol> sipList
+                        = analysisProtocolCollection.
+                        getSpectrumIdentificationProtocol();
+                for (SpectrumIdentificationProtocol sip : sipList) {
+                    if (sip.getAdditionalSearchParams().getCvParam().contains(
+                            CvConstants.NO_SPECIAL_PROCESSING)) {
+                        sip.getAdditionalSearchParams().getCvParam().remove(
+                                CvConstants.NO_SPECIAL_PROCESSING);
+                    }
+
+                    if (!sip.getAdditionalSearchParams().getCvParam().contains(
+                            CvConstants.PEPTIDE_LEVEL_SCORING)) {
+                        sip.getAdditionalSearchParams().getCvParam().add(
+                                CvConstants.PEPTIDE_LEVEL_SCORING);
+                    }
+
+                    if (!sip.getAdditionalSearchParams().getCvParam().contains(
+                            CvConstants.GROUP_PSMS_BY_SEQUENCE)) {
+                        sip.getAdditionalSearchParams().getCvParam().add(
+                                CvConstants.GROUP_PSMS_BY_SEQUENCE);
+                    }
+                }
                 marshaller.marshal(analysisProtocolCollection, writer);
 
             }
@@ -726,30 +743,8 @@ public class FalseDiscoveryRateGlobal {
                 marshaller.marshal(inputs, writer);
             }
             writer.write("\n");
+
             writer.write(marshaller.createAnalysisDataStartTag() + "\n");
-
-        } catch (IOException e) {
-            String methodName = Thread.currentThread().getStackTrace()[1].
-                    getMethodName();
-            String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \""
-                    + className
-                    + "\" was not completed because of " + e.getMessage() + "."
-                    + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
-            System.out.println(message);
-        }
-    }
-
-    //TODO: This method has to be broken into PSM, Peptide or ProteinGroup-specific functions
-    //Not only to increase the readability, but to avoid if-conditions inside loops. Grrr.
-    //Can't justify a function with 200 lines of code!
-    private void writeMzidFile(String csvFileName) {
-
-        try (Writer writer = new FileWriter(csvFileName)) {
-            MzIdentMLMarshaller marshaller;
-            marshaller = new MzIdentMLMarshaller(version);
-
-            writeUnchangedPart(writer, marshaller);
 
             SpectrumIdentificationList siList = new SpectrumIdentificationList();
             String spectrumIdentificationListRef = "";
@@ -831,7 +826,7 @@ public class FalseDiscoveryRateGlobal {
                         CvParam cvParamestimated_qvalue = new CvParam();
                         CvParam cvParamfdrscore = new CvParam();
                         String[] sii_arr = sortedValue.split(":");
-                        Cv cv = mzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+                        Cv cv = MzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
 
                         cvParamestimated_simpleFDR.setAccession("MS:1002351");
                         cvParamestimated_simpleFDR.
@@ -874,7 +869,7 @@ public class FalseDiscoveryRateGlobal {
                         CvParam cvParamestimated_qvalue = new CvParam();
                         CvParam cvParamfdrscore = new CvParam();
                         String[] sii_arr = sortedValue.split(":");
-                        Cv cv = mzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+                        Cv cv = MzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
 
                         cvParamestimated_simpleFDR.setAccession("MS:1002359");
                         cvParamestimated_simpleFDR.setName(
@@ -955,7 +950,7 @@ public class FalseDiscoveryRateGlobal {
                                         = new CvParam();
                                 CvParam cvParamestimated_qvalue = new CvParam();
                                 String[] sii_arr = sortedValue.split(":");
-                                Cv cv = mzidLibUtils.getpsiCV(
+                                Cv cv = MzidLibUtils.getpsiCV(
                                         mzIdentMLUnmarshaller);
                                 cvParamestimated_simpleFDR.setAccession(
                                         "MS:1002370");
@@ -1031,7 +1026,7 @@ public class FalseDiscoveryRateGlobal {
             double tpValue = allTargets - falsePositiveDivRatio;
             tp.add(tpValue);
         }
-        if (fp.size() == 0 || (fp.get(fp.size() - 1) == 0)) {
+        if (fp.isEmpty() || (fp.get(fp.size() - 1) == 0)) {
             System.out.println(
                     "No decoys found for search engine Mascot|Omssa|tandem - likely caused by: wrong decoy regex, database doesn't contain decoys or the search reported only identifications for stringent e-values - please allow identifications up to e-value = 10 for omssa and tandem. See omssa and tandem documentation for how to do change this setting");
         }
@@ -1309,20 +1304,21 @@ public class FalseDiscoveryRateGlobal {
     public void writeToTsvFile(String fileName)
             throws Exception {
 
-        Writer out = new BufferedWriter(new FileWriter(fileName));
-        String outStr;
-        for (int i = 0; i < sorted_peptideNames.size(); i++) {
+        try (Writer out = new BufferedWriter(new FileWriter(fileName))) {
+            String outStr;
+            for (int i = 0; i < sorted_peptideNames.size(); i++) {
 
-            outStr = sorted_spectrumResult.get(i) + "\t" + sorted_peptideNames.
-                    get(i) + "\t" + sorted_decoyOrNot.get(i)
-                    + "\t"
-                    + estimated_simpleFDR.get(i) + "\t" + estimated_qvalue.
-                    get(i) + "\t" + estimated_fdrscore.get(i)
-                    + "\n";
+                outStr = sorted_spectrumResult.get(i) + "\t"
+                        + sorted_peptideNames.
+                        get(i) + "\t" + sorted_decoyOrNot.get(i)
+                        + "\t"
+                        + estimated_simpleFDR.get(i) + "\t" + estimated_qvalue.
+                        get(i) + "\t" + estimated_fdrscore.get(i)
+                        + "\n";
 
-            out.write(outStr);
+                out.write(outStr);
+            }
         }
-        out.close();
     }
 
     // Write the sorted data into a file
@@ -1330,23 +1326,25 @@ public class FalseDiscoveryRateGlobal {
     public void writeToCsvFile(String fileName)
             throws Exception {
 
-        Writer out = new BufferedWriter(new FileWriter(fileName));
-        String outStrHead
-                = "sorted_spectrumResult.get(i),sorted_peptideNames.get(i) , sorted_decoyOrNot.get(i) ,  sorted_evalues.get(i).toString() , + sorted_scores.get(i).toString() , estimated_simpleFDR.get(i) , estimated_qvalue.get(i) , estimated_fdrscore.get(i) \n";
+        try (Writer out = new BufferedWriter(new FileWriter(fileName))) {
+            String outStrHead
+                    = "sorted_spectrumResult.get(i),sorted_peptideNames.get(i) , sorted_decoyOrNot.get(i) ,  sorted_evalues.get(i).toString() , + sorted_scores.get(i).toString() , estimated_simpleFDR.get(i) , estimated_qvalue.get(i) , estimated_fdrscore.get(i) \n";
 
-        for (int i = 0; i < sorted_peptideNames.size(); i++) {
+            for (int i = 0; i < sorted_peptideNames.size(); i++) {
 
-            String outStr = sorted_spectrumResult.get(i) + ","
-                    + sorted_peptideNames.get(i) + ","
-                    + sorted_decoyOrNot.get(i) + "," + sorted_evalues.get(i).
-                    toString() + ","
-                    + estimated_simpleFDR.get(i) + "," + estimated_qvalue.get(i)
-                    + "," + estimated_fdrscore.get(i)
-                    + "\n";
+                String outStr = sorted_spectrumResult.get(i) + ","
+                        + sorted_peptideNames.get(i) + ","
+                        + sorted_decoyOrNot.get(i) + ","
+                        + sorted_evalues.get(i).
+                        toString() + ","
+                        + estimated_simpleFDR.get(i) + "," + estimated_qvalue.
+                        get(i)
+                        + "," + estimated_fdrscore.get(i)
+                        + "\n";
 
-            out.write(outStr);
+                out.write(outStr);
+            }
         }
-        out.close();
     }
 
     //  Write the sorted data into a file
@@ -1363,19 +1361,18 @@ public class FalseDiscoveryRateGlobal {
                     + "in sorted_evalues"));
         }
 
-        Writer out = new BufferedWriter(new FileWriter(fileName));
+        try (Writer out = new BufferedWriter(new FileWriter(fileName))) {
+            for (int i = 0; i < sorted_peptideNames.size(); i++) {
+                String outStr = sorted_spectrumResult.get(i) + "\t"
+                        + sorted_spectrumItem.get(i) + "\t"
+                        + sorted_peptideNames.get(i) + "\t" + sorted_decoyOrNot.
+                        get(
+                                i) + "\t"
+                        + sorted_evalues.get(i).toString() + "\n";
 
-        for (int i = 0; i < sorted_peptideNames.size(); i++) {
-            String outStr = sorted_spectrumResult.get(i) + "\t"
-                    + sorted_spectrumItem.get(i) + "\t"
-                    + sorted_peptideNames.get(i) + "\t" + sorted_decoyOrNot.get(
-                    i) + "\t"
-                    + sorted_evalues.get(i).toString() + "\n";
-
-            out.write(outStr);
+                out.write(outStr);
+            }
         }
-
-        out.close();
     }
 
     private UserParam makeUserParam(String name, String value) {
