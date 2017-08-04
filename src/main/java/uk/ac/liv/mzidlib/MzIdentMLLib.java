@@ -41,8 +41,8 @@ public class MzIdentMLLib {
             + "and whether the scores are ordered low to high or vice versa\n. ";
     final public static String fdrUsage = "FalseDiscoveryRate input.mzid output.mzid " + fdrParams + " \n\nDescription:\n" + fdrToolDescription;
     
-    final public static String fdrGlobalParams = "-decoyValue decoyToTargetRatio -decoyRegex decoyRegex -cvTerm cvTerm -betterScoresAreLower true|false -fdrLevel PSM|Peptide|ProteinGroup -proteinLevel PDH|PAG [-compress true|false]";
-    final public static String fdrGlobalUsageExample = " -decoyValue 0.01 -decoyRegex REVERSED -cvTerm MS:1002356 -betterScoresAreLower true -fdrLevel Peptide -proteinLevel PAG -compress true";
+    final public static String fdrGlobalParams = "-decoyValue decoyToTargetRatio -decoyRegex decoyRegex -cvTerm cvTerm -betterScoresAreLower true|false -fdrLevel PSM|Peptide|ProteinGroup -proteinLevel PDH|PAG -mzidVer mzidVersion [-compress true|false]";
+    final public static String fdrGlobalUsageExample = " -decoyValue 0.01 -decoyRegex REVERSED -cvTerm MS:1002356 -betterScoresAreLower true -fdrLevel Peptide -proteinLevel PAG -mzidVer 1.2 -compress true";
     final public static String fdrGlobalToolDescription = "The Global FDR module calculates the FDR on one of the three levels. 1) PSM, 2) Peptide, 3) ProteinGroup. If ProteinGroup is chosen, there are two options for protein level PAG or PDH.";
     final public static String fdrGlobalUsage = "FalseDiscoveryRateGlobal input.mzid output.mzid " + fdrGlobalParams + " \n\nDescription:\n" + fdrGlobalToolDescription;
 
@@ -51,7 +51,7 @@ public class MzIdentMLLib {
             + " No protein inference is done by this tool (no protein list produced). To make valid mzid output, OMSSA must have been run with the option \"-w include spectra and search params in search results\"."
             + " Without this option, search paramaters cannot be extracted from OMSSA. In this case, the OMSSA CSV converter should be used. ";
     final public static String omssa2mzidUsage = "Omssa2mzid input.omx output.mzid " + omssa2mzidparams + " \n\nDescription:\n" + omssa2mzidToolDescription;
-    final public static String omssa2mzidUsageExample = " -outputFragmentation false -decoyRegex Rev_ -compress true";
+    final public static String omssa2mzidUsageExample = " -outputFragmentation false -decoyRegex Rev_ -mzidVer 1.2 -compress true";
 
     final public static String tandem2mzidParams = "[-outputFragmentation (true|false)] [-decoyRegex decoyRegex] [-databaseFileFormatID (e.g. MS:1001348 is FASTA format) \"MS:100blah\"] [-massSpecFileFormatID (e.g. MS:1001062 is MGF) \"MS:100blah\"] [-idsStartAtZero (true for mzML searched, false otherwise) [true|false]] -mzidVer mzidVersion [-compress true|false]";
     final public static String tandem2mzidToolDescription = "This tool converts X!Tandem XML results files into mzid. There are several optional parameters: whether to export fragment ions (makes bigger files), "
@@ -67,7 +67,7 @@ public class MzIdentMLLib {
             + " This mode is required since OMSSA does not report fixed mods on peptides, which must be present in mzIdentML. This behaviour can be switched off using -applyFixedMods false. "
             + " Developers can easily adapt this tool to process other types of CSV file into mzid, by altering the file csv_config_file.csv under src/resources and re-building.";
     final public static String csv2mzidUsage = "Csv2mzid input_omssa.csv output.mzid " + csv2mzidParams + " \n\nDescription:\n" + csv2mzidToolDescription;
-    final public static String csv2mzidUsageExample = " -paramsFile example_files/toxo_omssa_params.csv -cvAccessionForPSMOrdering \"MS:1001328\" -decoyRegex Rev_ -mzidVer 1.2 -compress true";
+    final public static String csv2mzidUsageExample = " -paramsFile example_files/toxo_omssa_params.csv -cvAccessionForPSMOrdering \"MS:1001328\" -decoyRegex Rev_ -compress true";
 
     final public static String mzid2CsvParams = "-exportType exportProteinGroups|exportPSMs|exportProteinsOnly|exportRepProteinPerPAGOnly|exportProteoAnnotator|exportPeptides [-verboseOutput true|false] [-compress true|false]";
     final public static String mzid2CsvToolDescription = "This tool can export from an mzid file into CSV, according to one of the four types of export specified as parameters.";
@@ -317,9 +317,9 @@ public class MzIdentMLLib {
 
                     String fdrLevel = Utils.getCmdParameter(args, "fdrLevel", true);
                     String proteinLevel = Utils.getCmdParameter(args, "proteinLevel", true);
-
+                    String mzidVerString = Utils.getCmdParameter(args, "mzidVer", true);
                     if (decoyRegex != null && decoyValue != null && fdrLevel != null) {
-                        FalseDiscoveryRateGlobal fdrGlobal = new FalseDiscoveryRateGlobal(inputFile.getAbsolutePath(), decoyValue, decoyRegex, cvTerm, Boolean.valueOf(betterScoresAreLower), fdrLevel, proteinLevel);
+                        FalseDiscoveryRateGlobal fdrGlobal = new FalseDiscoveryRateGlobal(inputFile.getAbsolutePath(), decoyValue, decoyRegex, cvTerm, Boolean.valueOf(betterScoresAreLower), fdrLevel, proteinLevel, mzidVerString);
 
                         if (outputFileName != null) {
                             fdrGlobal.computeFDRusingJonesMethod();

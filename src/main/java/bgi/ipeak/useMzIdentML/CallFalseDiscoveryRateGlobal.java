@@ -44,7 +44,7 @@ public class CallFalseDiscoveryRateGlobal {
         if (mzid != null && decoyregex != null && decoy_ratio != null && fdr_levle != null) {
             System.out.println("FalseDiscoveryRateGlobal");
             FalseDiscoveryRateGlobal fdrGlobal = new FalseDiscoveryRateGlobal(mzid, decoy_ratio,
-                    decoyregex, cvterm, betterScoresAreLower, fdr_levle, protein_levle);
+                    decoyregex, cvterm, betterScoresAreLower, fdr_levle, protein_levle, "1.1");
 
             if (output_mzid != null) {
                 fdrGlobal.computeFDRusingJonesMethod();
