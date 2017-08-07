@@ -540,8 +540,8 @@ public class ProteoAnnotator2 {
             }
 
             // combine mzid files
-            List<String> files2Combine = new ArrayList();
-            System.out.println("Files to compile:");
+            List<String> files2Combine = new ArrayList<>();
+            System.out.println("Files to combine:");
             for (int i = 1; i <= totalSearches; i++) {
                 String newOutput = outputFolder + File.separator + i;
                 System.out.println("From Dir: " + newOutput);
@@ -567,11 +567,12 @@ public class ProteoAnnotator2 {
                 }
             }
             if (!combinedInput.equals("")) {
-                combinedInput = combinedInput.substring(0, combinedInput.length() - 1);
+                combinedInput = combinedInput.substring(0, combinedInput.length() - 1); // remove the trailing semicolon
             }
             if (files2Combine.size() == 1) {
                 combinedPSMfiles = combinedInput;
             }
+            
             System.out.println("All files to compile: " + combinedInput);
             String[] combinedPSMfilesParams = {"CombinePSMMzidFiles", combinedInput, combinedPSMfiles, "-combineFractions", "true", "-compress", "false"};
             mzidLib.init(combinedPSMfilesParams);
@@ -593,7 +594,7 @@ public class ProteoAnnotator2 {
                     MzIdentMLUnmarshaller mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(new File(tempFile));
                     Inputs inputs = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Inputs);
                     List spectraDataList = inputs.getSpectraData();
-                    HashMap<String, List> spectrumIdHashMap = new HashMap<>();
+                    Map<String, List> spectrumIdHashMap = new HashMap<>();
                     Iterator<MzIdentMLObject> iterSpectrumIdentificationResult = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
                     while (iterSpectrumIdentificationResult.hasNext()) {
                         SpectrumIdentificationResult spectrumIdentificationResult = (SpectrumIdentificationResult) iterSpectrumIdentificationResult.next();
@@ -630,7 +631,6 @@ public class ProteoAnnotator2 {
                                 String newID = "index=" + String.valueOf(j);
                                 oldNewIds.put(newID, oldID);
                                 oldNewLocations.put(spectraDataLocation, oldLocation);
-
                             }
                         }
 
@@ -654,12 +654,10 @@ public class ProteoAnnotator2 {
                     }
 
                     String tempOutName = outputFolder + File.separator + prefix + "OutputFile.mzid";
-                    Writer out = new BufferedWriter(new OutputStreamWriter(
-                            new FileOutputStream(tempOutName)));
-                    try {
-                        out.write(content);
-                    } finally {
-                        out.close();
+                    try (Writer tempOut
+                            = new BufferedWriter(new OutputStreamWriter(
+                                    new FileOutputStream(tempOutName)))) {
+                        tempOut.write(content);
                     }
 
                     String inputCombine = tempOutName + ";" + firstStageFile;
@@ -671,7 +669,8 @@ public class ProteoAnnotator2 {
                     stopTime = System.currentTimeMillis();
                     elapsedTime = stopTime - startTime;
                     if (verbose) {
-                        bf.append("\n\nCombinePSMMzidFiles time " + elapsedTime / 1000 + " Seconds");
+                        bf.append("\n\nCombinePSMMzidFiles time ").
+                                append(elapsedTime / 1000).append(" Seconds");
                         System.out.println("\n\nCombinePSMMzidFiles time " + elapsedTime / 1000 + " Seconds");
                     }
 
@@ -698,8 +697,10 @@ public class ProteoAnnotator2 {
                 stopTime = System.currentTimeMillis();
                 elapsedTime = stopTime - startTime;
                 if (verbose) {
-                    bf.append("\n\nAddGenomeCoordinatesForPeptides time " + elapsedTime / 1000 + " Seconds");
+                    bf.append("\n\nAddGenomeCoordinatesForPeptides time ").
+                            append(elapsedTime / 1000).append(" Seconds");
                 }
+                
                 // AddGenomeCoordinatesForPeptides
                 out.println("Add genome Coordinates for peptides");
             } else {
@@ -726,7 +727,8 @@ public class ProteoAnnotator2 {
                         stopTime = System.currentTimeMillis();
                         elapsedTime = stopTime - startTime;
                         if (verbose) {
-                            bf.append("\n\nAddGenomeCoordinatesForPeptides time " + elapsedTime / 1000 + " Seconds");
+                            bf.append("\n\nAddGenomeCoordinatesForPeptides time ").
+                                    append(elapsedTime / 1000).append(" Seconds");
                         }
                     }
                 }
@@ -746,8 +748,9 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nProteoGrouper time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nProteoGrouper time ").append(elapsedTime / 1000).append(" Seconds");
             }
+            
             //  FDR Global protein level
             out.println("FDR Global protein level");
 
@@ -758,8 +761,10 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nFalseDiscoveryRateGlobal time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nFalseDiscoveryRateGlobal time ").
+                        append(elapsedTime / 1000).append(" Seconds");
             }
+            
             //  Threshold 1% Protein FDR - delete under Threshold
             out.println("Threshold 1% Protein FDR - delete under Threshold");
 
@@ -770,9 +775,10 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nThreshold time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nThreshold time ").append(elapsedTime / 1000).append(" Seconds");
             }
             out.println("Handling non-A");
+            
             //  Threshold nonAScore < 0.00001 - delete under Threshold
             out.println("Threshold nonAScore < 0.00001 - delete under Threshold");
             String proteoGrouperNonAThresholdFile = outputFolder + File.separator + prefix + "combined_fdr_peptide_threshold_mappedGff2_proteoGrouper_nonA_Threshold.mzid";
@@ -783,8 +789,9 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nThreshold time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nThreshold time ").append(elapsedTime / 1000).append(" Seconds");
             }
+            
             //  FDR Global protein level - non-A score
             out.println("FDR Global protein level - non-A score");
 
@@ -796,8 +803,10 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nFalseDiscoveryRateGlobal time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nFalseDiscoveryRateGlobal time ").
+                        append(elapsedTime / 1000).append(" Seconds");
             }
+            
             //  Threshold 5% Protein FDR - delete under Threshold
             out.println(" Threshold 5% Protein FDR - delete under Threshold");
 
@@ -809,8 +818,9 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nThreshold time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nThreshold time ").append(elapsedTime / 1000).append(" Seconds");
             }
+            
             // exportProteoAnnotator to csv using Mzid2Csv
             out.println("exportProteoAnnotator to csv using Mzid2Csv");
 
@@ -822,8 +832,9 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nMzid2Csv time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nMzid2Csv time ").append(elapsedTime / 1000).append(" Seconds");
             }
+            
             // exportPSMs to csv using Mzid2Csv
             out.println("exportPSMs to csv using Mzid2Csv");
 
@@ -835,8 +846,9 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nMzid2Csv time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nMzid2Csv time ").append(elapsedTime / 1000).append(" Seconds");
             }
+            
             // exportProteinGroups to csv using Mzid2Csv
             out.println("exportProteinGroups to csv using Mzid2Csv");
 
@@ -848,8 +860,9 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nMzid2Csv time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nMzid2Csv time ").append(elapsedTime / 1000).append(" Seconds");
             }
+            
             // exportRepProteinPerPAGOnly to csv using Mzid2Csv
             out.println("exportRepProteinPerPAGOnly to csv using Mzid2Csv");
 
@@ -861,8 +874,10 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nMzid2Csv time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nMzid2Csv time ").append(elapsedTime / 1000).append(" Seconds");
             }
+            
+
             // exportProteinsOnly to csv using Mzid2Csv
             out.println("exportProteinsOnly to csv using Mzid2Csv");
 
@@ -874,8 +889,9 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nMzid2Csv time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nMzid2Csv time ").append(elapsedTime / 1000).append(" Seconds");
             }
+            
             // Add exportPeptides option
             String mzid2CsvOutputFile5 = outputFolder + File.separator + prefix + "combined_fdr_peptide_threshold_mappedGff_ProteoGrouper_exportPeptides.csv";
             String[] mzid2CsvInput5 = {"Mzid2Csv", proteoGrouperFDRThresholdOutputFile, mzid2CsvOutputFile5, "-exportType", "exportPeptides", "-compress", "false"};
@@ -885,7 +901,7 @@ public class ProteoAnnotator2 {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                bf.append("\n\nMzid2Csv time " + elapsedTime / 1000 + " Seconds");
+                bf.append("\n\nMzid2Csv time ").append(elapsedTime / 1000).append(" Seconds");
             }
             out.println("");
             out.println("");
@@ -894,12 +910,11 @@ public class ProteoAnnotator2 {
 
             bf.append("\n\n");
             bf.append("\n\n");
-            bf.append("\n\nProteoAnnotator finished on " + date.toString());
+            bf.append("\n\nProteoAnnotator finished on ").append(date.toString());
             out1.println(bf.toString());
             out1.close();
             // executorPool.shutdown();
         } catch (Exception ex) {
-            ex.printStackTrace();
             out.println("");
             out.println(ex.getMessage());
             out.println("");

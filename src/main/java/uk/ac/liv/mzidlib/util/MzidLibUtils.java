@@ -1,3 +1,4 @@
+
 package uk.ac.liv.mzidlib.util;
 
 import java.util.Iterator;
@@ -22,7 +23,8 @@ public class MzidLibUtils {
         return cvParam;
     }
 
-    public static CvParam makeCvParam(String accession, String name, Cv cv, String value) {
+    public static CvParam makeCvParam(String accession, String name, Cv cv,
+                                      String value) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
         cvParam.setName(name);
@@ -30,8 +32,19 @@ public class MzidLibUtils {
         cvParam.setValue(value);
         return cvParam;
     }
-    
-    public static CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName, Cv alternateUnitCV) {
+
+    public static Cv makeCv(String id, String uri, String name, String version) {
+        Cv retCv = new Cv();
+        retCv.setId(id);
+        retCv.setFullName(name);
+        retCv.setUri(uri);
+        retCv.setVersion(version);
+        return retCv;
+    }
+
+    public static CvParam makeCvParam(String accession, String name, Cv cv,
+                                      String unitAccession, String unitName,
+                                      Cv alternateUnitCV) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
         cvParam.setName(name);
@@ -41,18 +54,19 @@ public class MzidLibUtils {
         cvParam.setUnitName(unitName);
         return cvParam;
     }
-    
+
     public static UserParam makeUserParam(String name, String value) {
         UserParam userParam = new UserParam();
         userParam.setName(name);
         userParam.setValue(value);
         return userParam;
     }
-    
+
     public static Cv getpsiCV(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 
-        Iterator<Cv> iterCv = unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.CV);
+        Iterator<Cv> iterCv = unmarshaller.unmarshalCollectionFromXpath(
+                MzIdentMLElement.CV);
         while (iterCv.hasNext()) {
             Cv cv = iterCv.next();
             if (cv.getUri().toLowerCase().contains("psi")) {
@@ -66,7 +80,8 @@ public class MzidLibUtils {
     public static Cv getUnimod(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 
-        Iterator<Cv> iterCv = unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.CV);
+        Iterator<Cv> iterCv = unmarshaller.unmarshalCollectionFromXpath(
+                MzIdentMLElement.CV);
         while (iterCv.hasNext()) {
             Cv cv = iterCv.next();
             if (cv.getUri().toLowerCase().contains("unimod")) {
@@ -80,7 +95,8 @@ public class MzidLibUtils {
     public static Cv getUnit(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 
-        Iterator<Cv> iterCv = unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.CV);
+        Iterator<Cv> iterCv = unmarshaller.unmarshalCollectionFromXpath(
+                MzIdentMLElement.CV);
         while (iterCv.hasNext()) {
             Cv cv = iterCv.next();
             if (cv.getUri().toLowerCase().contains("unit")) {
@@ -93,7 +109,8 @@ public class MzidLibUtils {
 
     public static int safeLongToInt(long l) {
         if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException(l + " cannot be cast to int without changing its value.");
+            throw new IllegalArgumentException(l
+                    + " cannot be cast to int without changing its value.");
         }
         return (int) l;
     }

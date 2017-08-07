@@ -7,6 +7,7 @@
 
 package uk.ac.liv.mzidlib.constants;
 
+import static uk.ac.liv.mzidlib.util.MzidLibUtils.makeCv;
 import static uk.ac.liv.mzidlib.util.MzidLibUtils.makeCvParam;
 
 import uk.ac.ebi.jmzidml.model.mzidml.Cv;
@@ -36,14 +37,6 @@ public class CvConstants {
     public static final CvParam SPECTRAL_LIBRARY_SEARCH = makeCvParam("MS:1001031", "spectral library search", PSI_CV);
     public static final CvParam PROTEOGENOMICS_SEARCH = makeCvParam("MS:1002635", "proteogenomics search", PSI_CV);
     public static final CvParam GROUP_PSMS_BY_SEQUENCE = makeCvParam("MS:1002496", "group PSMs by sequence", PSI_CV);
-        
-    public static Cv makeCv(String id, String uri, String name, String version) {
-        Cv retCv = new Cv();
-        retCv.setId(id);
-        retCv.setFullName(name);
-        retCv.setUri(uri);
-        retCv.setVersion(version);
-        return retCv;
-    }
+    public static final CvParam MZIDLIB = makeCvParam("MS:1002237", "mzidLib", PSI_CV);
 
 }

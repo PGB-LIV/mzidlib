@@ -130,8 +130,8 @@ public class MzIdentMLLib {
     final public static String genericFastaToolDescription = "Create a generic Fasta file to be used as an input for SearchGUI.";
     final public static String genericFastaUsage = "GenericFasta input.fasta output.fasta " + genericFastaParams + " \n\nDescription:\n" + genericFastaToolDescription;
 
-    final public static String addGenomeCoordinatesForPeptidesParams = "-inputMzid inputMzid -outputMzid outputMzid -inputGff inputGff -outputGff outputGff [-compress true|false]";
-    final public static String addGenomeCoordinatesForPeptidesUsageExample = "-inputGff input.gff -outputGff output.gff -compress true";
+    final public static String addGenomeCoordinatesForPeptidesParams = "-inputMzid inputMzid -outputMzid outputMzid -inputGff inputGff -outputGff outputGff -mzidVer 1.1|1.2[-compress true|false]";
+    final public static String addGenomeCoordinatesForPeptidesUsageExample = "-inputGff input.gff -outputGff output.gff -mzidVer 1.2 -compress true";
     final public static String addGenomeCoordinatesForPeptidesToolDescription = "Add genome coordinates for peptides from the gff file to the mzid file";
     final public static String addGenomeCoordinatesForPeptidesUsage = "AddGenomeCoordinatesForPeptides input.mzid output.mzid " + addGenomeCoordinatesForPeptidesParams + " \n\nDescription:\n" + addGenomeCoordinatesForPeptidesToolDescription;
 
@@ -170,7 +170,7 @@ public class MzIdentMLLib {
      * Init all functions hashmap
      */
     public MzIdentMLLib() {
-        allFunctions = new HashMap<String, String>();
+        allFunctions = new HashMap<>();
         allFunctions.put("FalseDiscoveryRate", fdrParams + ";@;" + fdrUsage + ";@;" + fdrUsageExample);
         allFunctions.put("FalseDiscoveryRateGlobal", fdrGlobalParams + ";@;" + fdrGlobalUsage + ";@;" + fdrGlobalUsageExample);
         allFunctions.put("Omssa2mzid", omssa2mzidparams + ";@;" + omssa2mzidUsage + ";@;" + omssa2mzidUsageExample);
@@ -348,8 +348,9 @@ public class MzIdentMLLib {
                 } else if (args[0].equals("AddGenomeCoordinatesForPeptides")) {
                     String inputGff = Utils.getCmdParameter(args, "inputGff", true);
                     String outputGff = Utils.getCmdParameter(args, "outputGff", true);
+                    String mzidVerString = Utils.getCmdParameter(args, "mzidVer", true);
                     if (inputGff != null) {
-                        AddGenomeCoordinatesForPeptides addGenomeCoordinatesForPeptides = new AddGenomeCoordinatesForPeptides(inputFile.getAbsolutePath(), outputFileName, inputGff, outputGff);
+                        AddGenomeCoordinatesForPeptides addGenomeCoordinatesForPeptides = new AddGenomeCoordinatesForPeptides(inputFile.getAbsolutePath(), outputFileName, inputGff, outputGff, mzidVerString);
                         addGenomeCoordinatesForPeptides.writeMappingResults();
                     }
 

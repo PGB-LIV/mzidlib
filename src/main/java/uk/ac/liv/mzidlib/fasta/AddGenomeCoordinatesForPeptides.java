@@ -1,3 +1,4 @@
+
 package uk.ac.liv.mzidlib.fasta;
 
 import java.io.BufferedReader;
@@ -21,8 +22,10 @@ import javax.xml.bind.JAXBException;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.MzIdentMLObject;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
+import uk.ac.ebi.jmzidml.model.utils.MzIdentMLVersion;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
+import uk.ac.liv.mzidlib.constants.CvConstants;
 import uk.ac.liv.mzidlib.gff.CDS_Information;
 import uk.ac.liv.mzidlib.gff.ProteinResults;
 import uk.ac.liv.mzidlib.util.MzidLibUtils;
@@ -38,23 +41,27 @@ public class AddGenomeCoordinatesForPeptides {
     private String inputGff;
     private String outputGff;
     private Cv psiCV;
+    private MzIdentMLVersion version;
 
     private List unmappedAccessions = new ArrayList();
 
     private Map<String, List<CDS_Information>> cdsRecords = new HashMap<>();
 
-    public AddGenomeCoordinatesForPeptides(String inputMzid, String outputMzid, String inputGff, String outputGff) {
+    public AddGenomeCoordinatesForPeptides(String inputMzid, String outputMzid,
+                                           String inputGff, String outputGff,
+                                           String ver) {
         this.inputMzid = inputMzid;
         this.outputMzid = outputMzid;
         this.outputGff = outputGff;
         this.inputGff = inputGff;
+        this.version = MzIdentMLVersion.getVersion(ver);
 
     }
-
-    public static void main(String args[]) {
-        AddGenomeCoordinatesForPeptides addGenomeCoordinatesForPeptides = new AddGenomeCoordinatesForPeptides(args[0], args[1], args[2], args[3]);
-        addGenomeCoordinatesForPeptides.writeMappingResults();
-    }
+//
+//    public static void main(String args[]) {
+//        AddGenomeCoordinatesForPeptides addGenomeCoordinatesForPeptides = new AddGenomeCoordinatesForPeptides(args[0], args[1], args[2], args[3], args[4]);
+//        addGenomeCoordinatesForPeptides.writeMappingResults();
+//    }
 
     /**
      *
@@ -62,7 +69,8 @@ public class AddGenomeCoordinatesForPeptides {
      * @param outputGff
      * @param proteinHits
      */
-    private void writingTheGFFfile(String inputGffFile, String outputGffFile, HashMap<String, ProteinResults> proteinHits) {
+    private void writingTheGFFfile(String inputGffFile, String outputGffFile,
+                                   HashMap<String, ProteinResults> proteinHits) {
         try {
             BufferedReader in = new BufferedReader(new FileReader(inputGffFile));
             String line;
@@ -83,7 +91,8 @@ public class AddGenomeCoordinatesForPeptides {
 
                     String[] lineArray = line.split("\t");
                     // Added by Fawaz Ghali 22/08/2016 to handle ab inito gff3
-                    if (inputGffFile.contains("abinitio") && lineArray.length == 9 && lineArray[2].equals("exon")) {
+                    if (inputGffFile.contains("abinitio") && lineArray.length
+                            == 9 && lineArray[2].equals("exon")) {
                         out.write(line + "\n");
 
                         String[] gffArrayLine = line.split("\t");
@@ -101,20 +110,28 @@ public class AddGenomeCoordinatesForPeptides {
                         long endPos;
                         startPos = Long.parseLong(start);
                         endPos = Long.parseLong(end);
-                        CDS_Information cdsObj = new CDS_Information(seqId, source, startPos, endPos, strand, phase, attribute);
+                        CDS_Information cdsObj = new CDS_Information(seqId,
+                                                                     source,
+                                                                     startPos,
+                                                                     endPos,
+                                                                     strand,
+                                                                     phase,
+                                                                     attribute);
                         String accession = "";
 
                         String[] splits = attribute.split(";");
                         for (int i = 0; i < splits.length; i++) {
                             String string = splits[i];
                             if (string.contains("Parent=transcript:")) {
-                                accession = string.replace("Parent=transcript:", "");
+                                accession = string.replace("Parent=transcript:",
+                                                           "");
                             }
                         }
 
                         accession = accession.toLowerCase();
 
-                        List<CDS_Information> cdsColl = cdsRecords.get(accession);
+                        List<CDS_Information> cdsColl = cdsRecords.
+                                get(accession);
 
                         if (cdsColl == null) {
                             cdsColl = new ArrayList<>();
@@ -140,7 +157,13 @@ public class AddGenomeCoordinatesForPeptides {
                         long endPos;
                         startPos = Long.parseLong(start);
                         endPos = Long.parseLong(end);
-                        CDS_Information cdsObj = new CDS_Information(seqId, source, startPos, endPos, strand, phase, attribute);
+                        CDS_Information cdsObj = new CDS_Information(seqId,
+                                                                     source,
+                                                                     startPos,
+                                                                     endPos,
+                                                                     strand,
+                                                                     phase,
+                                                                     attribute);
                         String accession = null;
                         accession = attribute.split(";")[0];
                         if (accession.startsWith("ID=apidb|")) {
@@ -177,7 +200,8 @@ public class AddGenomeCoordinatesForPeptides {
                             }
                         }
                         accession = accession.toLowerCase();
-                        List<CDS_Information> cdsColl = cdsRecords.get(accession);
+                        List<CDS_Information> cdsColl = cdsRecords.
+                                get(accession);
 
                         if (cdsColl == null) {
                             cdsColl = new ArrayList<>();
@@ -235,10 +259,19 @@ public class AddGenomeCoordinatesForPeptides {
                     String mappedStartLocation = Long.toString(start_map);
                     String mappedEndLocation = Long.toString(end_map);
 
-                    String attr = "ID=pep_" + accession + "_" + ";description=peptide_seq:" + pr.getPeptideSeq() + "_fdr_score:" + pr.getfdrScore() + "_peptide_start: " + pr.getstart() + "_peptide_end: " + pr.getEnd() + ";Derives_from=" + accession;
+                    String attr = "ID=pep_" + accession + "_"
+                            + ";description=peptide_seq:" + pr.getPeptideSeq()
+                            + "_fdr_score:" + pr.getfdrScore()
+                            + "_peptide_start: " + pr.getstart()
+                            + "_peptide_end: " + pr.getEnd() + ";Derives_from="
+                            + accession;
                     // Just use the information from the first CDS entry with mapped start and end locations
-                    String gffEntry = cdsColl.get(0).getSeqID() + "\t" + cdsColl.get(0).getSource() + "\t" + feature + "\t" + mappedStartLocation
-                            + "\t" + mappedEndLocation + "\t" + score + "\t" + cdsColl.get(0).getStrand() + "\t" + cdsColl.get(0).getSePhase() + "\t" + attr + "\n";
+                    String gffEntry = cdsColl.get(0).getSeqID() + "\t"
+                            + cdsColl.get(0).getSource() + "\t" + feature + "\t"
+                            + mappedStartLocation
+                            + "\t" + mappedEndLocation + "\t" + score + "\t"
+                            + cdsColl.get(0).getStrand() + "\t"
+                            + cdsColl.get(0).getSePhase() + "\t" + attr + "\n";
                     out.write(gffEntry);
                 }
 
@@ -262,13 +295,16 @@ public class AddGenomeCoordinatesForPeptides {
             Writer writer = new FileWriter(outFile);
 
             MzIdentMLMarshaller marshaller;
-            marshaller = new MzIdentMLMarshaller();
+            marshaller = new MzIdentMLMarshaller(version);
 
             //cvList = mzIdentML.getCvList();
-            MzIdentMLUnmarshaller mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(new File(inputMzid));
+            MzIdentMLUnmarshaller mzIdentMLUnmarshaller
+                    = new MzIdentMLUnmarshaller(new File(inputMzid));
 
-            CvList cvList = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.CvList);
-            Iterator<Cv> iterCv = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.CV);
+            CvList cvList = mzIdentMLUnmarshaller.unmarshal(
+                    MzIdentMLElement.CvList);
+            Iterator<Cv> iterCv = mzIdentMLUnmarshaller.
+                    unmarshalCollectionFromXpath(MzIdentMLElement.CV);
             while (iterCv.hasNext()) {
                 Cv cv = iterCv.next();
                 if (cv.getUri().toLowerCase().contains("psi")) {
@@ -276,17 +312,24 @@ public class AddGenomeCoordinatesForPeptides {
                 }
             }
             //analysisSoftwareList = mzIdentML.getAnalysisSoftwareList();
-            AnalysisSoftwareList analysisSoftwareList = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisSoftwareList);
+            AnalysisSoftwareList analysisSoftwareList = mzIdentMLUnmarshaller.
+                    unmarshal(MzIdentMLElement.AnalysisSoftwareList);
             //auditCollection = mzIdentML.getAuditCollection();
-            AuditCollection auditCollection = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AuditCollection);
+            AuditCollection auditCollection = mzIdentMLUnmarshaller.unmarshal(
+                    MzIdentMLElement.AuditCollection);
             //provider = mzIdentML.getProvider();
-            Provider provider = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Provider);
+            Provider provider = mzIdentMLUnmarshaller.unmarshal(
+                    MzIdentMLElement.Provider);
             // analysisProtocolCollection = mzIdentML.getAnalysisProtocolCollection();
-            AnalysisProtocolCollection analysisProtocolCollection = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisProtocolCollection);
+            AnalysisProtocolCollection analysisProtocolCollection
+                    = mzIdentMLUnmarshaller.unmarshal(
+                            MzIdentMLElement.AnalysisProtocolCollection);
             //analysisCollection = mzIdentML.getAnalysisCollection();
-            AnalysisCollection analysisCollection = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisCollection);
+            AnalysisCollection analysisCollection = mzIdentMLUnmarshaller.
+                    unmarshal(MzIdentMLElement.AnalysisCollection);
             //inputs = mzIdentML.getDataCollection().getInputs();
-            Inputs inputs = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Inputs);
+            Inputs inputs = mzIdentMLUnmarshaller.unmarshal(
+                    MzIdentMLElement.Inputs);
 
             writer.write(marshaller.createXmlHeader() + "\n");
 
@@ -304,12 +347,15 @@ public class AddGenomeCoordinatesForPeptides {
 
             AnalysisSoftware analysisSoftware = new AnalysisSoftware();
             Date date = new Date();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
-            analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
+            SimpleDateFormat dateFormat = new SimpleDateFormat(
+                    "yyyy-MM-dd HH-mm-ss");
+            analysisSoftware.setName(this.getClass().getSimpleName() + "_"
+                    + dateFormat.format(date));
+            analysisSoftware.setId(this.getClass().getSimpleName() + "_"
+                    + dateFormat.format(date));
             Param param = new Param();
 
-            param.setParam(makeCvParam("MS:1002237", "mzidLib", "mzidLib", psiCV));
+            param.setParam(CvConstants.MZIDLIB);
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
             marshaller.marshal(analysisSoftwareList, writer);
@@ -328,21 +374,27 @@ public class AddGenomeCoordinatesForPeptides {
 
             String spectrumIdentificationListRef = "";
             if (analysisCollection.getSpectrumIdentification().size() > 0) {
-                spectrumIdentificationListRef = analysisCollection.getSpectrumIdentification().get(0).getSpectrumIdentificationListRef();
+                spectrumIdentificationListRef = analysisCollection.
+                        getSpectrumIdentification().get(0).
+                        getSpectrumIdentificationListRef();
             }
             SpectrumIdentificationList siList;
             siList = new SpectrumIdentificationList();
 
             siList.setId(spectrumIdentificationListRef);
 
-            Iterator<FragmentationTable> iterFragmentationTable = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.FragmentationTable);
+            Iterator<FragmentationTable> iterFragmentationTable
+                    = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(
+                            MzIdentMLElement.FragmentationTable);
             while (iterFragmentationTable.hasNext()) {
 
                 FragmentationTable fr = iterFragmentationTable.next();
                 siList.setFragmentationTable(fr);
             }
 
-            Iterator<SpectrumIdentificationResult> sirIter = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
+            Iterator<SpectrumIdentificationResult> sirIter
+                    = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(
+                            MzIdentMLElement.SpectrumIdentificationResult);
             while (sirIter.hasNext()) {
 
                 SpectrumIdentificationResult sr = sirIter.next();
@@ -352,21 +404,25 @@ public class AddGenomeCoordinatesForPeptides {
 
             String proteinDetectionListRef = "";
             if (analysisCollection.getProteinDetection() != null) {
-                proteinDetectionListRef = analysisCollection.getProteinDetection().getProteinDetectionListRef();
+                proteinDetectionListRef = analysisCollection.
+                        getProteinDetection().getProteinDetectionListRef();
             }
             ProteinDetectionList pdList;
             pdList = new ProteinDetectionList();
 
             pdList.setId(proteinDetectionListRef);
 
-            Iterator<ProteinAmbiguityGroup> iterProteinAmbiguityGroup = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.ProteinAmbiguityGroup);
+            Iterator<ProteinAmbiguityGroup> iterProteinAmbiguityGroup
+                    = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(
+                            MzIdentMLElement.ProteinAmbiguityGroup);
             while (iterProteinAmbiguityGroup.hasNext()) {
                 ProteinAmbiguityGroup pag = iterProteinAmbiguityGroup.next();
                 pdList.getProteinAmbiguityGroup().add(pag);
             }
 
             // here 
-            SequenceCollection sequenceCollection1 = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.SequenceCollection);
+            SequenceCollection sequenceCollection1 = mzIdentMLUnmarshaller.
+                    unmarshal(MzIdentMLElement.SequenceCollection);
 
             SequenceCollection sq = new SequenceCollection();
             List<DBSequence> dbSeqList = sequenceCollection1.getDBSequence();
@@ -378,11 +434,13 @@ public class AddGenomeCoordinatesForPeptides {
             }
             sq.getPeptide().addAll(sequenceCollection1.getPeptide());
 
-            List<PeptideEvidence> peList = sequenceCollection1.getPeptideEvidence();
+            List<PeptideEvidence> peList = sequenceCollection1.
+                    getPeptideEvidence();
             List<PeptideEvidence> newPeList = new ArrayList<>();
             for (int i = 0; i < peList.size(); i++) {
                 PeptideEvidence peptideEvidence = peList.get(i);
-                DBSequence dbSeq = mzIdentMLUnmarshaller.unmarshal(DBSequence.class, peptideEvidence.getDBSequenceRef());
+                DBSequence dbSeq = mzIdentMLUnmarshaller.unmarshal(
+                        DBSequence.class, peptideEvidence.getDBSequenceRef());
                 String accession = dbSeq.getAccession();
                 if (accession.startsWith("generic")) {
                     accession = accession.split("\\|")[1];
@@ -390,26 +448,33 @@ public class AddGenomeCoordinatesForPeptides {
                     // Update by Fawaz Ghali 04/08/2016 fix Ensembl mapping version 85
                     if (accession.contains(".")) {
 
-                        accession = accession.substring(0, accession.indexOf("."));
+                        accession = accession.substring(0, accession.
+                                                        indexOf("."));
                     }
                 } else {
                     throw new RuntimeException("Not generic accession");
                 }
                 accession = accession.toLowerCase();
                 List<CDS_Information> gffData = cdsRecords.get(accession);
-                if (gffData != null && gffData.size() > 0 && !peptideEvidence.isIsDecoy()) {
+                if (gffData != null && gffData.size() > 0 && !peptideEvidence.
+                        isIsDecoy()) {
                     ProteinResults pr = prList.get(peptideEvidence.getId());
                     String[] co_ords = new String[2];
                     long start_map, end_map;
 
                     co_ords = mapToGff(pr);
-                    
+
                     // unmapped peptide
-                    if (co_ords == null || unmappedAccessions.contains(pr.getAccession())){
-                        dbSeq.getCvParam().add(makeCvParam("MS:1002741", "unmapped protein", gffData.get(0).getSeqID(), psiCV));
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002740", "unmapped peptide", gffData.get(0).getSeqID(), psiCV));                    
-                    }
-                    // mapped peptide
+                    if (co_ords == null || unmappedAccessions.contains(pr.
+                            getAccession())) {
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002741",
+                                                           "unmapped protein",
+                                                           gffData.get(0).
+                                                           getSeqID(), psiCV));
+                        peptideEvidence.getCvParam().add(makeCvParam(
+                                "MS:1002740", "unmapped peptide",
+                                gffData.get(0).getSeqID(), psiCV));
+                    } // mapped peptide
                     else {
                         start_map = Long.parseLong(co_ords[0]);
                         end_map = Long.parseLong(co_ords[1]);
@@ -420,12 +485,14 @@ public class AddGenomeCoordinatesForPeptides {
                         }
                         // Added by Fawaz Ghali 13/8/2015
                         // Update the code to cover the case where a peptide covers multiple exons
-                        List<CDS_Information> sortedCDS = sortCDSAccordingToStartPosition(gffData);
+                        List<CDS_Information> sortedCDS
+                                = sortCDSAccordingToStartPosition(gffData);
                         List<CDS_Information> outputCDS = new ArrayList();
                         int countCDS = 0;
                         boolean sorted = false;
                         if (gffData.get(0).getStrand().equals("-")) {
-                            sortedCDS = sortCDSAccordingToStartPositionTemp(sortedCDS);
+                            sortedCDS = sortCDSAccordingToStartPositionTemp(
+                                    sortedCDS);
                         }
                         for (int j = 0; j < sortedCDS.size(); j++) {
                             CDS_Information object = sortedCDS.get(j);
@@ -444,7 +511,13 @@ public class AddGenomeCoordinatesForPeptides {
                                     newEnd = e;
                                 }
 
-                                CDS_Information temp = new CDS_Information("", "", newStart, newEnd, "", "", "");
+                                CDS_Information temp = new CDS_Information("",
+                                                                           "",
+                                                                           newStart,
+                                                                           newEnd,
+                                                                           "",
+                                                                           "",
+                                                                           "");
                                 outputCDS.add(temp);
                                 break;
                             }
@@ -457,19 +530,22 @@ public class AddGenomeCoordinatesForPeptides {
                                 long newStart, newEnd;
 
                                 if (end_map > e) {
-                                    CDS_Information temp = new CDS_Information("", "", s, e, "", "", "");
+                                    CDS_Information temp = new CDS_Information(
+                                            "", "", s, e, "", "", "");
                                     outputCDS.add(temp);
                                 } else {
                                     newStart = s;
                                     newEnd = end_map;
 
-                                    CDS_Information temp = new CDS_Information("", "", newStart, newEnd, "", "", "");
+                                    CDS_Information temp = new CDS_Information(
+                                            "", "", newStart, newEnd, "", "", "");
                                     outputCDS.add(temp);
                                     break;
                                 }
                             }
                         }
-                        int pepLen = 3 * (peptideEvidence.getEnd() - peptideEvidence.getStart() + 1);
+                        int pepLen = 3 * (peptideEvidence.getEnd()
+                                - peptideEvidence.getStart() + 1);
                         int coordLen = 0;
 //                        for (int j = 0; j < outputCDS.size(); j++) {
 //                            CDS_Information cDS_Information = outputCDS.get(j);
@@ -495,8 +571,10 @@ public class AddGenomeCoordinatesForPeptides {
                                 e = cDS_Information.getEnd();
                             }
                             // peptideEvidence.getUserParam().add(makeUserParam("end_map", String.valueOf(e)));
-                            coordLen = coordLen + MzidLibUtils.safeLongToInt(e - s);
-                            positionsList = positionsList + String.valueOf(e - s) + ",";
+                            coordLen = coordLen + MzidLibUtils.safeLongToInt(e
+                                    - s);
+                            positionsList = positionsList + String.
+                                    valueOf(e - s) + ",";
 //                            System.out.println("toIntExact(e -s) "+ toIntExact(e -s));
                         }
 //                            System.out.println("coordLen "+ coordLen);
@@ -508,28 +586,52 @@ public class AddGenomeCoordinatesForPeptides {
 //                        System.out.println("");
 
 //                        peptideEvidence.getUserParam().add(makeUserParam("chr", gffData.get(0).getSeqID()));
-                        dbSeq.getCvParam().add(makeCvParam("MS:1002637", "chromosome name", gffData.get(0).getSeqID(), psiCV));
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002637",
+                                                           "chromosome name",
+                                                           gffData.get(0).
+                                                           getSeqID(), psiCV));
 //                        peptideEvidence.getUserParam().add(makeUserParam("strand", gffData.get(0).getStrand()));
-                        dbSeq.getCvParam().add(makeCvParam("MS:1002638", "chromosome strand", gffData.get(0).getStrand(), psiCV));
-                        dbSeq.getCvParam().add(makeCvParam("MS:1002644", "genome reference version", new File(inputGff).getName(), psiCV));
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002638",
+                                                           "chromosome strand",
+                                                           gffData.get(0).
+                                                           getStrand(), psiCV));
+                        dbSeq.getCvParam().add(makeCvParam("MS:1002644",
+                                                           "genome reference version",
+                                                           new File(inputGff).
+                                                           getName(), psiCV));
                         dbSeqHM.put(dbSeq.getId(), dbSeq);
                         //peptideEvidence.getCvParam().add(makeCvParam("MS:1002639", "peptide start on chromosome", String.valueOf(start_map), psiCV));
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002640", "peptide end on chromosome", String.valueOf(end_map), psiCV));
+                        peptideEvidence.getCvParam().add(makeCvParam(
+                                "MS:1002640", "peptide end on chromosome",
+                                String.valueOf(end_map), psiCV));
 
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002641", "peptide exon count", String.valueOf(outputCDS.size()), psiCV));
+                        peptideEvidence.getCvParam().add(makeCvParam(
+                                "MS:1002641", "peptide exon count", String.
+                                valueOf(outputCDS.size()), psiCV));
                         if (startsList.endsWith(",")) {
-                            startsList = startsList.substring(0, startsList.length() - 1);
+                            startsList = startsList.substring(0, startsList.
+                                                              length() - 1);
                         }
                         if (positionsList.endsWith(",")) {
-                            positionsList = positionsList.substring(0, positionsList.length() - 1);
+                            positionsList = positionsList.substring(0,
+                                                                    positionsList.
+                                                                    length() - 1);
                         }
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002642", "peptide exon nucleotide sizes", positionsList, psiCV));
-                        peptideEvidence.getCvParam().add(makeCvParam("MS:1002643", "peptide start positions on chromosome", startsList, psiCV));
+                        peptideEvidence.getCvParam().add(makeCvParam(
+                                "MS:1002642", "peptide exon nucleotide sizes",
+                                positionsList, psiCV));
+                        peptideEvidence.getCvParam().add(makeCvParam(
+                                "MS:1002643",
+                                "peptide start positions on chromosome",
+                                startsList, psiCV));
 
                     }
-                }else if (gffData == null && !peptideEvidence.isIsDecoy()){
-                    dbSeq.getCvParam().add(makeCvParam("MS:1002741", "unmapped protein", psiCV));
-                    peptideEvidence.getCvParam().add(makeCvParam("MS:1002740", "unmapped peptide", psiCV));       
+                } else if (gffData == null && !peptideEvidence.isIsDecoy()) {
+                    dbSeq.getCvParam().add(makeCvParam("MS:1002741",
+                                                       "unmapped protein", psiCV));
+                    peptideEvidence.getCvParam().add(makeCvParam("MS:1002740",
+                                                                 "unmapped peptide",
+                                                                 psiCV));
                     dbSeqHM.put(dbSeq.getId(), dbSeq);
                 }
                 newPeList.add(peptideEvidence);
@@ -537,32 +639,28 @@ public class AddGenomeCoordinatesForPeptides {
             sq.getDBSequence().addAll(dbSeqHM.values());
             sq.getPeptideEvidence().addAll(newPeList);
 
-            if (sq != null) {
-                marshaller.marshal(sq, writer);
-            }
+            marshaller.marshal(sq, writer);
+
             writer.write("\n");
 
-            if (analysisCollection != null) {
-                marshaller.marshal(analysisCollection, writer);
-            }
+            marshaller.marshal(analysisCollection, writer);
+
             writer.write("\n");
 
             if (analysisProtocolCollection != null) {
-                ParamList paramList = analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams();
-                List<CvParam> cvParamList = paramList.getCvParam();
-                boolean exist = false;
-                for (int i = 0; i < cvParamList.size(); i++) {
-                    CvParam get = cvParamList.get(i);
-                    if (get.getAccession().equals("MS:1002635")) {
-                        exist = true;
-                        break;
+
+                List<SpectrumIdentificationProtocol> sipList
+                        = analysisProtocolCollection.
+                        getSpectrumIdentificationProtocol();
+                for (SpectrumIdentificationProtocol sip : sipList) {
+                    List<CvParam> cvs = sip.getAdditionalSearchParams().
+                            getCvParam();
+                    cvs.remove(CvConstants.NO_SPECIAL_PROCESSING);
+                    if (!cvs.contains(CvConstants.PROTEOGENOMICS_SEARCH)) {
+                        cvs.add(CvConstants.PROTEOGENOMICS_SEARCH);
                     }
-
                 }
 
-                if (!exist) {
-                    analysisProtocolCollection.getSpectrumIdentificationProtocol().get(0).getAdditionalSearchParams().getCvParam().add(makeCvParam("MS:1002635", "proteogenomics search", "", psiCV));
-                }
                 marshaller.marshal(analysisProtocolCollection, writer);
             }
             writer.write("\n");
@@ -581,11 +679,11 @@ public class AddGenomeCoordinatesForPeptides {
             marshaller.marshal(siList, writer);
             writer.write("\n");
 
-            if(!pdList.getProteinAmbiguityGroup().isEmpty()) {
+            if (!pdList.getProteinAmbiguityGroup().isEmpty()) {
                 marshaller.marshal(pdList, writer);
                 writer.write("\n");
             }
-            
+
             writer.write(marshaller.createAnalysisDataClosingTag() + "\n");
             writer.write(marshaller.createDataCollectionClosingTag() + "\n");
             writer.write(marshaller.createMzIdentMLClosingTag());
@@ -594,9 +692,12 @@ public class AddGenomeCoordinatesForPeptides {
         } catch (JAXBException ex) {
             ex.printStackTrace();
         } catch (IOException e) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + e.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + e.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
@@ -610,7 +711,8 @@ public class AddGenomeCoordinatesForPeptides {
         return userParam;
     }
 
-    public CvParam makeCvParam(String accession, String name, String value, Cv cv) {
+    public CvParam makeCvParam(String accession, String name, String value,
+                               Cv cv) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
         cvParam.setName(name);
@@ -618,7 +720,7 @@ public class AddGenomeCoordinatesForPeptides {
         cvParam.setCv(cv);
         return cvParam;
     }
-    
+
     public CvParam makeCvParam(String accession, String name, Cv cv) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -652,11 +754,14 @@ public class AddGenomeCoordinatesForPeptides {
 
     /**
      * Determine the location of sequence on CDs.
-     * @param pr protein results
+     *
+     * @param pr      protein results
      * @param cdsColl CDS column list
+     *
      * @return an array of locations
      */
-    long[] determineTheLocationOfSeqOnCds(ProteinResults pr, List<CDS_Information> cdsColl) {
+    long[] determineTheLocationOfSeqOnCds(ProteinResults pr,
+                                          List<CDS_Information> cdsColl) {
         long[] gffEntry = new long[2];
 
         // Get locations from the protein object
@@ -664,16 +769,21 @@ public class AddGenomeCoordinatesForPeptides {
         long end = pr.getEnd();
 
         // sort the CDS collection according to the strand
-        List<CDS_Information> sortedCDS = sortCDSAccordingToStartPosition(cdsColl);
+        List<CDS_Information> sortedCDS = sortCDSAccordingToStartPosition(
+                cdsColl);
 
         long mapped_start = getMappedCordinates(start, sortedCDS, pr);
         long mapped_end = getMappedCordinates(end, sortedCDS, pr);
         if (mapped_start == -1) {
-            System.out.println("For accession: " + pr.getAccession() + " and a peptide eveidence: " + pr.getPeptideEvidenceID() + " start coordinates couldn't be mapped.");
+            System.out.println("For accession: " + pr.getAccession()
+                    + " and a peptide eveidence: " + pr.getPeptideEvidenceID()
+                    + " start coordinates couldn't be mapped.");
             unmappedAccessions.add(pr.getAccession());
         }
         if (mapped_end == -1) {
-            System.out.println("For accession: " + pr.getAccession() + " and a peptide eveidence: " + pr.getPeptideEvidenceID() + " the end coordinates couldn't be mapped.");
+            System.out.println("For accession: " + pr.getAccession()
+                    + " and a peptide eveidence: " + pr.getPeptideEvidenceID()
+                    + " the end coordinates couldn't be mapped.");
             mapped_end = mapped_start + ((end - start) * 3);
             System.out.println("mapped_end modified value= " + mapped_end);
             unmappedAccessions.add(pr.getAccession());
@@ -688,12 +798,15 @@ public class AddGenomeCoordinatesForPeptides {
 
     /**
      * Get mapped coordinate.
-     * @param number number
+     *
+     * @param number  number
      * @param cdsColl CDs column list
-     * @param pr protein results
+     * @param pr      protein results
+     *
      * @return a coordinate
      */
-    long getMappedCordinates(long number, List<CDS_Information> cdsColl, ProteinResults pr) {
+    long getMappedCordinates(long number, List<CDS_Information> cdsColl,
+                             ProteinResults pr) {
         long mappedCord = -1;
 
         // compute the cumm array
@@ -725,9 +838,11 @@ public class AddGenomeCoordinatesForPeptides {
      * otherwise, sort in descending order.
      *
      * @param cdsColl CDS column list
+     *
      * @return list of CDS information
      */
-    List<CDS_Information> sortCDSAccordingToStartPosition(List<CDS_Information> cdsCollection) {
+    List<CDS_Information> sortCDSAccordingToStartPosition(
+            List<CDS_Information> cdsCollection) {
 
         List<CDS_Information> cdsColl = new ArrayList<>(cdsCollection);
 
@@ -767,7 +882,8 @@ public class AddGenomeCoordinatesForPeptides {
 
     }
 
-    List<CDS_Information> sortCDSAccordingToStartPositionTemp(List<CDS_Information> cdsCollection) {
+    List<CDS_Information> sortCDSAccordingToStartPositionTemp(
+            List<CDS_Information> cdsCollection) {
 
         List<CDS_Information> cdsColl = new ArrayList<>(cdsCollection);
 
@@ -784,19 +900,20 @@ public class AddGenomeCoordinatesForPeptides {
 
     }
 
-
     long[] cumulativeStartPositions(List<CDS_Information> cdsCollection) {
         long[] cummStartPosition = new long[cdsCollection.size()];
 
         // compute Diff = end - start
         for (int i = 0; i < cdsCollection.size(); i++) {
             //cummStartPosition[i] = cdsCollection.get(i).getEnd() - cdsCollection.get(i).getStart();
-            cummStartPosition[i] = cdsCollection.get(i).getEnd() - cdsCollection.get(i).getStart() + 1;
+            cummStartPosition[i] = cdsCollection.get(i).getEnd()
+                    - cdsCollection.get(i).getStart() + 1;
         }
 
         // Form cumulative array 
         for (int i = 1; i < cummStartPosition.length; i++) {
-            cummStartPosition[i] = cummStartPosition[i] + cummStartPosition[i - 1];
+            cummStartPosition[i] = cummStartPosition[i] + cummStartPosition[i
+                    - 1];
         }
 
         return cummStartPosition;
@@ -831,19 +948,24 @@ public class AddGenomeCoordinatesForPeptides {
         Map<String, Peptide> peptideHashMap = new HashMap<>();
         Map<String, String> peptideIdAndSequenceHash = new HashMap<>();
         try {
-            MzIdentMLUnmarshaller mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(new File(summaryFile));
-            Iterator<DBSequence> iterDBSequence = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.DBSequence);
+            MzIdentMLUnmarshaller mzIdentMLUnmarshaller
+                    = new MzIdentMLUnmarshaller(new File(summaryFile));
+            Iterator<DBSequence> iterDBSequence = mzIdentMLUnmarshaller.
+                    unmarshalCollectionFromXpath(MzIdentMLElement.DBSequence);
             while (iterDBSequence.hasNext()) {
                 DBSequence dBSequence = iterDBSequence.next();
                 dBSequenceHashMap.put(dBSequence.getId(), dBSequence);
             }
 
-            Iterator<PeptideEvidence> iterPeptideEvidence = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.PeptideEvidence);
+            Iterator<PeptideEvidence> iterPeptideEvidence
+                    = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(
+                            MzIdentMLElement.PeptideEvidence);
             while (iterPeptideEvidence.hasNext()) {
                 PeptideEvidence pe = iterPeptideEvidence.next();
                 peptideEvidenceHashMap.put(pe.getId(), pe);
             }
-            Iterator<Peptide> iterPeptide = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
+            Iterator<Peptide> iterPeptide = mzIdentMLUnmarshaller.
+                    unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
             while (iterPeptide.hasNext()) {
                 Peptide peptide = iterPeptide.next();
 
@@ -853,14 +975,22 @@ public class AddGenomeCoordinatesForPeptides {
                 peptideHashMap.put(peptide.getId(), peptide);
             }
 
-            Iterator<MzIdentMLObject> iterSpectrumIdentificationResult = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
+            Iterator<MzIdentMLObject> iterSpectrumIdentificationResult
+                    = mzIdentMLUnmarshaller.unmarshalCollectionFromXpath(
+                            MzIdentMLElement.SpectrumIdentificationResult);
             while (iterSpectrumIdentificationResult.hasNext()) {
-                SpectrumIdentificationResult spectrumIdentificationResult = (SpectrumIdentificationResult) iterSpectrumIdentificationResult.next();
-                for (int j = 0; j < spectrumIdentificationResult.getSpectrumIdentificationItem().size(); j++) {
-                    SpectrumIdentificationItem spectrumIdentItem = spectrumIdentificationResult.getSpectrumIdentificationItem().get(j);
+                SpectrumIdentificationResult spectrumIdentificationResult
+                        = (SpectrumIdentificationResult) iterSpectrumIdentificationResult.
+                        next();
+                for (int j = 0; j < spectrumIdentificationResult.
+                        getSpectrumIdentificationItem().size(); j++) {
+                    SpectrumIdentificationItem spectrumIdentItem
+                            = spectrumIdentificationResult.
+                            getSpectrumIdentificationItem().get(j);
 
                     if (spectrumIdentItem.isPassThreshold()) {
-                        List<CvParam> cvParamList = spectrumIdentItem.getCvParam();
+                        List<CvParam> cvParamList = spectrumIdentItem.
+                                getCvParam();
                         String fdrScore = "";
                         for (int i = 0; i < cvParamList.size(); i++) {
                             CvParam cvParam = cvParamList.get(i);
@@ -870,12 +1000,18 @@ public class AddGenomeCoordinatesForPeptides {
                             }
 
                         }
-                        List<PeptideEvidenceRef> peptideEvidenceRef = spectrumIdentItem.getPeptideEvidenceRef();
+                        List<PeptideEvidenceRef> peptideEvidenceRef
+                                = spectrumIdentItem.getPeptideEvidenceRef();
 
                         for (int i = 0; i < peptideEvidenceRef.size(); i++) {
-                            PeptideEvidenceRef peptideEvidenceRef1 = peptideEvidenceRef.get(i);
-                            PeptideEvidence peptideEvidence = peptideEvidenceHashMap.get(peptideEvidenceRef1.getPeptideEvidenceRef());
-                            DBSequence dBSequence = dBSequenceHashMap.get(peptideEvidence.getDBSequenceRef());
+                            PeptideEvidenceRef peptideEvidenceRef1
+                                    = peptideEvidenceRef.get(i);
+                            PeptideEvidence peptideEvidence
+                                    = peptideEvidenceHashMap.get(
+                                            peptideEvidenceRef1.
+                                            getPeptideEvidenceRef());
+                            DBSequence dBSequence = dBSequenceHashMap.get(
+                                    peptideEvidence.getDBSequenceRef());
                             String accession = dBSequence.getAccession();
                             if (accession.startsWith("generic")) {
                                 accession = accession.split("\\|")[1];
@@ -883,13 +1019,23 @@ public class AddGenomeCoordinatesForPeptides {
                                 // Update by Fawaz Ghali 04/08/2016 fix Ensembl mapping version 85
                                 if (accession.contains(".")) {
 
-                                    accession = accession.substring(0, accession.indexOf("."));
+                                    accession = accession.substring(0,
+                                                                    accession.
+                                                                    indexOf("."));
                                 }
                             } else {
-                                throw new RuntimeException("Not a generic accession");
+                                throw new RuntimeException(
+                                        "Not a generic accession");
                             }
-                            Peptide peptide = peptideHashMap.get(peptideEvidence.getPeptideRef());
-                            pr = new ProteinResults(accession, peptideEvidence.isIsDecoy(), peptideEvidence.getStart(), peptideEvidence.getEnd(), peptideEvidence.getId(), fdrScore, peptide.getPeptideSequence());
+                            Peptide peptide = peptideHashMap.get(
+                                    peptideEvidence.getPeptideRef());
+                            pr = new ProteinResults(accession, peptideEvidence.
+                                                    isIsDecoy(),
+                                                    peptideEvidence.getStart(),
+                                                    peptideEvidence.getEnd(),
+                                                    peptideEvidence.getId(),
+                                                    fdrScore, peptide.
+                                                    getPeptideSequence());
                             prList.put(peptideEvidence.getId(), pr);
 
                         }
@@ -899,12 +1045,16 @@ public class AddGenomeCoordinatesForPeptides {
             }
 
         } catch (OutOfMemoryError error) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + error.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + error.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
         return prList;
     }
+
 }
