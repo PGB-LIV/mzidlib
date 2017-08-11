@@ -1,6 +1,8 @@
 
 package uk.ac.liv.mzidlib.fdr;
 
+import static uk.ac.liv.mzidlib.constants.CvConstants.*;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -64,9 +66,12 @@ public class FalseDiscoveryRateGlobal {
     private String decoy;
     private boolean usingFileDecoyAttribute = false;
     //TODO: Make this as an array of possible values than a long string
-    private String allowedEvalues = "MS:1001330" + ";" + "MS:1001172" + ";"
-            + "MS:1001159" + ";" + "MS:1001328" + ";" + "MS:1002045" + ";"
-            + "MS:1002053";
+    private String allowedEvalues = XTANDEM_EXPECT.getAccession() + ";" 
+            + MASCOT_EXPECTATION_VALUE.getAccession() + ";"
+            + SEQUEST_EXPECTATION_VALUE.getAccession() + ";" 
+            + OMSSA_EVALUE.getAccession() + ";" 
+            + PROTEINPROSPECTOR_EXPECTATION_VALUE.getAccession() + ";"
+            + MSGF_EVALUE.getAccession();
     private boolean betterScoresAreLower = true;
     /*
      * For each Spectrum Result id we need to store :: - peptides associated-

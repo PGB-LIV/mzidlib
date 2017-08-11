@@ -38,5 +38,13 @@ public class CvConstants {
     public static final CvParam PROTEOGENOMICS_SEARCH = makeCvParam("MS:1002635", "proteogenomics search", PSI_CV);
     public static final CvParam GROUP_PSMS_BY_SEQUENCE = makeCvParam("MS:1002496", "group PSMs by sequence", PSI_CV);
     public static final CvParam MZIDLIB = makeCvParam("MS:1002237", "mzidLib", PSI_CV);
-
+    
+    //FDR calculation
+    public static final CvParam XTANDEM_EXPECT = makeCvParam("MS:1001330", "X\\!Tandem:expect", PSI_CV);
+    public static final CvParam MASCOT_EXPECTATION_VALUE = makeCvParam("MS:1001172", "Mascot:expectation value", PSI_CV);
+    public static final CvParam SEQUEST_EXPECTATION_VALUE = makeCvParam("MS:1001159", "SEQUEST:expectation value", PSI_CV);
+    public static final CvParam OMSSA_EVALUE = makeCvParam("MS:1001328", "OMSSA:evalue", PSI_CV);
+    public static final CvParam PROTEINPROSPECTOR_EXPECTATION_VALUE = makeCvParam("MS:1002045", "ProteinProspector:expectation value", PSI_CV);
+    public static final CvParam MSGF_EVALUE = makeCvParam("MS:1002053", "MS-GF:EValue", PSI_CV);
+    
 }

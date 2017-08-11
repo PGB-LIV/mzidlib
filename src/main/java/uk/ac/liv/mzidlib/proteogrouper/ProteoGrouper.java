@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
@@ -26,6 +24,7 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 
 import org.apache.commons.collections.CollectionUtils;
+
 import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
 
@@ -101,7 +100,6 @@ public class ProteoGrouper {
     private AnalysisProtocolCollection analysisProtocolCollection;
     private AnalysisSoftwareList analysisSoftwareList;
     private AnalysisCollection anCollection;
-    private MzidLibUtils utils = new MzidLibUtils();        //Utils class containing makeCvParam methods
     private boolean useProteoAnnotator = false;
     private String performanceFile;
     long startTime, stopTime, elapsedTime;
@@ -149,7 +147,7 @@ public class ProteoGrouper {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
 
-            bf.append("\n\nInit time " + elapsedTime / 1000 + " Seconds");
+            bf.append("\n\nInit time ").append(elapsedTime / 1000).append(" Seconds");
 
             this.algorithm();
         } catch (IOException ex) {
@@ -186,7 +184,7 @@ public class ProteoGrouper {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
 
-            bf.append("\n\nInit time " + elapsedTime / 1000 + " Seconds");
+            bf.append("\n\nInit time ").append(elapsedTime / 1000).append(" Seconds");
             algorithm();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -273,7 +271,7 @@ public class ProteoGrouper {
                             if (!dbSequenceList.contains(peptideEvidence.getDBSequenceRef())) {
                                 dbSequenceList.add(peptideEvidence.getDBSequenceRef());
 
-                                peptideEvidIDList = new ArrayList<String>();
+                                peptideEvidIDList = new ArrayList<>();
                                 protAccessionToAllPepEvidIDs.put(peptideEvidence.getDBSequenceRef(), peptideEvidIDList);        //Create link from a protein accession to all PEs
                             } else {
                                 peptideEvidIDList = protAccessionToAllPepEvidIDs.get(peptideEvidence.getDBSequenceRef());
@@ -286,7 +284,7 @@ public class ProteoGrouper {
 
                             List<SpectrumIdentificationItem> siiList = null;
                             if (!peptideEvidenceIDToSIIIDsHashMap.containsKey(peptideEvidence.getId())) {
-                                siiList = new ArrayList<SpectrumIdentificationItem>();
+                                siiList = new ArrayList<>();
                                 peptideEvidenceIDToSIIIDsHashMap.put(peptideEvidence.getId(), siiList);
                             } else {
                                 siiList = peptideEvidenceIDToSIIIDsHashMap.get(peptideEvidence.getId());
@@ -409,17 +407,17 @@ public class ProteoGrouper {
         buildPDHs();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
-        bf.append("\n\nbuildPDHs time " + elapsedTime / 1000 + " Seconds");
+        bf.append("\n\nbuildPDHs time ").append(elapsedTime / 1000).append(" Seconds");
         startTime = System.currentTimeMillis();
         buildPAGs();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
-        bf.append("\n\nbuildPAGs time " + elapsedTime / 1000 + " Seconds");
+        bf.append("\n\nbuildPAGs time ").append(elapsedTime / 1000).append(" Seconds");
         startTime = System.currentTimeMillis();
         sortPAGs();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
-        bf.append("\n\nsortPAGs time " + elapsedTime / 1000 + " Seconds");
+        bf.append("\n\nsortPAGs time ").append(elapsedTime / 1000).append(" Seconds");
 
         if (useProteoAnnotator) {
             applyProteoAnnotator();
@@ -429,7 +427,7 @@ public class ProteoGrouper {
         buildClusters();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
-        bf.append("\n\nbuildClusters time " + elapsedTime / 1000 + " Seconds");
+        bf.append("\n\nbuildClusters time ").append(elapsedTime / 1000).append(" Seconds");
 
         if (verbose) {
             System.out.println("x= Number of peptides:" + peptideList.size());
@@ -493,7 +491,7 @@ public class ProteoGrouper {
         writeOutputFile();
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
-        bf.append("\n\nwriteOutputFile time " + elapsedTime / 1000 + " Seconds");
+        bf.append("\n\nwriteOutputFile time ").append(elapsedTime / 1000).append(" Seconds");
 
         bf.append("\n\n");
         bf.append("\n\n");
@@ -622,9 +620,9 @@ public class ProteoGrouper {
             }
 
             //The number of distinct peptide sequences is needed by the make PAG algorithm 17/01/2013
-            proteinDetectionHypothesis.getCvParam().add(utils.makeCvParam("MS:1001097", "distinct peptide sequences", psiCV, "" + tempDistinctPeptideSequence.keySet().size()));
+            proteinDetectionHypothesis.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001097", "distinct peptide sequences", psiCV, "" + tempDistinctPeptideSequence.keySet().size()));
             proteinDetectionHypothesis.setPassThreshold(passThreshold);
-            proteinDetectionHypothesis.getCvParam().add(utils.makeCvParam(cvParamAccForProtScore, cvParamNameForProtScore, psiCV, "" + protScore));
+            proteinDetectionHypothesis.getCvParam().add(MzidLibUtils.makeCvParam(cvParamAccForProtScore, cvParamNameForProtScore, psiCV, "" + protScore));
             proteinDetectionHypothesisList.add(proteinDetectionHypothesis);
 
         }
@@ -840,7 +838,7 @@ public class ProteoGrouper {
                 numPAGsPassThreshold++;
                 //Needed for v1.2 files
               //  if (!isV11) {
-                    pag.getCvParam().add(utils.makeCvParam("MS:1002415", "protein group passes threshold", psiCV, "true"));
+                    pag.getCvParam().add(MzidLibUtils.makeCvParam("MS:1002415", "protein group passes threshold", psiCV, "true"));
                 //}
 
                 List<String> allScoringPeps = new ArrayList<>();
@@ -863,19 +861,19 @@ public class ProteoGrouper {
                 pdhIsRepProt.put(outerPDH, true);
 
                 if (isV11) {
-                    outerPDH.getCvParam().add(utils.makeCvParam(repProteinCvAcc, repProteinCvName, psiCV));
+                    outerPDH.getCvParam().add(MzidLibUtils.makeCvParam(repProteinCvAcc, repProteinCvName, psiCV));
                 } else {
-                    outerPDH.getCvParam().add(utils.makeCvParam(leadingProteinCvAcc, leadingProteinCvName, psiCV));
-                    outerPDH.getCvParam().add(utils.makeCvParam(repProteinV12CvAcc, repProteinV12CvName, psiCV));
+                    outerPDH.getCvParam().add(MzidLibUtils.makeCvParam(leadingProteinCvAcc, leadingProteinCvName, psiCV));
+                    outerPDH.getCvParam().add(MzidLibUtils.makeCvParam(repProteinV12CvAcc, repProteinV12CvName, psiCV));
                 }
 
                 if (uniquePeptides.size() > 0) {
                     //outerPDH.getCvParam().add(makeCvParam("MS:99999","uniquePeptides",psiCV,uniquePeptides.toString().replaceAll(",", ";").replaceAll("\\[", "").replaceAll("\\]", "")));
-                    outerPDH.getUserParam().add(utils.makeUserParam("unique peptides", uniquePeptides.toString().replace(',', ';').replaceAll("\\[", "").replaceAll("\\]", "")));
+                    outerPDH.getUserParam().add(MzidLibUtils.makeUserParam("unique peptides", uniquePeptides.toString().replace(',', ';').replaceAll("\\[", "").replaceAll("\\]", "")));
                 }
 
                 if (razorPeptides.size() > 0) {
-                    outerPDH.getUserParam().add(utils.makeUserParam("razor peptides", razorPeptides.toString().replace(',', ';').replaceAll("\\[", "").replaceAll("\\]", "")));
+                    outerPDH.getUserParam().add(MzidLibUtils.makeUserParam("razor peptides", razorPeptides.toString().replace(',', ';').replaceAll("\\[", "").replaceAll("\\]", "")));
 
                     //outerPDH.getCvParam().add(makeCvParam("MS:99999","razorPeptides",psiCV,razorPeptides.toString().replaceAll(",", ";").replaceAll("\\[", "").replaceAll("\\]", "")));
                 }
@@ -908,20 +906,20 @@ public class ProteoGrouper {
                     if (member.getIsSameSet()) {
                         //ARJ Jan 2014: New recommendations state that reference should be given to superset PDH ID
                         //pdh.getCvParam().add(utils.makeCvParam("MS:1001594", "sequence same-set protein", psiCV, dbSequenceIDToDBSequenceHashMap.get(outerPDH.getDBSequenceRef()).getAccession()));
-                        pdh.getCvParam().add(utils.makeCvParam("MS:1001594", "sequence same-set protein", psiCV, outerPDH.getId()));
+                        pdh.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001594", "sequence same-set protein", psiCV, outerPDH.getId()));
                         if (!isV11) {//In version 1.2, we can flag that these are equally good - also leading proteins
-                            pdh.getCvParam().add(utils.makeCvParam(leadingProteinCvAcc, leadingProteinCvName, psiCV));
+                            pdh.getCvParam().add(MzidLibUtils.makeCvParam(leadingProteinCvAcc, leadingProteinCvName, psiCV));
                         }
 
                     } else if (member.getIsSubset()) {
-                        pdh.getCvParam().add(utils.makeCvParam("MS:1001596", "sequence sub-set protein", psiCV, outerPDH.getId()));
+                        pdh.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001596", "sequence sub-set protein", psiCV, outerPDH.getId()));
                         if (!isV11) {
-                            pdh.getCvParam().add(utils.makeCvParam(nonLeadingProteinCvAcc, nonLeadingProteinCvName, psiCV));
+                            pdh.getCvParam().add(MzidLibUtils.makeCvParam(nonLeadingProteinCvAcc, nonLeadingProteinCvName, psiCV));
                         }
                     } else if (member.getIsMultiplySubsumed()) {
-                        pdh.getCvParam().add(utils.makeCvParam("MS:1001598", "sequence subsumable protein", psiCV, outerPDH.getId()));
+                        pdh.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001598", "sequence subsumable protein", psiCV, outerPDH.getId()));
                         if (!isV11) {
-                            pdh.getCvParam().add(utils.makeCvParam(nonLeadingProteinCvAcc, nonLeadingProteinCvName, psiCV));
+                            pdh.getCvParam().add(MzidLibUtils.makeCvParam(nonLeadingProteinCvAcc, nonLeadingProteinCvName, psiCV));
                         }
                     } else {
                         System.out.println("Error - protein is not a master and not sameset, subset or multiply subsumed?");
@@ -1018,11 +1016,11 @@ public class ProteoGrouper {
                 List<ProteinDetectionHypothesis> pdhList = pag.getProteinDetectionHypothesis();
                 pdhList.add(msPDH);
                 pdh_To_Group_Map.put(msPDH, pag);
-                msPDH.getCvParam().add(utils.makeCvParam("MS:1001598", "sequence subsumable protein", psiCV, subsumingProteins));
+                msPDH.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001598", "sequence subsumable protein", psiCV, subsumingProteins));
 
                 //In version 1.2, need to flag it is non-leading
                 if (!isV11) {
-                    msPDH.getCvParam().add(utils.makeCvParam(nonLeadingProteinCvAcc, nonLeadingProteinCvName, psiCV));
+                    msPDH.getCvParam().add(MzidLibUtils.makeCvParam(nonLeadingProteinCvAcc, nonLeadingProteinCvName, psiCV));
                 }
                 allMastersAndMembersForTesting.add(msPDH.getId());
                 if (verbose) {
@@ -1041,15 +1039,15 @@ public class ProteoGrouper {
                     pdh_To_Group_Map.put(pdh, pag); //ARJ 02072014 - seems this case was missed
 
                     if (!isV11) { //rest of proteins contained by this one, must be non-leading in version 1.2 specs
-                        pdh.getCvParam().add(utils.makeCvParam(nonLeadingProteinCvAcc, nonLeadingProteinCvName, psiCV));
+                        pdh.getCvParam().add(MzidLibUtils.makeCvParam(nonLeadingProteinCvAcc, nonLeadingProteinCvName, psiCV));
                     }
 
                     if (member.getIsSameSet()) {
-                        pdh.getCvParam().add(utils.makeCvParam("MS:1001594", "sequence same-set protein", psiCV, msPDH.getId()));
+                        pdh.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001594", "sequence same-set protein", psiCV, msPDH.getId()));
                     } else if (member.getIsSubset()) {
-                        pdh.getCvParam().add(utils.makeCvParam("MS:1001596", "sequence sub-set protein", psiCV, msPDH.getId()));
+                        pdh.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001596", "sequence sub-set protein", psiCV, msPDH.getId()));
                     } else if (member.getIsMultiplySubsumed()) {
-                        pdh.getCvParam().add(utils.makeCvParam("MS:1001598", "sequence subsumable protein", psiCV, subsumingProteins));
+                        pdh.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001598", "sequence subsumable protein", psiCV, subsumingProteins));
                     } else {
                         System.out.println("Error - protein is not a master and not sameset, subset or multiply subsumed?");
                     }
@@ -1067,7 +1065,7 @@ public class ProteoGrouper {
 //        System.out.println("Number of PDHs assigned to groups:" + pdhAssignedToGroupCount);
 //        System.out.println("Total PDH:" + proteinDetectionHypothesisList.size());
         //if (!isV11) {
-            proteinDetectionList.getCvParam().add(utils.makeCvParam(countProteinsCvAcc, countProteinsCvName, psiCV, "" + numPAGsPassThreshold));
+            proteinDetectionList.getCvParam().add(MzidLibUtils.makeCvParam(countProteinsCvAcc, countProteinsCvName, psiCV, "" + numPAGsPassThreshold));
         //}
         //System.out.println("Total PAGs:" + pagCount);
 
@@ -1085,7 +1083,7 @@ public class ProteoGrouper {
         for (String pep : peps) {
             pagScore += pepSeqToBestScoreMap.get(pep);
         }
-        pag.getCvParam().add(utils.makeCvParam(cvParamAccForPAGScore, cvParamNameForPAGScore, psiCV, "" + pagScore));
+        pag.getCvParam().add(MzidLibUtils.makeCvParam(cvParamAccForPAGScore, cvParamNameForPAGScore, psiCV, "" + pagScore));
 
         return pagScore;
     }
@@ -1283,7 +1281,7 @@ public class ProteoGrouper {
                 }
                 List<PDHSetMember> clusterMembers = clusterIDMap.get(memberClusterID);
                 if (clusterMembers == null) {
-                    clusterMembers = new ArrayList<PDHSetMember>();
+                    clusterMembers = new ArrayList<>();
                 }
                 clusterMembers.add(pdhMember);
                 clusterIDMap.put(memberClusterID, clusterMembers);
@@ -1326,11 +1324,11 @@ public class ProteoGrouper {
 
                 if (groupPlacedInCluster.get(parentPAG) == null) {
 
-                    parentPAG.getCvParam().add(utils.makeCvParam(cvParamAccForClusterID, cvParamNameForClusterID, psiCV, member.getClusterID()));
+                    parentPAG.getCvParam().add(MzidLibUtils.makeCvParam(cvParamAccForClusterID, cvParamNameForClusterID, psiCV, member.getClusterID()));
                     groupPlacedInCluster.put(parentPAG, true);
                 }
             } else {
-                member.getPdh().getUserParam().add(utils.makeUserParam(cvParamNameForClusterID, member.getClusterID()));
+                member.getPdh().getUserParam().add(MzidLibUtils.makeUserParam(cvParamNameForClusterID, member.getClusterID()));
             }
         }
         //
@@ -1401,7 +1399,7 @@ public class ProteoGrouper {
         pdProtocol.setId("PD_Protocol1");
 
         ParamList threshold = new ParamList();
-        threshold.getCvParam().add(utils.makeCvParam("MS:1001494", "no threshold", psiCV));
+        threshold.getCvParam().add(MzidLibUtils.makeCvParam("MS:1001494", "no threshold", psiCV));
         pdProtocol.setThreshold(threshold);
 
         analysisProtocolCollection.setProteinDetectionProtocol(pdProtocol);
@@ -1412,7 +1410,7 @@ public class ProteoGrouper {
         analysisSoftware.setName("ProteoGrouper");
         Param tempParam = new Param();
         //tempParam.setParamGroup(makeCvParam("MS:1001475","OMSSA",psiCV));
-        tempParam.setParam(utils.makeCvParam("MS:1002241", "ProteoGrouper", psiCV));
+        tempParam.setParam(MzidLibUtils.makeCvParam("MS:1002241", "ProteoGrouper", psiCV));
         analysisSoftware.setSoftwareName(tempParam);
         analysisSoftware.setId("ProteoGrouper");
         analysisSoftware.setVersion(mzidLibVersion);
@@ -1679,9 +1677,9 @@ public class ProteoGrouper {
                         nonAPeptide = nonAPeptide + peptideSequence + ";";
                     }
                 }
-                proteinAmbiguityGroup.getUserParam().add(utils.makeUserParam("nonAPeptide", nonAPeptide));
-                proteinAmbiguityGroup.getCvParam().add(utils.makeCvParam("MS:1002474", "ProteoAnnotator:non-canonical gene model score", psiCV, String.valueOf(scoreNonA)));
-                proteinAmbiguityGroup.getCvParam().add(utils.makeCvParam("MS:1002475", "ProteoAnnotator:count alternative peptides", psiCV, String.valueOf(countNonA)));
+                proteinAmbiguityGroup.getUserParam().add(MzidLibUtils.makeUserParam("nonAPeptide", nonAPeptide));
+                proteinAmbiguityGroup.getCvParam().add(MzidLibUtils.makeCvParam("MS:1002474", "ProteoAnnotator:non-canonical gene model score", psiCV, String.valueOf(scoreNonA)));
+                proteinAmbiguityGroup.getCvParam().add(MzidLibUtils.makeCvParam("MS:1002475", "ProteoAnnotator:count alternative peptides", psiCV, String.valueOf(countNonA)));
 
             }
 
