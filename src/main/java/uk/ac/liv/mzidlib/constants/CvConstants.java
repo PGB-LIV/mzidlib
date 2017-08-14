@@ -46,5 +46,13 @@ public class CvConstants {
     public static final CvParam OMSSA_EVALUE = makeCvParam("MS:1001328", "OMSSA:evalue", PSI_CV);
     public static final CvParam PROTEINPROSPECTOR_EXPECTATION_VALUE = makeCvParam("MS:1002045", "ProteinProspector:expectation value", PSI_CV);
     public static final CvParam MSGF_EVALUE = makeCvParam("MS:1002053", "MS-GF:EValue", PSI_CV);
+    //Peptide level FDR
+    public static final CvParam DISTINCT_PEPTIDE_LEVEL_LOCAL_FDR = makeCvParam("MS:1002359", "distinct peptide-level local FDR", PSI_CV);
+    public static final CvParam DISTINCT_PEPTIDE_LEVEL_Q_VALUE = makeCvParam("MS:1001868", "distinct peptide-level q-value", PSI_CV);
+    public static final CvParam DISTINCT_PEPTIDE_LEVEL_FDRSCORE = makeCvParam("MS:1002360", "distinct peptide-level FDRScore", PSI_CV);
+    //PSM level FDR
+    public static final CvParam PSM_LEVEL_LOCAL_FDR = makeCvParam("MS:1002351", "PSM-level local FDR", PSI_CV);
+    public static final CvParam PSM_LEVEL_Q_VALUE = makeCvParam("MS:1002354", "PSM-level q-value", PSI_CV);
+    public static final CvParam PSM_LEVEL_FDRSCORE = makeCvParam("MS:1002355", "PSM-level FDRScore", PSI_CV);
     
 }
