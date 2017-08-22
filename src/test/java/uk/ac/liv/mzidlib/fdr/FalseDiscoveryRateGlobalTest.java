@@ -47,29 +47,58 @@ import uk.ac.liv.mzidlib.constants.CvConstants;
  */
 public class FalseDiscoveryRateGlobalTest {
 
-    private final FalseDiscoveryRateGlobal fdrPSM;
+    private final FalseDiscoveryRateGlobal fdrPSMSeq;
+    private final FalseDiscoveryRateGlobal fdrPSMPar;
     private final FalseDiscoveryRateGlobal fdrPep;
     private final double DIFF = 0.000001;
 
     public FalseDiscoveryRateGlobalTest() {
-//        File testFile = new File(Thread.currentThread().getContextClassLoader().
-//                getResource(
-//                        "Adult_Adrenalgland_Gel_Velos_2_f26.t_tandem.mzid").
-//                getPath());
+
         File testFile = FileUtils.getFile("src","test","data","Adult_Adrenalgland_Gel_Velos_2_f26.t_tandem.mzid");
-        fdrPSM
+        
+        
+                
+        fdrPSMSeq
                 = new FalseDiscoveryRateGlobal(testFile.getAbsolutePath(),
                                                "0.01", "REVERSED",
                                                CvConstants.XTANDEM_EXPECT.
                                                getAccession(), true, "PSM",
-                                               "PAG", "1.2");
+        
+                        "PAG", "1.2");
+        final long startFdrPSMSeq = System.currentTimeMillis();
+        
+        fdrPSMSeq.computeFDRusingJonesMethod();
+        
+        final long endFdrPSMSeq = System.currentTimeMillis();
+        
+        fdrPSMPar
+                = new FalseDiscoveryRateGlobal(testFile.getAbsolutePath(),
+                                               "0.01", "REVERSED",
+                                               CvConstants.XTANDEM_EXPECT.
+                                               getAccession(), true, "PSM",
+        
+                        "PAG", "1.2");
+        
+        final long startFdrPSMPar = System.currentTimeMillis();
+        
+        fdrPSMPar.computeFDRusingJonesMethodPar();
+        
+        final long endFdrPSMPar = System.currentTimeMillis();
+        
+        System.out.println("FalseDiscoveryRateGlobal.computeFDRusingJonesMethod() takes " + (endFdrPSMSeq - startFdrPSMSeq) + " Millis.\n");
+        
+        System.out.println("FalseDiscoveryRateGlobal.computeFDRusingJonesMethodPar() takes " + (endFdrPSMPar - startFdrPSMPar) + " Millis.\n");
+        
+        System.out.println("Speedup is: " + (double) (endFdrPSMSeq - startFdrPSMSeq) / (double) (endFdrPSMPar - startFdrPSMPar) + ".\n");
+        
+        
         fdrPep
                 = new FalseDiscoveryRateGlobal(testFile.getAbsolutePath(),
                                                "0.01", "REVERSED",
                                                CvConstants.XTANDEM_EXPECT.
                                                getAccession(), true, "Peptide",
                                                "PAG", "1.2");
-        fdrPSM.computeFDRusingJonesMethod();
+        
         fdrPep.computeFDRusingJonesMethod();
     }
 
@@ -174,7 +203,7 @@ public class FalseDiscoveryRateGlobalTest {
         System.out.println("Test PSM level");
         File tempPSMFile = File.createTempFile("fdr-psm-test", ".mzid");
         tempPSMFile.deleteOnExit();
-        fdrPSM.writeToMzIdentMLFile(tempPSMFile.getAbsolutePath());
+        fdrPSMSeq.writeToMzIdentMLFile(tempPSMFile.getAbsolutePath());
         MzIdentMLUnmarshaller psmUm = new MzIdentMLUnmarshaller(tempPSMFile);
 
         ad = psmUm.unmarshal(MzIdentMLElement.AnalysisData);

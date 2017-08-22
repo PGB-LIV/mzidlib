@@ -15,6 +15,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang.mutable.MutableDouble;
+import org.apache.commons.lang.mutable.MutableInt;
 
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.mzidml.AnalysisSoftware;
@@ -55,10 +60,10 @@ public class FalseDiscoveryRateGlobal {
     private String decoy;
 
     //TODO: Make this as an array of possible values than a long string
-    private String allowedEvalues = XTANDEM_EXPECT.getAccession() + ";" 
+    private String allowedEvalues = XTANDEM_EXPECT.getAccession() + ";"
             + MASCOT_EXPECTATION_VALUE.getAccession() + ";"
-            + SEQUEST_EXPECTATION_VALUE.getAccession() + ";" 
-            + OMSSA_EVALUE.getAccession() + ";" 
+            + SEQUEST_EXPECTATION_VALUE.getAccession() + ";"
+            + OMSSA_EVALUE.getAccession() + ";"
             + PROTEINPROSPECTOR_EXPECTATION_VALUE.getAccession() + ";"
             + MSGF_EVALUE.getAccession();
     private boolean betterScoresAreLower = true;
@@ -81,22 +86,8 @@ public class FalseDiscoveryRateGlobal {
     private List<Double> tp = new ArrayList<>();
     private List<Double> fp = new ArrayList<>();
 
-    //private Map<String, DBSequence> dBSequenceMap = new HashMap<>();
-    //private Map<String, PeptideEvidence> peptideEvidenceMap = new HashMap<>();
-    //private Map<String, Peptide> peptideMap = new HashMap<>();
-
-    /*
-     * The data read from MzIdentML file after parsing
-     */
-    //private Map<String, String> peptideIdAndSequence = new HashMap<>();
-
-    // Store all PSM related information to a specific peptide
-    //private Map<String, List<String>> peptidePSMMap = new HashMap<>();
-    //private Map<String, Integer> peptidePSMCount = new HashMap<>();
-    //private Map<String, String> bestScorePSM = new HashMap<>();
-
     private MzIdentMLVersion version;
-    
+
     private FalseDiscoveryRateGlobalReader fdrgReader;
 
     public FalseDiscoveryRateGlobal(String mzid, String decoyRatio, String decoy,
@@ -124,7 +115,10 @@ public class FalseDiscoveryRateGlobal {
             this.version = MzIdentMLVersion.Version_1_2;
         }
 
-        fdrgReader = new FalseDiscoveryRateGlobalReader(new File(mzid), this.decoy, this.fdrLevel, this.proteinLevel);
+        fdrgReader = new FalseDiscoveryRateGlobalReader(new File(mzid),
+                                                        this.decoy,
+                                                        this.fdrLevel,
+                                                        this.proteinLevel);
     }
 
     /**
@@ -136,11 +130,6 @@ public class FalseDiscoveryRateGlobal {
         computeSimpleFDR();
         computeQValues();
         computeFDRScore();
-    }
-
-    // Write the sorted data into a file
-    public void writeToMzIdentMLFile(String fileName) {
-        writeMzidFile(fileName);
     }
 
     /**
@@ -162,7 +151,8 @@ public class FalseDiscoveryRateGlobal {
             int index;
             for (Integer sortOrderForEvalue : sortOrderForEvalues) {
                 index = sortOrderForEvalue;
-                sorted_spectrumResult.add(fdrgReader.getSpectrumResult().get(index));
+                sorted_spectrumResult.add(fdrgReader.getSpectrumResult().get(
+                        index));
                 sorted_spectrumItem.add(fdrgReader.getSpectrumItem().get(index));
                 sorted_peptideNames.add(fdrgReader.getPeptideNames().get(index));
                 sorted_evalues.add(fdrgReader.getEvalues().get(index));
@@ -182,6 +172,174 @@ public class FalseDiscoveryRateGlobal {
 
     }
 
+    /**
+     * Compute simple FDR
+     */
+    private void computeSimpleFDR() {
+        int falsePositiveCount = 0;
+        int allTargets = 0;
+        double falsePositiveDivRatio;
+        double simpleFDR;
+
+        for (int i = 0; i < sorted_peptideNames.size(); i++) {
+            if (sorted_decoyOrNot.get(i).equals("true")) {
+                falsePositiveCount++;
+            } else {
+                allTargets++;
+            }
+
+            falsePositiveDivRatio = (double) falsePositiveCount / decoyRatio;
+
+            simpleFDR = falsePositiveDivRatio / (double) allTargets;
+            estimated_simpleFDR.add(simpleFDR);
+            estimated_qvalue.add(0d);
+
+            fp.add(falsePositiveDivRatio);
+            double tpValue = allTargets - falsePositiveDivRatio;
+            tp.add(tpValue);
+        }
+        if (fp.isEmpty() || (fp.get(fp.size() - 1) == 0)) {
+            System.out.println(
+                    "No decoys found for search engine Mascot|Omssa|tandem - likely caused by: wrong decoy regex, database doesn't contain decoys or the search reported only identifications for stringent e-values - please allow identifications up to e-value = 10 for omssa and tandem. See omssa and tandem documentation for how to do change this setting");
+        }
+    }
+
+    /**
+     * Compute q-value
+     */
+    private void computeQValues() {
+        double immediateMinFdr = estimated_simpleFDR.get(estimated_simpleFDR.
+                size() - 1);
+        estimated_qvalue.set(estimated_qvalue.size() - 1, immediateMinFdr);
+        double currentFDR;
+        for (int i = estimated_simpleFDR.size() - 1; i > 0; i--) {
+            currentFDR = estimated_simpleFDR.get(i - 1);
+
+            if (currentFDR < immediateMinFdr) {
+                immediateMinFdr = currentFDR;
+            }
+
+            estimated_qvalue.set(i - 1, immediateMinFdr);
+        }
+    }
+
+    /**
+     * Compute FDR Score
+     */
+    private void computeFDRScore() {
+        // This method cannot be used for ProteinGroup FDRLevels
+        if (fdrLevel.equals("ProteinGroup")) {
+            return;
+        }
+        // Initialize the estimated_fdrscore by adding elements containing 0.
+        // This needs to be
+        // done because of back tracking involved in the algorithm, so simple
+        // .add() wouldn't work
+        for (int i = 0; i < sorted_peptideNames.size(); i++) {
+            estimated_fdrscore.add(0d);
+
+        }
+
+        // previous evalue in case of straight vertical rise in q value without
+        // any change in evalue
+        double prev_evalue = 0f;
+        double prev_qvalue = 0f;
+        double prev_prev_evalue = 0f;
+
+        int counter_backwardStep = 0;
+
+        int lastNonZeroScoreIdx = -1;
+        int i = 0;
+        for (; i < sorted_peptideNames.size(); i++) {
+            double current_evalue = sorted_evalues.get(i);
+            double current_qvalue = estimated_qvalue.get(i);
+
+            if (current_qvalue > prev_qvalue) {
+
+                double slope;
+                double intercept;
+
+                // Work out the slope and the intercept
+                // Tells us which co-ordinates to use for
+                if (current_evalue != prev_evalue) {
+                    slope = (current_qvalue - prev_qvalue) / (current_evalue
+                            - prev_evalue);
+                    intercept = prev_qvalue - slope * prev_evalue;
+                } else {
+                    slope = (current_qvalue - prev_qvalue) / (current_evalue
+                            - prev_prev_evalue);
+                    intercept = prev_qvalue - slope * prev_prev_evalue;
+                }
+
+                if (counter_backwardStep > 0) { // compute the FDR score for flat q-value region
+                    for (int k = 0; k <= counter_backwardStep; k++) {
+                        int index = i - counter_backwardStep + k;
+                        double fdrScore = slope * sorted_evalues.get(index)
+                                + intercept;
+                        estimated_fdrscore.set(index, fdrScore);
+                        lastNonZeroScoreIdx = fdrScore > 0 && index
+                                > lastNonZeroScoreIdx ? index
+                                        : lastNonZeroScoreIdx;
+                    }
+                } else { // In case an immediate increment in q value is found
+                    double fdrScore = slope * current_evalue + intercept;
+                    estimated_fdrscore.set(i, fdrScore);
+                    lastNonZeroScoreIdx = fdrScore > 0 && i
+                            > lastNonZeroScoreIdx ? i : lastNonZeroScoreIdx;
+                }
+
+                // Re-initialise the variables
+                counter_backwardStep = 0;
+                if (current_evalue > prev_evalue) { // the previous e-value will
+                    // change only if the current e-value is different
+                    prev_prev_evalue = prev_evalue;
+                    prev_evalue = current_evalue;
+                }
+                prev_qvalue = current_qvalue;
+
+            } else {
+                counter_backwardStep++;
+            }
+        }
+
+        // In case if we miss to update the very last values in
+        // estimated_fdrscore because
+        // current_qvalue == prev_qvalue
+        //TODO: Pretty dangerous tactic here in terms of manipulating an expired loop trip count.
+        //TODO: Fix this please! Seriously who on the earth would write a code like this? Must be sacked!
+        if (estimated_fdrscore.get(i - 1) == 0) {
+            double lastFdrValue;
+            i = i - 1;
+            // TODO: Appears totally novel tactic to locate a last occuring, non-zero estimated score.
+            // TODO: Record the index while putting values! IOOOOO!
+            while (estimated_fdrscore.get(i) == 0 && i > 0) {
+                i--;
+            }
+            if (i == 0) {
+                throw new RuntimeException(
+                        "\n Can't compute FDR. Likely that all the hits are corrects, so nothing to do.");
+            } else {
+                System.out.println("Last FDR Value Found at " + i
+                        + " and pre-recorded version is: " + lastNonZeroScoreIdx);
+                lastFdrValue = estimated_fdrscore.get(i);
+                while (i < estimated_fdrscore.size()) {
+                    estimated_fdrscore.set(i, lastFdrValue);
+                    i++;
+                }
+            }
+        }
+
+//        double lastFdrValue = estimated_fdrscore.get(lastNonZeroScoreIdx);
+//        for (int i=lastNonZeroScoreIdx; i < estimated_fdrscore.size(); i++) {
+//            estimated_fdrscore.set(i, lastFdrValue);
+//        }
+    }
+
+    // Write the sorted data into a file
+    public void writeToMzIdentMLFile(String fileName) {
+        writeMzidFile(fileName);
+    }
+
     //TODO: This method has to be broken into PSM, Peptide or ProteinGroup-specific functions
     //Not only to increase the readability, but to avoid if-conditions inside loops. Grrr.
     //Can't justify a function with 200 lines of code!
@@ -193,8 +351,9 @@ public class FalseDiscoveryRateGlobal {
 
             writer.write(marshaller.createXmlHeader() + "\n");
 
-            MzIdentMLUnmarshaller mzIdentMLUnmarshaller = fdrgReader.getMzIdentMLUnmarshaller();
-            
+            MzIdentMLUnmarshaller mzIdentMLUnmarshaller = fdrgReader.
+                    getMzIdentMLUnmarshaller();
+
             String mzID = mzIdentMLUnmarshaller.getMzIdentMLId();
             if (mzID != null) {
                 writer.write(marshaller.createMzIdentMLStartTag(mzID) + "\n");
@@ -220,7 +379,8 @@ public class FalseDiscoveryRateGlobal {
             param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib",
                                                     psiCV));
             analysisSoftware.setSoftwareName(param);
-            fdrgReader.getAnalysisSoftwareList().getAnalysisSoftware().add(analysisSoftware);
+            fdrgReader.getAnalysisSoftwareList().getAnalysisSoftware().add(
+                    analysisSoftware);
             marshaller.marshal(fdrgReader.getAnalysisSoftwareList(), writer);
             writer.write("\n");
 
@@ -257,7 +417,8 @@ public class FalseDiscoveryRateGlobal {
                     String peptideRef = pe.getPeptideRef();
                     int psmCount = 0;
                     if (fdrgReader.getPeptidePSMCount().get(peptideRef) != null) {
-                        psmCount = fdrgReader.getPeptidePSMCount().get(peptideRef);
+                        psmCount = fdrgReader.getPeptidePSMCount().get(
+                                peptideRef);
                     }
                     pe.getUserParam().add(makeUserParam("psm_count", String.
                                                         valueOf(psmCount)));
@@ -296,7 +457,8 @@ public class FalseDiscoveryRateGlobal {
                                 CvConstants.GROUP_PSMS_BY_SEQUENCE);
                     }
                 }
-                marshaller.marshal(fdrgReader.getAnalysisProtocolCollection(), writer);
+                marshaller.marshal(fdrgReader.getAnalysisProtocolCollection(),
+                                   writer);
 
             }
             writer.write("\n");
@@ -311,8 +473,10 @@ public class FalseDiscoveryRateGlobal {
 
             SpectrumIdentificationList siList = new SpectrumIdentificationList();
             String spectrumIdentificationListRef = "";
-            if (fdrgReader.getAnalysisCollection().getSpectrumIdentification().size() > 0) {
-                spectrumIdentificationListRef = fdrgReader.getAnalysisCollection().
+            if (fdrgReader.getAnalysisCollection().getSpectrumIdentification().
+                    size() > 0) {
+                spectrumIdentificationListRef = fdrgReader.
+                        getAnalysisCollection().
                         getSpectrumIdentification().get(0).
                         getSpectrumIdentificationListRef();
             }
@@ -564,31 +728,84 @@ public class FalseDiscoveryRateGlobal {
     }
 
     /**
-     * Compute simple FDR
+     * Compute FDR score and q value etc using the method described in Jones et
+     * al. Proteomics, 2009,9, 1220-1229
+     * Parallel computing using Stream
      */
-    private void computeSimpleFDR() {
-        int falsePositiveCount = 0;
-        int allTargets = 0;
-        double falsePositiveDivRatio;
-        double simpleFDR;
+    public void computeFDRusingJonesMethodPar() {
+        getEvalueSortedPeptideListPar();
+        computeSimpleFDRPar();
+        computeQValuesPar();
+        computeFDRScorePar();
+    }
 
-        for (int i = 0; i < sorted_peptideNames.size(); i++) {
-            if (sorted_decoyOrNot.get(i).equals("true")) {
-                falsePositiveCount++;
-            } else {
-                allTargets++;
-            }
+    /**
+     * Sort the data using evalue
+     * Make simple arrayLists from complicated data structures returned after
+     * reading mzIdentML file. These simple arrayLists will be used for further
+     * calculations of various scores.
+     * Parallel computing using Stream
+     */
+    private void getEvalueSortedPeptideListPar() {
 
-            falsePositiveDivRatio = (double) falsePositiveCount / decoyRatio;
+        // Call the sorting routine to find the indices of sorted evalues
+        TreeSortForIndices sortClass = new TreeSortForIndices();
+        Integer[] sortOrderForEvalues = sortClass.sortTheValueColumn(
+                fdrgReader.getEvalues().toArray(), betterScoresAreLower);
 
-            simpleFDR = falsePositiveDivRatio / (double) allTargets;
-            estimated_simpleFDR.add(simpleFDR);
-            estimated_qvalue.add(0d);
+        // Arrange the values in the order determined by the sorting
+        // operation, such that, each index an arraylist can be map to
+        // the entries in other arraylists for the "same" index
+        Stream.of(sortOrderForEvalues).parallel().forEachOrdered(ind -> {
+            sorted_spectrumResult.add(fdrgReader.getSpectrumResult().get(
+                    ind));
+            sorted_spectrumItem.add(fdrgReader.getSpectrumItem().get(ind));
+            sorted_peptideNames.add(fdrgReader.getPeptideNames().get(ind));
+            sorted_evalues.add(fdrgReader.getEvalues().get(ind));
+            sorted_decoyOrNot.add(fdrgReader.getDecoyOrNot().get(ind));
+        });
 
-            fp.add(falsePositiveDivRatio);
-            double tpValue = allTargets - falsePositiveDivRatio;
-            tp.add(tpValue);
-        }
+        // Clear the memory for the items no more needed
+        fdrgReader.getSpectrumResult().clear();
+        fdrgReader.getPeptideNames().clear();
+        fdrgReader.getSpectrumItem().clear();
+        fdrgReader.getEvalues().clear();
+        fdrgReader.getDecoyOrNot().clear();
+    }
+
+    /**
+     * Compute simple FDR
+     * Parallel computing using Stream
+     */
+    private void computeSimpleFDRPar() {
+
+        final MutableInt falsePositiveCount = new MutableInt();
+        final MutableInt allTargets = new MutableInt();
+        final MutableDouble falsePositiveDivRatio = new MutableDouble();
+        final MutableDouble simpleFDR = new MutableDouble();
+
+        IntStream.range(0, sorted_peptideNames.size()).parallel()
+                .forEachOrdered(idx -> {
+                    if (sorted_decoyOrNot.get(idx).equals("true")) {
+                        falsePositiveCount.increment();
+                    } else {
+                        allTargets.increment();
+                    }
+                    falsePositiveDivRatio.setValue((double) falsePositiveCount.
+                            intValue() / decoyRatio);
+
+                    simpleFDR.setValue(falsePositiveDivRatio.doubleValue()
+                            / (double) allTargets.intValue());
+                    estimated_simpleFDR.add(simpleFDR.doubleValue());
+                    estimated_qvalue.add(0d);
+
+                    fp.add(falsePositiveDivRatio.doubleValue());
+                    double tpValue = allTargets.intValue()
+                            - falsePositiveDivRatio.
+                            doubleValue();
+                    tp.add(tpValue);
+                });
+
         if (fp.isEmpty() || (fp.get(fp.size() - 1) == 0)) {
             System.out.println(
                     "No decoys found for search engine Mascot|Omssa|tandem - likely caused by: wrong decoy regex, database doesn't contain decoys or the search reported only identifications for stringent e-values - please allow identifications up to e-value = 10 for omssa and tandem. See omssa and tandem documentation for how to do change this setting");
@@ -597,8 +814,9 @@ public class FalseDiscoveryRateGlobal {
 
     /**
      * Compute q-value
+     * Parallel computing using Stream
      */
-    private void computeQValues() {
+    private void computeQValuesPar() {
         double immediateMinFdr = estimated_simpleFDR.get(estimated_simpleFDR.
                 size() - 1);
         estimated_qvalue.set(estimated_qvalue.size() - 1, immediateMinFdr);
@@ -616,8 +834,9 @@ public class FalseDiscoveryRateGlobal {
 
     /**
      * Compute FDR Score
+     * Parallel computing using Stream
      */
-    private void computeFDRScore() {
+    private void computeFDRScorePar() {
         // This method cannot be used for ProteinGroup FDRLevels
         if (fdrLevel.equals("ProteinGroup")) {
             return;
