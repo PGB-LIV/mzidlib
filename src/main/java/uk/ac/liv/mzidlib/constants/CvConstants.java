@@ -16,7 +16,7 @@ import uk.ac.ebi.jmzidml.model.mzidml.CvParam;
 /**
  *
  * @author Da Qi
- * @institute University of Liverpool
+ * University of Liverpool
  * @since 21-Mar-2017 09:56:07
  */
 public class CvConstants {

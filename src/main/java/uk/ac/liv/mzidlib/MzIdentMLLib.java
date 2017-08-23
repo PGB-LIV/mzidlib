@@ -4,7 +4,7 @@ import uk.ac.liv.mzidlib.fasta.InsertMetaDataFromFasta;
 import uk.ac.liv.mzidlib.proteogrouper.ProteoGrouper;
 import uk.ac.liv.mzidlib.fdr.FalseDiscoveryRate;
 import uk.ac.liv.mzidlib.fdr.FalseDiscoveryRateGlobal;
-import uk.ac.liv.mzidlib.converters.MzIdentMLToMzTab;
+import uk.ac.liv.mzidlib.converters.MzIdentmlToMzTab;
 import uk.ac.liv.mzidlib.converters.MzIdentMLToCSV;
 import uk.ac.liv.mzidlib.fasta.CreateRestrictedFASTADatabase;
 import bgi.ipeak.percolator.MsgfPercolator;
@@ -277,7 +277,7 @@ public class MzIdentMLLib {
 
                 if (args[0].equals("MzIdentMLToMzTab")) {
                     if (outputFileName != null) {
-                        MzIdentMLToMzTab mzIdentMLToMzTab = new MzIdentMLToMzTab(inputFileName, outputFileName);
+                        MzIdentmlToMzTab mzIdentMLToMzTab = new MzIdentmlToMzTab(inputFileName, outputFileName);
 
                     } else {
                         guiFeedback = "Error, usage: " + mzIdentMLToMzTabUsage;

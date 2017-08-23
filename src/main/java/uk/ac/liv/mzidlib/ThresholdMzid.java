@@ -148,8 +148,7 @@ public class ThresholdMzid {
         String outFile = outputFile;
 
         try (Writer writer = new FileWriter(outFile)) {
-            MzIdentMLMarshaller marshaller;
-            marshaller = new MzIdentMLMarshaller(version);
+            MzIdentMLMarshaller marshaller = new MzIdentMLMarshaller(version);
 
             //cvList = mzIdentML.getCvList();
             CvList cvList = mzIdentMLUnmarshaller.unmarshal(

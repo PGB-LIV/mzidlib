@@ -57,11 +57,6 @@ public class AddGenomeCoordinatesForPeptides {
         this.version = MzIdentMLVersion.getVersion(ver);
 
     }
-//
-//    public static void main(String args[]) {
-//        AddGenomeCoordinatesForPeptides addGenomeCoordinatesForPeptides = new AddGenomeCoordinatesForPeptides(args[0], args[1], args[2], args[3], args[4]);
-//        addGenomeCoordinatesForPeptides.writeMappingResults();
-//    }
 
     /**
      *
@@ -70,7 +65,7 @@ public class AddGenomeCoordinatesForPeptides {
      * @param proteinHits
      */
     private void writingTheGFFfile(String inputGffFile, String outputGffFile,
-                                   HashMap<String, ProteinResults> proteinHits) {
+                                   Map<String, ProteinResults> proteinHits) {
         try {
             BufferedReader in = new BufferedReader(new FileReader(inputGffFile));
             String line;
@@ -286,7 +281,7 @@ public class AddGenomeCoordinatesForPeptides {
     }
 
     public void writeMappingResults() {
-        HashMap<String, ProteinResults> prList = getProteinResults(inputMzid);
+        Map<String, ProteinResults> prList = getProteinResults(inputMzid);
         writingTheGFFfile(inputGff, outputGff, prList);
 
         try {
@@ -939,8 +934,8 @@ public class AddGenomeCoordinatesForPeptides {
         return idx;
     }
 
-    public HashMap<String, ProteinResults> getProteinResults(String summaryFile) {
-        HashMap<String, ProteinResults> prList = new HashMap();
+    public Map<String, ProteinResults> getProteinResults(String summaryFile) {
+        Map<String, ProteinResults> prList = new HashMap();
         ProteinResults pr = null;
 
         Map<String, DBSequence> dBSequenceHashMap = new HashMap<>();

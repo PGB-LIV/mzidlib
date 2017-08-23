@@ -1,17 +1,16 @@
 
 package uk.ac.liv.mzidlib.converters;
 
-import uk.ac.liv.unimod.ModT;
-import uk.ac.ebi.jmzidml.model.mzidml.*;
-import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,14 +18,87 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.proteinms.omxparser.*;
-import de.proteinms.omxparser.util.*;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import de.proteinms.omxparser.OmssaOmxFile;
+import de.proteinms.omxparser.util.MSHitSet;
+import de.proteinms.omxparser.util.MSHitSet_error;
+import de.proteinms.omxparser.util.MSHitSet_hits;
+import de.proteinms.omxparser.util.MSHits;
+import de.proteinms.omxparser.util.MSHits_mods;
+import de.proteinms.omxparser.util.MSHits_mzhits;
+import de.proteinms.omxparser.util.MSHits_pephits;
+import de.proteinms.omxparser.util.MSIonAnnot;
+import de.proteinms.omxparser.util.MSMZHit;
+import de.proteinms.omxparser.util.MSMZHit_annotation;
+import de.proteinms.omxparser.util.MSMZHit_ion;
+import de.proteinms.omxparser.util.MSModHit;
+import de.proteinms.omxparser.util.MSModHit_modtype;
+import de.proteinms.omxparser.util.MSPepHit;
+import de.proteinms.omxparser.util.MSRequest;
+import de.proteinms.omxparser.util.MSRequest_settings;
+import de.proteinms.omxparser.util.MSResponse;
+import de.proteinms.omxparser.util.MSSearch;
+import de.proteinms.omxparser.util.MSSearchSettings;
+import de.proteinms.omxparser.util.MSSearch_request;
+import de.proteinms.omxparser.util.MSSearch_response;
+import de.proteinms.omxparser.util.MSSpectrum;
+import de.proteinms.omxparser.util.MSSpectrum_abundance;
+import de.proteinms.omxparser.util.MSSpectrum_ids;
+import de.proteinms.omxparser.util.MSSpectrum_mz;
+import de.proteinms.omxparser.util.OmssaEnumerators;
+import de.proteinms.omxparser.util.OmssaModification;
+import uk.ac.ebi.jmzidml.model.mzidml.AbstractContact;
+import uk.ac.ebi.jmzidml.model.mzidml.Affiliation;
+import uk.ac.ebi.jmzidml.model.mzidml.AnalysisCollection;
+import uk.ac.ebi.jmzidml.model.mzidml.AnalysisProtocolCollection;
+import uk.ac.ebi.jmzidml.model.mzidml.AnalysisSampleCollection;
+import uk.ac.ebi.jmzidml.model.mzidml.AnalysisSoftware;
+import uk.ac.ebi.jmzidml.model.mzidml.AnalysisSoftwareList;
+import uk.ac.ebi.jmzidml.model.mzidml.AuditCollection;
+import uk.ac.ebi.jmzidml.model.mzidml.ContactRole;
+import uk.ac.ebi.jmzidml.model.mzidml.Cv;
+import uk.ac.ebi.jmzidml.model.mzidml.CvList;
+import uk.ac.ebi.jmzidml.model.mzidml.CvParam;
+import uk.ac.ebi.jmzidml.model.mzidml.DBSequence;
+import uk.ac.ebi.jmzidml.model.mzidml.Enzyme;
+import uk.ac.ebi.jmzidml.model.mzidml.Enzymes;
+import uk.ac.ebi.jmzidml.model.mzidml.FileFormat;
+import uk.ac.ebi.jmzidml.model.mzidml.FragmentArray;
+import uk.ac.ebi.jmzidml.model.mzidml.Fragmentation;
+import uk.ac.ebi.jmzidml.model.mzidml.FragmentationTable;
+import uk.ac.ebi.jmzidml.model.mzidml.InputSpectra;
+import uk.ac.ebi.jmzidml.model.mzidml.Inputs;
+import uk.ac.ebi.jmzidml.model.mzidml.IonType;
+import uk.ac.ebi.jmzidml.model.mzidml.Measure;
+import uk.ac.ebi.jmzidml.model.mzidml.Modification;
+import uk.ac.ebi.jmzidml.model.mzidml.ModificationParams;
+import uk.ac.ebi.jmzidml.model.mzidml.Organization;
+import uk.ac.ebi.jmzidml.model.mzidml.Param;
+import uk.ac.ebi.jmzidml.model.mzidml.ParamList;
+import uk.ac.ebi.jmzidml.model.mzidml.Peptide;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidenceRef;
+import uk.ac.ebi.jmzidml.model.mzidml.Person;
+import uk.ac.ebi.jmzidml.model.mzidml.Provider;
+import uk.ac.ebi.jmzidml.model.mzidml.Role;
+import uk.ac.ebi.jmzidml.model.mzidml.SearchDatabase;
+import uk.ac.ebi.jmzidml.model.mzidml.SearchDatabaseRef;
+import uk.ac.ebi.jmzidml.model.mzidml.SearchModification;
+import uk.ac.ebi.jmzidml.model.mzidml.SequenceCollection;
+import uk.ac.ebi.jmzidml.model.mzidml.SourceFile;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectraData;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIDFormat;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentification;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationItem;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationList;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationProtocol;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationResult;
+import uk.ac.ebi.jmzidml.model.mzidml.Tolerance;
+import uk.ac.ebi.jmzidml.model.mzidml.UserParam;
 import uk.ac.ebi.jmzidml.model.utils.MzIdentMLVersion;
+import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
+import uk.ac.liv.mzidlib.constants.CvConstants;
 import uk.ac.liv.mzidlib.util.MzidLibUtils;
+import uk.ac.liv.unimod.ModT;
 
 /**
  *
@@ -61,9 +133,7 @@ public class Omssa2mzid {
     //Some IDs to be used throughout;
     String inputOmssaFile = "example_files/55merge_omssa.omx";
     String modsFile = "build/classes/resources/mods.xml";
-    //private String modsFile = getClass().getClassLoader().getResource("lib/mods.xml").getPath();
-    //URL modsFileURL = getClass().getClassLoader().getResource("resources/mods.xml");
-    //URL userModsFileURL = getClass().getClassLoader().getResource("resources/mods.xml");
+
     static String userModsFile = "build/classes/resources/usermods.xml";
     static String siiListID = "SII_LIST_1";
     static String spectraDataID = "SID_1";
@@ -106,7 +176,7 @@ public class Omssa2mzid {
     Boolean outputFragmentation = false;
     int response_scale = 100;           // This is the scale to get correct MZ values out - get reset from the omx
     private String defline_regex = " "; //TODO  - current grabs protein accessions from the defline, by space - need to implement other options
-    private MzIdentMLVersion mzidVer;
+    private MzIdentMLVersion version;
 
     public Omssa2mzid(String inputfile) {
 
@@ -162,9 +232,9 @@ public class Omssa2mzid {
 
         //determin mzid file version
         if (null == ver) {
-            mzidVer = MzIdentMLVersion.Version_1_1;
+            version = MzIdentMLVersion.Version_1_1;
         } else {
-            mzidVer = ver;
+            version = ver;
         }
 
         boolean cleanupOmssaMods = false;
@@ -348,15 +418,22 @@ public class Omssa2mzid {
         Measure mzMeasure = new Measure();
         mzMeasure.setId(measureMzID);
         List<CvParam> cvParamList = mzMeasure.getCvParam();
-        cvParamList.add(MzidLibUtils.makeCvParam("MS:1001225", "product ion m/z", psiCV, "MS:1000040", "m/z", psiCV));
+        cvParamList.add(MzidLibUtils.
+                makeCvParam("MS:1001225", "product ion m/z", psiCV, "MS:1000040",
+                            "m/z", psiCV));
         Measure intMeasure = new Measure();
         intMeasure.setId(measureIntID);
         cvParamList = intMeasure.getCvParam();
-        cvParamList.add(MzidLibUtils.makeCvParam("MS:1001226", "product ion intensity", psiCV, "MS:1000131", "number of counts", psiCV));
+        cvParamList.add(MzidLibUtils.makeCvParam("MS:1001226",
+                                                 "product ion intensity", psiCV,
+                                                 "MS:1000131",
+                                                 "number of counts", psiCV));
         Measure errorMeasure = new Measure();
         errorMeasure.setId(measureErrorID);
         cvParamList = errorMeasure.getCvParam();
-        cvParamList.add(MzidLibUtils.makeCvParam("MS:1001227", "product ion m/z error", psiCV, "MS:1000040", "m/z", psiCV));
+        cvParamList.add(MzidLibUtils.makeCvParam("MS:1001227",
+                                                 "product ion m/z error", psiCV,
+                                                 "MS:1000040", "m/z", psiCV));
 
         measureList.add(mzMeasure);
         measureList.add(intMeasure);
@@ -364,7 +441,8 @@ public class Omssa2mzid {
 
         siList.setFragmentationTable(fragTable);
 
-        List<SpectrumIdentificationResult> specIdentResults = siList.getSpectrumIdentificationResult();
+        List<SpectrumIdentificationResult> specIdentResults = siList.
+                getSpectrumIdentificationResult();
         List<DBSequence> dbSeqList = sequenceCollection.getDBSequence();
         List<Peptide> peptideList = sequenceCollection.getPeptide();
         spectraData = new SpectraData();
@@ -409,14 +487,17 @@ public class Omssa2mzid {
                 //int error = ms_error.MSHitError;
                 //System.out.println("Error:" + ms_error.MSHitError);                
                 specIdentRes.setSpectraData(spectraData);
-                specIdentRes.setSpectrumID("index=" + spectrum.MSSpectrum_number);
+                specIdentRes.
+                        setSpectrumID("index=" + spectrum.MSSpectrum_number);
 
                 MSSpectrum_ids specIDs = spectrum.MSSpectrum_ids;
 
                 if (!specIDs.MSSpectrum_ids_E.isEmpty()) {
                     List<CvParam> sir_cvParamList = specIdentRes.getCvParam();
                     for (String id : specIDs.MSSpectrum_ids_E) {
-                        CvParam cvp = MzidLibUtils.makeCvParam("MS:1000796", "spectrum title", psiCV, id);
+                        CvParam cvp = MzidLibUtils.makeCvParam("MS:1000796",
+                                                               "spectrum title",
+                                                               psiCV, id);
                         sir_cvParamList.add(cvp);
                     }
                 }
@@ -427,8 +508,10 @@ public class Omssa2mzid {
 
                 for (MSHits hits : msHits.MSHits) {
 
-                    SpectrumIdentificationItem sii = new SpectrumIdentificationItem();
-                    List<PeptideEvidenceRef> peptideEvidenceRefList = sii.getPeptideEvidenceRef();
+                    SpectrumIdentificationItem sii
+                            = new SpectrumIdentificationItem();
+                    List<PeptideEvidenceRef> peptideEvidenceRefList = sii.
+                            getPeptideEvidenceRef();
                     siiList.add(sii);
 
                     int charge = hits.MSHits_charge;
@@ -447,8 +530,10 @@ public class Omssa2mzid {
                     rank++;
                     //sii.setExperimentalMassToCharge(hits.MSHits_mass);
 
-                    long expMZ = java.lang.Math.round(hits.MSHits_mass / hits.MSHits_charge);
-                    long theoMass = java.lang.Math.round(hits.MSHits_theomass / hits.MSHits_charge);
+                    long expMZ = java.lang.Math.round(hits.MSHits_mass
+                            / hits.MSHits_charge);
+                    long theoMass = java.lang.Math.round(hits.MSHits_theomass
+                            / hits.MSHits_charge);
 
                     //System.out.println("expMZ:" + expMZ + "hits.MSHits_mass " + hits.MSHits_mass);
                     if (evalue > maxEvalue) {
@@ -459,8 +544,12 @@ public class Omssa2mzid {
                     sii.setCalculatedMassToCharge((double) theoMass / 1000);
 
                     cvParamList = sii.getCvParam();
-                    cvParamList.add(MzidLibUtils.makeCvParam("MS:1001328", "OMSSA:evalue", psiCV, "" + evalue));
-                    cvParamList.add(MzidLibUtils.makeCvParam("MS:1001329", "OMSSA:pvalue", psiCV, "" + pvalue));
+                    cvParamList.add(MzidLibUtils.makeCvParam("MS:1001328",
+                                                             "OMSSA:evalue",
+                                                             psiCV, "" + evalue));
+                    cvParamList.add(MzidLibUtils.makeCvParam("MS:1001329",
+                                                             "OMSSA:pvalue",
+                                                             psiCV, "" + pvalue));
 
                     MSHits_mods mods = hits.MSHits_mods;
 
@@ -473,7 +562,8 @@ public class Omssa2mzid {
                     List<IonType> ionTypeList = null;
                     if (outputFragmentation) {
                         MSHits_mzhits mzhits = hits.MSHits_mzhits;
-                        Map<String, List<MSMZHit>> mapIonsToHits = new HashMap<>();
+                        Map<String, List<MSMZHit>> mapIonsToHits
+                                = new HashMap<>();
 
                         //ionTypeList = sii.getFragmentation();
                         Fragmentation frag = new Fragmentation();
@@ -487,14 +577,16 @@ public class Omssa2mzid {
                             double ionMz = (double) mzhit.MSMZHit_mz;
                             int number = mzhit.MSMZHit_number;
 
-                            MSMZHit_annotation ionAnnot = mzhit.MSMZHit_annotation;
+                            MSMZHit_annotation ionAnnot
+                                    = mzhit.MSMZHit_annotation;
 
                             MSIonAnnot ionA = ionAnnot.MSIonAnnot;
                             double massError = ionA.MSIonAnnot_massdiff;
 
                             MSMZHit_ion ion = mzhit.MSMZHit_ion;
                             int ionType = ion.MSIonType;
-                            String ionString = OmssaEnumerators.getMSIonTypeAsText(ionType);
+                            String ionString = OmssaEnumerators.
+                                    getMSIonTypeAsText(ionType);
                             //System.out.println("\t" + index + "\t" + number + "\t" + ionCharge + "\t" + ionString + "\t" + ionMz + "\t" + massError);
 
                             //Logic is slightly different from Tandem parser, since all ion types appear to be mixed up in one structure
@@ -516,7 +608,8 @@ public class Omssa2mzid {
 
                             IonType mzidIon = new IonType();
                             List<Integer> ionIndexList = mzidIon.getIndex();
-                            List<FragmentArray> fragmentList = mzidIon.getFragmentArray();
+                            List<FragmentArray> fragmentList = mzidIon.
+                                    getFragmentArray();
 
                             FragmentArray mzArray = new FragmentArray();
                             FragmentArray intArray = new FragmentArray();
@@ -535,23 +628,28 @@ public class Omssa2mzid {
                                 MSMZHit_ion ion = mzhit.MSMZHit_ion;
 
                                 int ionType = ion.MSIonType;
-                                String ionString = OmssaEnumerators.getMSIonTypeAsText(ionType);
+                                String ionString = OmssaEnumerators.
+                                        getMSIonTypeAsText(ionType);
 
                                 if (j == 0) {
                                     int ionCharge = mzhit.MSMZHit_charge;
                                     mzidIon.setCharge(ionCharge);
                                     //System.out.println("Lookup:" + ionType);
 
-                                    CvParam cvParam = getFragmentCVParam(ionType);
+                                    CvParam cvParam
+                                            = getFragmentCVParam(ionType);
                                     mzidIon.setCvParam(cvParam);
                                 }
                                 j++;
 
-                                double theoMZ = (double) (mzhit.MSMZHit_mz) / response_scale;
-                                double[] matchedPeak = getMatchedIon(spectrum, theoMZ);
+                                double theoMZ = (double) (mzhit.MSMZHit_mz)
+                                        / response_scale;
+                                double[] matchedPeak = getMatchedIon(spectrum,
+                                                                     theoMZ);
                                 mzValues.add((float) matchedPeak[0]);
                                 intValues.add((float) matchedPeak[1]);
-                                errorValues.add((float) (matchedPeak[0] - theoMZ));
+                                errorValues.add(
+                                        (float) (matchedPeak[0] - theoMZ));
                                 ionIndexList.add(mzhit.MSMZHit_number);  //index position
 
                             }
@@ -586,7 +684,8 @@ public class Omssa2mzid {
                         // Added By FG
                         String protAcc;
                         if (defline.indexOf(defline_regex) >= 0) {
-                            protAcc = defline.substring(0, defline.indexOf(defline_regex));
+                            protAcc = defline.substring(0, defline.indexOf(
+                                                        defline_regex));
                         } else {
                             protAcc = defline;
                         }
@@ -608,13 +707,16 @@ public class Omssa2mzid {
                             List<CvParam> db_cvParamList = dbSeq.getCvParam();
                             String desc = defline;
 
-                            db_cvParamList.add(MzidLibUtils.makeCvParam("MS:1001088", "protein description", psiCV, desc));
+                            db_cvParamList.add(MzidLibUtils.makeCvParam(
+                                    "MS:1001088", "protein description", psiCV,
+                                    desc));
                             dbSeqList.add(dbSeq);
                         } else {
                             dbSeq = foundProts.get(protAcc);
                         }
 
-                        String testPepMods = pepSeq + "_" + modString + "_" + start + "_" + end;
+                        String testPepMods = pepSeq + "_" + modString + "_"
+                                + start + "_" + end;
                         String testProt = protAcc + "_" + start + "_" + end;
 
                         //Check this is a unique peptide
@@ -641,7 +743,8 @@ public class Omssa2mzid {
                         } else {
                             String mappedProts = pepProtMap.get(testPepMods);
                             if (mappedProts.indexOf(testProt) == -1) {  //test if testProt is within mapped prots - if yes, do nothing, if not, create a new peptideevidence
-                                pepProtMap.put(testPepMods, mappedProts + ";" + testProt);
+                                pepProtMap.put(testPepMods, mappedProts + ";"
+                                               + testProt);
                                 newPepEvid = true;
                             }
                             mzidPep = peptideLookup.get(testPepMods);
@@ -650,7 +753,8 @@ public class Omssa2mzid {
                         PeptideEvidence pepEvid = null;
                         if (newPepEvid) {
                             pepEvid = new PeptideEvidence();
-                            pepEvidLookup.put(mzidPep.getId() + "_" + testProt, pepEvid);
+                            pepEvidLookup.put(mzidPep.getId() + "_" + testProt,
+                                              pepEvid);
                             pepEvid.setEnd(end);
                             pepEvid.setStart(start);
                             pepEvid.setPeptide(mzidPep);
@@ -667,7 +771,8 @@ public class Omssa2mzid {
                                 pre = "-";
                             }
                             pepEvid.setPre(pre);
-                            pepEvid.setId("PE" + sirCounter + "_" + siiCounter + "_" + pepEvidCounter);
+                            pepEvid.setId("PE" + sirCounter + "_" + siiCounter
+                                    + "_" + pepEvidCounter);
                             pepEvidCounter++;
                             pepEvid.setIsDecoy(Boolean.FALSE);
                             if (decoyRegex != null) {
@@ -677,11 +782,13 @@ public class Omssa2mzid {
                             }
                             peptideEvidenceList.add(pepEvid);
                         } else {
-                            pepEvid = pepEvidLookup.get(mzidPep.getId() + "_" + testProt);
+                            pepEvid = pepEvidLookup.get(mzidPep.getId() + "_"
+                                    + testProt);
 
                         }
 
-                        PeptideEvidenceRef peptideEvidenceRef = new PeptideEvidenceRef();
+                        PeptideEvidenceRef peptideEvidenceRef
+                                = new PeptideEvidenceRef();
                         peptideEvidenceRef.setPeptideEvidence(pepEvid);
                         peptideEvidenceRefList.add(peptideEvidenceRef);
                         sii.setPeptide(mzidPep);
@@ -724,18 +831,24 @@ public class Omssa2mzid {
                         mzidmod.getResidues().add(modifiedResidue);
                         List<CvParam> paramList = mzidmod.getCvParam();
                         CvParam modParam = new CvParam();
-                        double monoMass = intToModMap.get(fixedModification).getModMonoMass();
+                        double monoMass = intToModMap.get(fixedModification).
+                                getModMonoMass();
                         mzidmod.setMonoisotopicMassDelta(monoMass);
                         int mzidModLocation = index + 1;              //If second res is modified, index would return 1, but mzid position should be 2
                         mzidmod.setLocation(mzidModLocation);
                         boolean isMono = true;
-                        ModT unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono, pepSeq.charAt(index));
+                        ModT unimod = unimodDoc.getModByMass(monoMass,
+                                                             unimodMassError,
+                                                             isMono, pepSeq.
+                                                             charAt(index));
                         if (unimod != null) {
-                            modParam.setAccession("UNIMOD:" + unimod.getRecordId());
+                            modParam.setAccession("UNIMOD:" + unimod.
+                                    getRecordId());
                             modParam.setCv(unimodCV);
                             modParam.setName(unimod.getTitle());
                         } else {
-                            System.out.println("Error: modification with mass not recognized");
+                            System.out.println(
+                                    "Error: modification with mass not recognized");
                             modParam.setName("unknown modification");
                             modParam.setCv(psiCV);
                             modParam.setAccession("MS:1001460");
@@ -748,7 +861,8 @@ public class Omssa2mzid {
                 }
 
                 //Candidate N or C terminal mods
-                if (modifiedResidues == null || modifiedResidues.isEmpty() || modifiedResidues.isEmpty()) {
+                if (modifiedResidues == null || modifiedResidues.isEmpty()
+                        || modifiedResidues.isEmpty()) {
 
                     boolean isPepNTerminalMod = false;
                     boolean isPepCTerminalMod = false;
@@ -773,23 +887,30 @@ public class Omssa2mzid {
                         Modification mzidmod = new Modification();
                         List<CvParam> paramList = mzidmod.getCvParam();
                         CvParam modParam = new CvParam();
-                        double monoMass = intToModMap.get(fixedModification).getModMonoMass();
+                        double monoMass = intToModMap.get(fixedModification).
+                                getModMonoMass();
                         mzidmod.setMonoisotopicMassDelta(monoMass);
 
                         if (isPepNTerminalMod) {
-                            unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono, '[');
+                            unimod = unimodDoc.getModByMass(monoMass,
+                                                            unimodMassError,
+                                                            isMono, '[');
                             mzidmod.setLocation(0);
                         } else if (isPepCTerminalMod) {
-                            unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono, ']');
+                            unimod = unimodDoc.getModByMass(monoMass,
+                                                            unimodMassError,
+                                                            isMono, ']');
                             mzidmod.setLocation(pepSeq.length() + 1);
                         }
 
                         if (unimod != null) {
-                            modParam.setAccession("UNIMOD:" + unimod.getRecordId());
+                            modParam.setAccession("UNIMOD:" + unimod.
+                                    getRecordId());
                             modParam.setCv(unimodCV);
                             modParam.setName(unimod.getTitle());
                         } else {
-                            System.out.println("Error: modification with mass not recognized");
+                            System.out.println(
+                                    "Error: modification with mass not recognized");
                             modParam.setName("unknown modification");
                             modParam.setCv(psiCV);
                             modParam.setAccession("MS:1001460");
@@ -840,7 +961,8 @@ public class Omssa2mzid {
             mzidmod.setLocation(modSite + 1);                  //+1 since Omssa counts from zero, mzid counts first position in peptide as 1
 
             boolean isMono = true;
-            ModT unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono, pepSeq.charAt(modSite));
+            ModT unimod = unimodDoc.getModByMass(monoMass, unimodMassError,
+                                                 isMono, pepSeq.charAt(modSite));
 
             if (unimod != null) {
                 mzidmod.getResidues().add("" + pepSeq.charAt(modSite));
@@ -848,14 +970,18 @@ public class Omssa2mzid {
 
             if (unimod == null && modSite == 0) {
                 //See if this is a possible N-terminal mod
-                System.out.println("\tNot found, so look to see if it is N-terminal\n");
-                unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono, '[');
+                System.out.println(
+                        "\tNot found, so look to see if it is N-terminal\n");
+                unimod = unimodDoc.getModByMass(monoMass, unimodMassError,
+                                                isMono, '[');
                 mzidmod.setLocation(0);
             }
             if (unimod == null && modSite == pepSeq.length()) {
                 //See if this is a possible C-terminal mod
-                System.out.println("\tNot found, so look to see if it is C-terminal\n");
-                unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono, ']');
+                System.out.println(
+                        "\tNot found, so look to see if it is C-terminal\n");
+                unimod = unimodDoc.getModByMass(monoMass, unimodMassError,
+                                                isMono, ']');
                 mzidmod.setLocation(pepSeq.length() + 1);
             }
 
@@ -865,7 +991,8 @@ public class Omssa2mzid {
                 modParam.setName(unimod.getTitle());
 
             } else {
-                System.out.println("Error: modification with mass not recognized");
+                System.out.println(
+                        "Error: modification with mass not recognized");
                 modParam.setName("unknown modification");
                 modParam.setCv(psiCV);
                 modParam.setAccession("MS:1001460");
@@ -886,7 +1013,8 @@ public class Omssa2mzid {
         cvList = new CvList();
         List<Cv> localCvList = cvList.getCv();
         psiCV = new Cv();
-        psiCV.setUri("https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo");
+        psiCV.setUri(
+                "https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo");
         psiCV.setId(psiCvID);
 //        psiCV.setVersion("2.25.0");
         psiCV.setFullName("PSI-MS");
@@ -897,7 +1025,8 @@ public class Omssa2mzid {
         unimodCV.setFullName("UNIMOD");
 
         unitCV = new Cv();
-        unitCV.setUri("http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo");
+        unitCV.setUri(
+                "http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo");
         unitCV.setId(unitCvID);
         unitCV.setFullName("UNIT-ONTOLOGY");
 
@@ -908,12 +1037,14 @@ public class Omssa2mzid {
 
     public void handleAnalysisSoftware(String version) {
         analysisSoftwareList = new AnalysisSoftwareList();
-        List<AnalysisSoftware> analysisSoftwares = analysisSoftwareList.getAnalysisSoftware();
+        List<AnalysisSoftware> analysisSoftwares = analysisSoftwareList.
+                getAnalysisSoftware();
         analysisSoftware = new AnalysisSoftware();
         analysisSoftware.setName("OMSSA");
         Param tempParam = new Param();
         //tempParam.setParamGroup(makeCvParam("MS:1001475","OMSSA",psiCV));
-        tempParam.setParam(MzidLibUtils.makeCvParam("MS:1001475", "OMSSA", psiCV));
+        tempParam.setParam(MzidLibUtils.
+                makeCvParam("MS:1001475", "OMSSA", psiCV));
         analysisSoftware.setSoftwareName(tempParam);
         analysisSoftware.setId(analysisSoftID);
         analysisSoftware.setVersion(version);
@@ -939,14 +1070,17 @@ public class Omssa2mzid {
         contactRole.setContact(docOwner);
 
         Role role = new Role();
-        role.setCvParam(MzidLibUtils.makeCvParam("MS:1001271", "researcher", psiCV));
+        role.setCvParam(MzidLibUtils.makeCvParam("MS:1001271", "researcher",
+                                                 psiCV));
         contactRole.setRole(role);
 
         provider.setContactRole(contactRole);
 
     }
 
-    public void handleAuditCollection(String firstName, String lastName, String email, String address, String affiliationName) {
+    public void handleAuditCollection(String firstName, String lastName,
+                                      String email, String address,
+                                      String affiliationName) {
         auditCollection = new AuditCollection();
         //List<Contact> contactList = auditCollection.getContactGroup();
         List<AbstractContact> contactList = auditCollection.
@@ -956,13 +1090,17 @@ public class Omssa2mzid {
         docOwner.setFirstName(firstName);
         docOwner.setLastName(lastName);
 
-        docOwner.getCvParam().add(MzidLibUtils.makeCvParam("MS:1000587", "contact address", psiCV, address));
+        docOwner.getCvParam().add(MzidLibUtils.makeCvParam("MS:1000587",
+                                                           "contact address",
+                                                           psiCV, address));
 
         //docOwner.setEmail(email);
         Organization org = new Organization();
         org.setId("ORG_DOC_OWNER");
         org.setName(affiliationName);
-        org.getCvParam().add(MzidLibUtils.makeCvParam("MS:1000586", "contact name", psiCV, address));
+        org.getCvParam().add(MzidLibUtils.makeCvParam("MS:1000586",
+                                                      "contact name", psiCV,
+                                                      address));
 
         //org.setAddress(address);
         List<Affiliation> affList = docOwner.getAffiliation();
@@ -987,12 +1125,14 @@ public class Omssa2mzid {
 
     public void handleAnalysisCollection(String activityDate) {
         analysisCollection = new AnalysisCollection();
-        List<SpectrumIdentification> specIdentList = analysisCollection.getSpectrumIdentification();
+        List<SpectrumIdentification> specIdentList = analysisCollection.
+                getSpectrumIdentification();
         SpectrumIdentification specIdent = new SpectrumIdentification();
         specIdent.setId(specIdentID);
         specIdent.setSpectrumIdentificationList(siList);
         specIdent.setSpectrumIdentificationProtocol(siProtocol);
-        List<SearchDatabaseRef> searchDBRefList = specIdent.getSearchDatabaseRef();
+        List<SearchDatabaseRef> searchDBRefList = specIdent.
+                getSearchDatabaseRef();
         SearchDatabaseRef searchDBRef = new SearchDatabaseRef();
         searchDBRef.setSearchDatabase(searchDB);
         searchDBRefList.add(searchDBRef);
@@ -1082,7 +1222,8 @@ public class Omssa2mzid {
          * </MSSearchSettings>
          */
         analysisProtocolCollection = new AnalysisProtocolCollection();
-        List<SpectrumIdentificationProtocol> sipList = analysisProtocolCollection.getSpectrumIdentificationProtocol();
+        List<SpectrumIdentificationProtocol> sipList
+                = analysisProtocolCollection.getSpectrumIdentificationProtocol();
 
         siProtocol = new SpectrumIdentificationProtocol();
         siProtocol.setId(siProtocolID);
@@ -1090,7 +1231,8 @@ public class Omssa2mzid {
 
         //<cvParam accession="MS:1001083" name="ms-ms search" cvRef="PSI-MS"/>
         Param tempParam = new Param();
-        tempParam.setParam(MzidLibUtils.makeCvParam("MS:1001083", "ms-ms search", psiCV));
+        tempParam.setParam(MzidLibUtils.
+                makeCvParam("MS:1001083", "ms-ms search", psiCV));
         siProtocol.setSearchType(tempParam);
 
         //List<CvParam> cvParamList = siProtocol.getAdditionalSearchCvParams();
@@ -1101,17 +1243,25 @@ public class Omssa2mzid {
         }
         List<CvParam> cvParamList = paramList.getCvParam();
 
-        int msSearchType = settings.MSSearchSettings_precursorsearchtype.MSSearchType;    //with 0 = monoisotopic, 1 = average, 2 = monoisotopic N15, 3 = exact
+        int msSearchType
+                = settings.MSSearchSettings_precursorsearchtype.MSSearchType;    //with 0 = monoisotopic, 1 = average, 2 = monoisotopic N15, 3 = exact
 
         if (msSearchType == 0) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001211", "parent mass type mono", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001211",
+                                                     "parent mass type mono",
+                                                     psiCV));
         } else if (msSearchType == 1) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001212", "parent mass type average", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001212",
+                                                     "parent mass type average",
+                                                     psiCV));
         } else if (msSearchType == 2) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:No_acc", "monoisotopic N15", psiCV));
-            System.out.println("Warning: No CV term for monoisotopic N15 search type");
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:No_acc",
+                                                     "monoisotopic N15", psiCV));
+            System.out.println(
+                    "Warning: No CV term for monoisotopic N15 search type");
         } else if (msSearchType == 3) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:No_acc", "exact", psiCV));
+            cvParamList.add(MzidLibUtils.
+                    makeCvParam("MS:No_acc", "exact", psiCV));
             System.out.println("Warning: No CV term for exact mass search type");
         } else {
             System.out.println("Error search type not recognised");
@@ -1122,27 +1272,34 @@ public class Omssa2mzid {
                 = settings.MSSearchSettings_productsearchtype.MSSearchType;    //with 0 = monoisotopic, 1 = average, 2 = monoisotopic N15, 3 = exact
 
         if (prodSearchType == 0) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001256", "fragment mass type mono", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001256",
+                                                     "fragment mass type mono",
+                                                     psiCV));
         } else if (prodSearchType == 1) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001255", "fragment mass type average", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001255",
+                                                     "fragment mass type average",
+                                                     psiCV));
         } else if (prodSearchType == 2) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:No_acc", "monoisotopic N15", psiCV));
-            System.out.println("Warning: No CV term for monoisotopic N15 search type");
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:No_acc",
+                                                     "monoisotopic N15", psiCV));
+            System.out.println(
+                    "Warning: No CV term for monoisotopic N15 search type");
         } else if (prodSearchType == 3) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:No_acc", "exact", psiCV));
+            cvParamList.add(MzidLibUtils.
+                    makeCvParam("MS:No_acc", "exact", psiCV));
             System.out.println("Warning: No CV term for exact mass search type");
         } else {
             System.out.println("Error search type not recognised");
         }
 
         // Add "no special processing" cv term if this is mzid 1.2 version
-        if (mzidVer.equals(MzIdentMLVersion.Version_1_2)) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1002495", "no special processing",
-                                        psiCV));
+        if (version.equals(MzIdentMLVersion.Version_1_2)) {
+            cvParamList.add(CvConstants.NO_SPECIAL_PROCESSING);
         }
-        
+
         ModificationParams modParams = new ModificationParams();
-        List<SearchModification> searchModList = modParams.getSearchModification();
+        List<SearchModification> searchModList = modParams.
+                getSearchModification();
 
         for (int fixedMod : settings.MSSearchSettings_fixed.MSMod) {
             OmssaModification omod = intToModMap.get(fixedMod);
@@ -1168,7 +1325,9 @@ public class Omssa2mzid {
         List<Integer> msEnzymeList = settings.MSSearchSettings_enzyme.MSEnzymes;
         for (Integer msEnzyme : msEnzymeList) {
             //OmssaEnumerators omssaEnums = new OmssaEnumerators();
-            Enzyme enzyme = getEnzyme(OmssaEnumerators.getEnzymeAsText(msEnzyme), settings.MSSearchSettings_missedcleave);
+            Enzyme enzyme
+                    = getEnzyme(OmssaEnumerators.getEnzymeAsText(msEnzyme),
+                                settings.MSSearchSettings_missedcleave);
             enzymeList.add(enzyme);
         }
 
@@ -1227,14 +1386,16 @@ public class Omssa2mzid {
         }
         cvParamList = sip_paramList.getCvParam();
 
-        cvParamList.add(MzidLibUtils.makeCvParam("MS:1001494", "no threshold", psiCV));
+        cvParamList.add(MzidLibUtils.makeCvParam("MS:1001494", "no threshold",
+                                                 psiCV));
         //<cvParam accession="MS:1001494" name="no threshold" cvRef="PSI-MS" />
 
         sipList.add(siProtocol);
 
     }
 
-    private SearchModification handleOmssaMod(OmssaModification omod, boolean isFixed) {
+    private SearchModification handleOmssaMod(OmssaModification omod,
+                                              boolean isFixed) {
         SearchModification searchMod = new SearchModification();
         double monoMass = omod.getModMonoMass();
         List<String> residues = omod.getModResidues();
@@ -1259,14 +1420,17 @@ public class Omssa2mzid {
         ModT unimod;
         if (isPepNTerminalMod || isProtNTerminalMod) {
             residues.add("[");
-            unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono, residues);
+            unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono,
+                                            residues);
             residues.remove(residues.size() - 1); //Remove the ] or [ char
         } else if (isPepCTerminalMod || isProtCTerminalMod) {
             residues.add("]");
-            unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono, residues);
+            unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono,
+                                            residues);
             residues.remove(residues.size() - 1); //Remove the ] or [ char
         } else {
-            unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono, residues);
+            unimod = unimodDoc.getModByMass(monoMass, unimodMassError, isMono,
+                                            residues);
         }
 
         searchMod.setFixedMod(isFixed);
@@ -1275,7 +1439,9 @@ public class Omssa2mzid {
         CvParam modParam = new CvParam();
 
         if (unimod != null) {
-            modParam = MzidLibUtils.makeCvParam("UNIMOD:" + unimod.getRecordId(), unimod.getTitle(), unimodCV);
+            modParam = MzidLibUtils.
+                    makeCvParam("UNIMOD:" + unimod.getRecordId(), unimod.
+                                getTitle(), unimodCV);
 
         } else {
             modParam.setName("unknown modification");
@@ -1288,13 +1454,21 @@ public class Omssa2mzid {
         List<String> residueList = searchMod.getResidues();
 
         if (isPepNTerminalMod) {
-            modCvParamList.add(MzidLibUtils.makeCvParam("MS:1001189", "modification specificity peptide N-term", psiCV));
+            modCvParamList.add(MzidLibUtils.makeCvParam("MS:1001189",
+                                                        "modification specificity peptide N-term",
+                                                        psiCV));
         } else if (isPepCTerminalMod) {
-            modCvParamList.add(MzidLibUtils.makeCvParam("MS:1001190", "modification specificity peptide C-term", psiCV));
+            modCvParamList.add(MzidLibUtils.makeCvParam("MS:1001190",
+                                                        "modification specificity peptide C-term",
+                                                        psiCV));
         } else if (isProtNTerminalMod) {
-            modCvParamList.add(MzidLibUtils.makeCvParam("MS:1002057", "modification specificity protein N-term", psiCV));
+            modCvParamList.add(MzidLibUtils.makeCvParam("MS:1002057",
+                                                        "modification specificity protein N-term",
+                                                        psiCV));
         } else if (isProtCTerminalMod) {
-            modCvParamList.add(MzidLibUtils.makeCvParam("MS:1002058", "modification specificity protein C-term", psiCV));
+            modCvParamList.add(MzidLibUtils.makeCvParam("MS:1002058",
+                                                        "modification specificity protein C-term",
+                                                        psiCV));
         }
 
         if (!residues.isEmpty()) {
@@ -1327,7 +1501,8 @@ public class Omssa2mzid {
         searchDB.setLocation(settings.MSSearchSettings_db);
 
         FileFormat ff = new FileFormat();
-        ff.setCvParam(MzidLibUtils.makeCvParam("MS:1001348", "FASTA format", psiCV));
+        ff.setCvParam(MzidLibUtils.makeCvParam("MS:1001348", "FASTA format",
+                                               psiCV));
         searchDB.setFileFormat(ff);   //TODO - this should not be hard coded <cvParam accession="MS:1001348" name="FASTA format" cvRef="PSI-MS"/>
         searchDBList.add(searchDB);
 
@@ -1336,7 +1511,8 @@ public class Omssa2mzid {
         sourceFile.setLocation(inputOmssaFile);
         sourceFile.setId(sourceFileID);
         ff = new FileFormat();
-        ff.setCvParam(MzidLibUtils.makeCvParam("MS:1001400", "OMSSA xml file", psiCV));
+        ff.setCvParam(MzidLibUtils.makeCvParam("MS:1001400", "OMSSA xml file",
+                                               psiCV));
 
         sourceFile.setFileFormat(ff);
         sourceFileList.add(sourceFile);
@@ -1344,46 +1520,27 @@ public class Omssa2mzid {
         List<SpectraData> spectraDataList = inputs.getSpectraData();
         spectraData = new SpectraData();
         SpectrumIDFormat sif = new SpectrumIDFormat();
-        sif.setCvParam(MzidLibUtils.makeCvParam("MS:1000774", "multiple peak list nativeID format", psiCV));
+        sif.setCvParam(MzidLibUtils.makeCvParam("MS:1000774",
+                                                "multiple peak list nativeID format",
+                                                psiCV));
         spectraData.setSpectrumIDFormat(sif);
 
-        int fileType = settings.MSSearchSettings_infiles.MSInFile.MSInFile_infiletype.MSSpectrumFileType;
+        int fileType
+                = settings.MSSearchSettings_infiles.MSInFile.MSInFile_infiletype.MSSpectrumFileType;
         ff = new FileFormat();
         ff.setCvParam(getFileFormatCVParam(fileType));
         spectraData.setFileFormat(ff);
 
         spectraData.setId(spectraDataID);
-        spectraData.setLocation(settings.MSSearchSettings_infiles.MSInFile.MSInFile_infile);
+        spectraData.setLocation(
+                settings.MSSearchSettings_infiles.MSInFile.MSInFile_infile);
         spectraDataList.add(spectraData);
 
-        /*
-         * <fileFormat> <cvParam accession="MS:1001062" name="Mascot MGF file"
-         * cvRef="PSI-MS" /> </fileFormat> <spectrumIDFormat> <cvParam
-         * accession="MS:1000774" name="multiple peak list nativeID format"
-         * cvRef="PSI-MS" /> </spectrumIDFormat>
-         */
-        //<note label="modelling, total proteins used">22348</note>
-        /*
-         * <SearchDatabase
-         * location="file:///C:/inetpub/mascot/sequence/SwissProt/current/SwissProt_51.6.fasta"
-         * id="SDB_SwissProt" name="SwissProt" numDatabaseSequences="257964"
-         * numResidues="93947433" releaseDate="SwissProt_51.6.fasta"
-         * version="SwissProt_51.6.fasta"> <fileFormat> <cvParam
-         * accession="MS:1001348" name="FASTA format" cvRef="PSI-MS" />
-         * </fileFormat> <DatabaseName> <userParam name="SwissProt_51.6.fasta"
-         * /> </DatabaseName> <cvParam accession="MS:1001073" name="database
-         * type amino acid" cvRef="PSI-MS" /> </SearchDatabase>
-         */
     }
 
     public void writeMzidFile(String output) {
-        try {
-            FileWriter writer = null;
-            if (output.equals("")) {
-                writer = new FileWriter("55merge_omssa.mzid");
-            } else {
-                writer = new FileWriter(output);
-            }
+
+        try (Writer writer = new FileWriter(output)) {
             MzIdentMLMarshaller m = new MzIdentMLMarshaller();
 
             // mzIdentML
@@ -1417,12 +1574,16 @@ public class Omssa2mzid {
             writer.write("\n");
             AnalysisSoftware analysisSoftware = new AnalysisSoftware();
             Date date = new Date();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
-            analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
+            SimpleDateFormat dateFormat = new SimpleDateFormat(
+                    "yyyy-MM-dd HH-mm-ss");
+            analysisSoftware.setName(this.getClass().getSimpleName() + "_"
+                    + dateFormat.format(date));
+            analysisSoftware.setId(this.getClass().getSimpleName() + "_"
+                    + dateFormat.format(date));
 
             Param param = new Param();
-            param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib", psiCV));
+            param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib",
+                                                    psiCV));
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
             m.marshal(analysisSoftwareList, writer);
@@ -1460,7 +1621,6 @@ public class Omssa2mzid {
             //m.marshall(table, writer);
             //writer.write("\n");
             //Iterator<SpectrumIdentificationResult> specResIter = unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
-
             /*
              * Iterator<SpectrumIdentificationResult> specResIter =
              * specIdentResults.iterator(); while (specResIter.hasNext()) {
@@ -1471,7 +1631,8 @@ public class Omssa2mzid {
             writer.write("\n");
 
             // writer.write(m.createSpectrumIdentificationListClosingTag() + "\n");
-            writer.write(m.createProteinDetectionListStartTag("PDL_1", null) + "\n");
+            writer.write(m.createProteinDetectionListStartTag("PDL_1", null)
+                    + "\n");
 
             /*
              * Iterator<ProteinAmbiguityGroup> protAmbGroupIter =
@@ -1491,12 +1652,13 @@ public class Omssa2mzid {
             // m.marshall(ref, writer);
             // writer.write("\n");
             writer.write(m.createMzIdentMLClosingTag());
-
-            writer.close();
         } catch (IOException ex) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + ex.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + ex.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
@@ -1744,19 +1906,25 @@ public class Omssa2mzid {
         List<CvParam> cvParamList = paramList.getCvParam();
 
         if (omssaEnzyme.equalsIgnoreCase("trypsin")) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001251", "Trypsin", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001251", "Trypsin",
+                                                     psiCV));
         } else if (omssaEnzyme.equalsIgnoreCase("Arg-C")) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001303", "Arg-C", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001303", "Arg-C",
+                                                     psiCV));
         } else if (omssaEnzyme.equalsIgnoreCase("CNBr")) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001307", "CNBr", psiCV));
+            cvParamList.add(MzidLibUtils.
+                    makeCvParam("MS:1001307", "CNBr", psiCV));
         } else if (omssaEnzyme.equalsIgnoreCase("Chymotrypsin")) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001306", "Chymotrypsin", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001306",
+                                                     "Chymotrypsin", psiCV));
         } else if (omssaEnzyme.equalsIgnoreCase("Formic Acid")) {
             cvParamList.add(MzidLibUtils.makeCvParam("TODO", "TODO", psiCV));
         } else if (omssaEnzyme.equalsIgnoreCase("Lys-C")) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001309", "Lys-C", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001309", "Lys-C",
+                                                     psiCV));
         } else if (omssaEnzyme.equalsIgnoreCase("Lys-C, no P rule")) {
-            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001310", "Lys-C/P", psiCV));
+            cvParamList.add(MzidLibUtils.makeCvParam("MS:1001310", "Lys-C/P",
+                                                     psiCV));
         } else if (omssaEnzyme.equalsIgnoreCase("Pepsin A")) {
             cvParamList.add(MzidLibUtils.makeCvParam("TODO", "TODO", psiCV));
         } else {

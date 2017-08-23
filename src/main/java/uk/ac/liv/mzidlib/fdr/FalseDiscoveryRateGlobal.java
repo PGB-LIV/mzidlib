@@ -733,10 +733,10 @@ public class FalseDiscoveryRateGlobal {
      * Parallel computing using Stream
      */
     public void computeFDRusingJonesMethodPar() {
-        getEvalueSortedPeptideListPar();
-        computeSimpleFDRPar();
-        computeQValuesPar();
-        computeFDRScorePar();
+        getEvalueSortedPeptideList();
+        computeSimpleFDR();
+        computeQValues();
+        computeFDRScore();
     }
 
     /**
@@ -847,9 +847,10 @@ public class FalseDiscoveryRateGlobal {
         // .add() wouldn't work
         for (int i = 0; i < sorted_peptideNames.size(); i++) {
             estimated_fdrscore.add(0d);
-
         }
-
+//        sorted_peptideNames.parallelStream().forEach(c -> {
+//            estimated_fdrscore.add(0d);
+//        });
         // previous evalue in case of straight vertical rise in q value without
         // any change in evalue
         double prev_evalue = 0f;
