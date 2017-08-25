@@ -106,19 +106,6 @@ import uk.ac.liv.unimod.ModT;
  */
 public class Omssa2mzid {
 
-    /*
-     *
-     * OmssaOmxFile omxFile = new OmssaOmxFile(â€œC:\\OMSSA_Files\\BSA.omxâ€�);
-     *
-     * HashMap<MSSpectrum, MSHitSet> results = omxFile.getSpectrumToHitSetMap();
-     * Iterator<MSSpectrum> iterator = results.keySet().iterator();
-     *
-     * ArrayList<List<Integer>> allMzValues = new ArrayList();
-     *
-     * while (iterator.hasNext()) { MSSpectrum tempSpectrum = iterator.next();
-     * allMzValues.add(tempSpectrum.MSSpectrum_mz.MSSpectrum_mz_E); }
-     *
-     */
 //These are the main structures to be output by the main writing method
     SequenceCollection sequenceCollection;
     SpectrumIdentificationList siList;
@@ -180,13 +167,10 @@ public class Omssa2mzid {
 
     public Omssa2mzid(String inputfile) {
 
-        //System.out.println("modsFileURL:" + modsFileURL);
-        //OmssaOmxFile omxFile = new OmssaOmxFile(fileName,modsFileURL.getPath().replaceAll("file:/",""),userModsFileURL.getPath().replaceAll("file:/",""));
         OmssaOmxFile omxFile = new OmssaOmxFile(inputfile, modsFile,
                                                 userModsFile);
         unimodDoc = new ReadUnimod();
         parseFile(omxFile);
-        writeMzidFile("");
 
     }
 
@@ -258,7 +242,6 @@ public class Omssa2mzid {
             cleanupUserMods = true;
         }
 
-        //OmssaOmxFile omxFile = new OmssaOmxFile(inputfile,modsFileURL.getPath().replaceAll("file:/",""),userModsFileURL.getPath().replaceAll("file:/",""));
         OmssaOmxFile omxFile = new OmssaOmxFile(inputfile, modsFile,
                                                 userModsFile);
 
@@ -1582,8 +1565,7 @@ public class Omssa2mzid {
                     + dateFormat.format(date));
 
             Param param = new Param();
-            param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib",
-                                                    psiCV));
+            param.setParam(CvConstants.MZIDLIB);
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
             m.marshal(analysisSoftwareList, writer);

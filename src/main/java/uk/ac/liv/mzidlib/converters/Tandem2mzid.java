@@ -75,6 +75,7 @@ import uk.ac.ebi.jmzidml.model.mzidml.Tolerance;
 import uk.ac.ebi.jmzidml.model.mzidml.UserParam;
 import uk.ac.ebi.jmzidml.model.utils.MzIdentMLVersion;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
+import uk.ac.liv.mzidlib.constants.CvConstants;
 import uk.ac.liv.mzidlib.util.CVUtils;
 import uk.ac.liv.mzidlib.util.MzidLibUtils;
 import uk.ac.liv.mzidlib.util.Utils;
@@ -198,8 +199,8 @@ public class Tandem2mzid {
                                      String proteinCodeRegex,
                                      boolean outputFragmentation)
             throws IOException {
-        if (decoyRegularExpression != null && !decoyRegularExpression.trim().
-                equals("")) {
+        if (decoyRegularExpression != null && !decoyRegularExpression.trim()
+                .equals("")) {
             this.decoyRegex = decoyRegularExpression;
         }
 
@@ -1549,14 +1550,7 @@ public class Tandem2mzid {
 
     public void writeMzidFile(String outputfile) {
 
-        try {
-            Writer writer = null;
-            if (outputfile.equals("")) {
-                writer = new FileWriter("55merge_tandem.mzid");
-            } else {
-                writer = new FileWriter(outputfile);
-            }
-
+        try (Writer writer = new FileWriter(outputfile)) {
             MzIdentMLMarshaller m = new MzIdentMLMarshaller();
 
             // mzIdentML
@@ -1599,8 +1593,7 @@ public class Tandem2mzid {
             analysisSoftware.setId(this.getClass().getSimpleName() + "_"
                     + dateFormat.format(date));
             Param param = new Param();
-            param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib",
-                                                    psiCV));
+            param.setParam(CvConstants.MZIDLIB);
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
             m.marshal(analysisSoftwareList, writer);
@@ -1637,7 +1630,6 @@ public class Tandem2mzid {
             //m.marshall(table, writer);
             //writer.write("\n");
             //Iterator<SpectrumIdentificationResult> specResIter = unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.SpectrumIdentificationResult);
-
             /*
              * Iterator<SpectrumIdentificationResult> specResIter =
              * specIdentResults.iterator(); while (specResIter.hasNext()) {
@@ -1670,7 +1662,6 @@ public class Tandem2mzid {
             // writer.write("\n");
             writer.write(m.createMzIdentMLClosingTag());
 
-            writer.close();
         } catch (IOException ex) {
             String methodName = Thread.currentThread().getStackTrace()[1].
                     getMethodName();

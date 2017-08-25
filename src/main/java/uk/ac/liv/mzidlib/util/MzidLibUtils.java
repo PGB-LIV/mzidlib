@@ -42,15 +42,23 @@ public class MzidLibUtils {
         return retCv;
     }
 
+    public static Cv makeCv(String id, String uri, String name) {
+        Cv retCv = new Cv();
+        retCv.setId(id);
+        retCv.setFullName(name);
+        retCv.setUri(uri);
+        return retCv;
+    }
+
     public static CvParam makeCvParam(String accession, String name, Cv cv,
                                       String unitAccession, String unitName,
-                                      Cv alternateUnitCV) {
+                                      Cv alternateUnitCv) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
         cvParam.setName(name);
         cvParam.setCv(cv);
         cvParam.setUnitAccession(unitAccession);
-        cvParam.setUnitCv(alternateUnitCV);
+        cvParam.setUnitCv(alternateUnitCv);
         cvParam.setUnitName(unitName);
         return cvParam;
     }
