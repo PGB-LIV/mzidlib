@@ -30,18 +30,21 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 
 /**
  * MzIdentML file writer class.
+ *
  * @author Da Qi
- *     University of Liverpool
+ * University of Liverpool
  * @time 23-Aug-2017 14:24:47
  */
 public class MzidWriter {
 
     /**
      * Static generic MzIdentML writer.
+     *
      * @param fileName output MzIdentML file name
-     * @param mc MzIdentML elements container
+     * @param mc       MzIdentML elements container
+     *
      * @throws FileNotFoundException file not found exception
-     * @throws IOException IO exception
+     * @throws IOException           IO exception
      */
     public static void write(String fileName, MzidContainer mc)
             throws FileNotFoundException, IOException {
@@ -57,45 +60,71 @@ public class MzidWriter {
             // mzIdentML start tag
             writer.write(marshaller.createMzIdentMLStartTag("12345") + "\n");
 
-            marshaller.marshal(mc.getCvList(), writer);
-            writer.write("\n");
+            if (mc.getCvList() != null) {
+                marshaller.marshal(mc.getCvList(), writer);
+                writer.write("\n");
+            }
 
-            marshaller.marshal(mc.getAnalysisSoftwareList(), writer);
-            writer.write("\n");
+            if (mc.getAnalysisSampleCollection() != null) {
+                marshaller.marshal(mc.getAnalysisSoftwareList(), writer);
+                writer.write("\n");
+            }
 
-            marshaller.marshal(mc.getProvider(), writer);
-            writer.write("\n");
+            if (mc.getProvider() != null) {
+                marshaller.marshal(mc.getProvider(), writer);
+                writer.write("\n");
+            }
 
-            marshaller.marshal(mc.getAuditCollection(), writer);
-            writer.write("\n");
+            if (mc.getAuditCollection() != null) {
+                marshaller.marshal(mc.getAuditCollection(), writer);
+                writer.write("\n");
+            }
 
-            //m.marshall(analysisSampleCollection, writer);     //TODO - complete this part
-            //writer.write("\n");
-            
-            marshaller.marshal(mc.getSequenceCollection(), writer);
-            writer.write("\n");
+            if (mc.getAnalysisSampleCollection() != null) {
+                marshaller.marshal(mc.getAnalysisSampleCollection(), writer);     //TODO - complete this part
+                writer.write("\n");
+            }
 
-            marshaller.marshal(mc.getAnalysisCollection(), writer);
-            writer.write("\n");
+            if (mc.getSequenceCollection() != null) {
+                marshaller.marshal(mc.getSequenceCollection(), writer);
+                writer.write("\n");
+            }
 
-            marshaller.marshal(mc.getAnalysisProtocolCollection(), writer);
-            writer.write("\n");
+            if (mc.getAnalysisCollection() != null) {
+                marshaller.marshal(mc.getAnalysisCollection(), writer);
+                writer.write("\n");
+            }
+
+            if (mc.getAnalysisProtocolCollection() != null) {
+                marshaller.marshal(mc.getAnalysisProtocolCollection(), writer);
+                writer.write("\n");
+            }
 
             writer.write(marshaller.createDataCollectionStartTag() + "\n");
-            marshaller.marshal(mc.getInputs(), writer);
-            writer.write("\n");
+            if (mc.getInputs() != null) {
+                marshaller.marshal(mc.getInputs(), writer);
+                writer.write("\n");
+            }
 
             writer.write(marshaller.createAnalysisDataStartTag() + "\n");
 
-            marshaller.marshal(mc.getSpectrumIdentificationList(), writer);
+            if (mc.getSpectrumIdentificationList() != null) {
+                marshaller.marshal(mc.getSpectrumIdentificationList(), writer);
+                writer.write("\n");
+            }
 
-            marshaller.marshal(mc.getProteinDetectionList(), writer);
+            if (mc.getProteinDetectionList() != null) {
+                marshaller.marshal(mc.getProteinDetectionList(), writer);
+                writer.write("\n");
+            }
 
             writer.write(marshaller.createAnalysisDataClosingTag() + "\n");
 
             writer.write(marshaller.createDataCollectionClosingTag() + "\n");
 
             writer.write(marshaller.createMzIdentMLClosingTag());
+            
+            writer.close();
 
         } catch (IOException ex) {
             String methodName = Thread.currentThread()

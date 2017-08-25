@@ -44,7 +44,7 @@ public interface MzidContainer {
 
     public AnalysisCollection getAnalysisCollection();
 
-    public AnalysisData getAnalysisData();
+    //public AnalysisData getAnalysisData();
 
     public AnalysisProtocolCollection getAnalysisProtocolCollection();
 
@@ -58,7 +58,7 @@ public interface MzidContainer {
 
     public CvList getCvList();
 
-    public DataCollection getDataCollection();
+    //public DataCollection getDataCollection();
 
     public Inputs getInputs();
 

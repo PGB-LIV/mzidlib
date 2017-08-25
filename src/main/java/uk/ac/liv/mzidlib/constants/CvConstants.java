@@ -101,4 +101,23 @@ public class CvConstants {
                                                                  "PSM-level FDRScore",
                                                                  PSI_CV);
 
+    public static final CvParam XTANDEM
+            = makeCvParam("MS:1001476", "X\\!Tandem", PSI_CV);
+    public static final CvParam MS_MS_SEARCH = makeCvParam("MS:1001083",
+                                                           "ms-ms search",
+                                                           PSI_CV);
+    public static final CvParam PARENT_MASS_TYPE_MONO
+            = makeCvParam("MS:1001211", "parent mass type mono", PSI_CV);
+    public static final CvParam PARENT_MASS_TYPE_AVERAGE = makeCvParam(
+            "MS:1001212",
+            "parent mass type average",
+            PSI_CV);
+    public static final CvParam FRAGMENT_MASS_TYPE_MONO = makeCvParam(
+            "MS:1001256",
+            "fragment mass type mono",
+            PSI_CV);
+    public static final CvParam FRAGMENT_MASS_TYPE_AVERAGE = makeCvParam(
+            "MS:1001255",
+            "fragment mass type average",
+            PSI_CV);
 }
