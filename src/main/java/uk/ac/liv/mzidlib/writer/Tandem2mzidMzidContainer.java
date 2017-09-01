@@ -99,6 +99,7 @@ import uk.ac.liv.mzidlib.util.Utils;
 import uk.ac.liv.unimod.ModT;
 
 /**
+ * Tandem2mzidMzidContainer.
  *
  * @author Da Qi
  * @institute University of Liverpool
@@ -236,6 +237,17 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
 
         createSpectrumIdentificationListAndSequenceCollection();
 
+    }
+
+    public Tandem2mzidMzidContainer(String input, String dbFileFormatId,
+                                    String msFileFormatId,
+                                    Boolean isMs2SpecIdStartingAtZero,
+                                    String decoyRegex,
+                                    String proteinCodeRegex,
+                                    MzIdentMLVersion ver)
+            throws SAXException, ParserConfigurationException, IOException {
+        this(input, dbFileFormatId, msFileFormatId, isMs2SpecIdStartingAtZero,
+             decoyRegex, proteinCodeRegex, true, ver);
     }
 
     @Override
@@ -694,7 +706,7 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
                     //domain item is just what we call in mzIdentML a 
                     //new PeptideEvidence (i.e. the same Peptide item found in
                     //another part of the protein sequence or even in another protein).
-                    String siiKey = getSIIKey(domain, this.xfile);
+                    String siiKey = getSiiKey(domain, this.xfile);
                     if (isNewSii(siiKey, siiMap)) {
                         /*
                          ****************************************************
@@ -895,19 +907,19 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
         return siiMap.get(siiKey) == null;
     }
 
-    private String getPeptideKey(Domain domain, XTandemFile iXtandemFile) {
+    private String getPeptideKey(Domain domain, XTandemFile ixtandemFile) {
         //is really the same as in getSIIKey, but the context of both maps is 
         //different (peptide map is global and siimap is local within 
         //a SepctrumIdentificationResult ):
-        return getSIIKey(domain, iXtandemFile);
+        return getSiiKey(domain, ixtandemFile);
     }
 
-    private String getSIIKey(Domain domain, XTandemFile iXtandemFile) {
+    private String getSiiKey(Domain domain, XTandemFile ixtandemFile) {
         List<de.proteinms.xtandemparser.interfaces.Modification> fixModList
-                = iXtandemFile.getModificationMap().getFixedModifications(
+                = ixtandemFile.getModificationMap().getFixedModifications(
                         domain.getDomainKey());
         List<de.proteinms.xtandemparser.interfaces.Modification> varModList
-                = iXtandemFile.getModificationMap().getVariableModifications(
+                = ixtandemFile.getModificationMap().getVariableModifications(
                         domain.getDomainKey());
 
         StringBuilder fixMods = new StringBuilder();
@@ -942,14 +954,14 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
 
     private void parseModificationsAndSubstitutions(Peptide mzidPep,
                                                     Domain domain,
-                                                    XTandemFile iXtandemFile,
+                                                    XTandemFile ixtandemFile,
                                                     boolean fragmentIsMono) {
         //Parse the modifications
         List<de.proteinms.xtandemparser.interfaces.Modification> fixModList
-                = iXtandemFile.getModificationMap().getFixedModifications(
+                = ixtandemFile.getModificationMap().getFixedModifications(
                         domain.getDomainKey());
         List<de.proteinms.xtandemparser.interfaces.Modification> varModList
-                = iXtandemFile.getModificationMap().getVariableModifications(
+                = ixtandemFile.getModificationMap().getVariableModifications(
                         domain.getDomainKey());
 
         fixModList.stream()
@@ -990,7 +1002,7 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
 
     private void parseFragmentationData(List<IonType> ionTypeList, Domain domain,
                                         de.proteinms.xtandemparser.xtandem.Peptide peptide,
-                                        XTandemFile iXtandemFile,
+                                        XTandemFile ixtandemFile,
                                         Measure mzMeasure, Measure intMeasure,
                                         Measure errorMeasure) {
         // Get the fragment ions
@@ -1015,8 +1027,8 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
                         + "in X!Tandem file (X!Tandem SLEDGEHAMMER (2013.09.01) and previous) . ");
                 //TODO add real logger option
                 @SuppressWarnings("unchecked")
-                List<FragmentIon[]> ionsForPeptide = iXtandemFile
-                        .getFragmentIonsForPeptide(peptide, domain, iXtandemFile
+                List<FragmentIon[]> ionsForPeptide = ixtandemFile
+                        .getFragmentIonsForPeptide(peptide, domain, ixtandemFile
                                                    .getInputParameters()
                                                    .getSpectrumMonoIsoMassError());
                 //TODO improvement for item above: a good trade-off would be that the X!Tandem 
@@ -1185,8 +1197,8 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
     private String[] parseProteinDetails(Map<String, DBSequence> foundProts,
                                          Domain domain,
                                          de.proteinms.xtandemparser.xtandem.Peptide peptide,
-                                         XTandemFile iXtandemFile) {
-        Protein protein = iXtandemFile.getProteinMap().getProtein(domain
+                                         XTandemFile ixtandemFile) {
+        Protein protein = ixtandemFile.getProteinMap().getProtein(domain
                 .getProteinKey());
 
         String protAccession = "";

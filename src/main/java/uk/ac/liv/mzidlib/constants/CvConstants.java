@@ -120,4 +120,12 @@ public class CvConstants {
             "MS:1001255",
             "fragment mass type average",
             PSI_CV);
+
+    public static final CvParam FASTA_FORMAT = makeCvParam("MS:1001348",
+                                                           "FASTA format",
+                                                           PSI_CV);
+
+    public static final CvParam MASCOT_MGF_FORMAT = makeCvParam("MS:1001062",
+                                                                "Mascot MGF format",
+                                                                PSI_CV);
 }

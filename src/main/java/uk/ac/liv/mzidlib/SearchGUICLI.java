@@ -1,3 +1,4 @@
+
 package uk.ac.liv.mzidlib;
 
 import java.io.BufferedReader;
@@ -12,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -40,7 +42,8 @@ public class SearchGUICLI {
             // make sure that the SearchGUI jar file is executable
             File searchGUIExecutable = new File(searchGUIPath);
             searchGUIExecutable.setExecutable(true);
-            out = new PrintWriter(new BufferedWriter(new FileWriter(debugFile, true)));
+            out = new PrintWriter(new BufferedWriter(new FileWriter(debugFile,
+                                                                    true)));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -53,7 +56,9 @@ public class SearchGUICLI {
      * @return the path to the jar file's parent folder
      */
     public String getSearchGUIPath() {
-        return new File(SearchGUICLI.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent() + File.separator + "searchgui";
+        return new File(SearchGUICLI.class.getProtectionDomain().getCodeSource()
+                .getLocation().getPath()).getParent() + File.separator
+                + "searchgui";
     }
 
     /**
@@ -68,9 +73,11 @@ public class SearchGUICLI {
             System.out.println("SearchGUI dir: " + dir);
 
             File[] matches = dir.listFiles(new FilenameFilter() {
+
                 public boolean accept(File dir, String name) {
                     return name.endsWith(".jar");
                 }
+
             });
             path = matches[0].getAbsolutePath();
 
@@ -84,14 +91,18 @@ public class SearchGUICLI {
      * Returns output file name from the decoy function
      *
      * @param in input fasta file
+     *
      * @return output file name from the decoy function
      */
     public String runDeocyCLI(String in) {
         String outputFileName = "";
         try {
-            System.out.println("Running SearchGUI decoy function using the following command:");
+            System.out.println(
+                    "Running SearchGUI decoy function using the following command:");
             //out.println("Running SearchGUI decoy function using the following command:");
-            String args[] = {"java", "-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.FastaCLI", "-in", in, "-decoy"};
+            String args[] = {"java", "-Djava.awt.headless=true", "-cp",
+                searchGUIPath, "eu.isas.searchgui.cmd.FastaCLI", "-in", in,
+                "-decoy"};
             for (int i = 0; i < args.length; i++) {
                 System.out.print(args[i] + " ");
                 out.print(args[i] + " ");
@@ -131,11 +142,16 @@ public class SearchGUICLI {
         return outputFileName;
     }
 
-    void runParameterFileCLI(String decoyFasta, String outputParameterFile, String paramters) {
+    void runParameterFileCLI(String decoyFasta, String outputParameterFile,
+                             String paramters) {
         try {
-            System.out.println("Running SearchGUI ParameterFileCLI function using the following command:");
+            System.out.println(
+                    "Running SearchGUI ParameterFileCLI function using the following command:");
             //out.println("Running SearchGUI ParameterFileCLI function using the following command:");
-            String javaCLI[] = {"java", "-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.IdentificationParametersCLI", "-db", decoyFasta, "-out", outputParameterFile};
+            String javaCLI[] = {"java", "-Djava.awt.headless=true", "-cp",
+                searchGUIPath,
+                "eu.isas.searchgui.cmd.IdentificationParametersCLI", "-db",
+                decoyFasta, "-out", outputParameterFile};
 
             BufferedReader br1 = new BufferedReader(new FileReader(paramters));
             String everything = "";
@@ -154,13 +170,15 @@ public class SearchGUICLI {
             }
             System.out.println("Search parameters are: " + everything);
             List<String> list = new ArrayList<>();
-            Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(everything);
+            Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(
+                    everything);
             while (m.find()) {
                 list.add(m.group(1)); // Add .replace("\"", "") to remove surrounding quotes.
             }
 
             System.out.println(list);
-            String[] args = (String[]) ArrayUtils.addAll(javaCLI, list.toArray());
+            String[] args = (String[]) ArrayUtils
+                    .addAll(javaCLI, list.toArray());
             for (int i = 0; i < args.length; i++) {
                 System.out.print(args[i] + " ");
                 //out.print(args[i] + " ");
@@ -195,12 +213,16 @@ public class SearchGUICLI {
 
     }
 
-    void runSearchGUICLI(String[] searchParamters) {
+    public void runSearchGUICLI(String[] searchParamters) {
         try {
-            System.out.println("Running SearchGUI search function using the following command:");
-            out.println("Running SearchGUI search function using the following command:");
-            String javaCLI[] = {"java", "-Djava.awt.headless=true", "-cp", searchGUIPath, "eu.isas.searchgui.cmd.SearchCLI"};
-            String[] args = (String[]) ArrayUtils.addAll(javaCLI, searchParamters);
+            System.out.println(
+                    "Running SearchGUI search function using the following command:");
+            out.println(
+                    "Running SearchGUI search function using the following command:");
+            String javaCLI[] = {"java", "-Djava.awt.headless=true", "-cp",
+                searchGUIPath, "eu.isas.searchgui.cmd.SearchCLI"};
+            String[] args = (String[]) ArrayUtils.addAll(javaCLI,
+                                                         searchParamters);
 
             for (int i = 0; i < args.length; i++) {
                 System.out.print(args[i] + " ");
@@ -213,26 +235,23 @@ public class SearchGUICLI {
             pb.redirectErrorStream(true);
             final Process process = pb.start();
             InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String line;
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
-                out.println(line);
-            }
-            try {
-                process.waitFor();
+            InputStreamReader isr = new InputStreamReader(is,
+                                                          StandardCharsets.UTF_8);
+            try (BufferedReader br = new BufferedReader(isr)) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    System.out.println(line);
+                    out.println(line);
+                }
+                try {
+                    process.waitFor();
 
-            } catch (InterruptedException ex) {
-                if (process != null) {
+                } catch (InterruptedException ex) {
                     process.destroy();
                     is.close();
-
                 }
 
-                ex.printStackTrace();
             }
-
             System.out.println("SearchGUI search function finished.");
             out.println("SearchGUI search function finished.");
             out.close();
