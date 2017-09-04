@@ -620,7 +620,7 @@ public class FalseDiscoveryRate {
             analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             Param param = new Param();
-            Cv psiCV = mzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+            Cv psiCV = mzidLibUtils.getpsiCv(mzIdentMLUnmarshaller);
             param.setParam(mzidLibUtils.makeCvParam("MS:1002237", "mzidLib", psiCV));
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
@@ -719,7 +719,7 @@ public class FalseDiscoveryRate {
                     String sii_temp = sii_stringMap.get(sii.getId());
                     if (sii_temp != null) {
                         String[] sii_arr = sii_temp.split(":");
-                        Cv cv = mzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+                        Cv cv = mzidLibUtils.getpsiCv(mzIdentMLUnmarshaller);
 
                         cvParamestimated_simpleFDR.setAccession("MS:1002351");
                         cvParamestimated_simpleFDR.setName("PSM-level local FDR");

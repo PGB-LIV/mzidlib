@@ -54,51 +54,53 @@ public class FalseDiscoveryRateGlobalTest {
 
     public FalseDiscoveryRateGlobalTest() {
 
-        File testFile = FileUtils.getFile("src","test","data","Adult_Adrenalgland_Gel_Velos_2_f26.t_tandem.mzid");
-        
-        
-                
+        File testFile = FileUtils.getFile("src", "test", "data",
+                                          "Adult_Adrenalgland_Gel_Velos_2_f26.t_tandem.mzid");
+
         fdrPSMSeq
                 = new FalseDiscoveryRateGlobal(testFile.getAbsolutePath(),
                                                "0.01", "REVERSED",
                                                CvConstants.XTANDEM_EXPECT.
                                                getAccession(), true, "PSM",
-        
-                        "PAG", "1.2");
+                                               "PAG", "1.2");
         final long startFdrPSMSeq = System.currentTimeMillis();
-        
+
         fdrPSMSeq.computeFDRusingJonesMethod();
-        
+
         final long endFdrPSMSeq = System.currentTimeMillis();
-        
+
         fdrPSMPar
                 = new FalseDiscoveryRateGlobal(testFile.getAbsolutePath(),
                                                "0.01", "REVERSED",
                                                CvConstants.XTANDEM_EXPECT.
                                                getAccession(), true, "PSM",
-        
-                        "PAG", "1.2");
-        
+                                               "PAG", "1.2");
+
         final long startFdrPSMPar = System.currentTimeMillis();
-        
+
         fdrPSMPar.computeFDRusingJonesMethodPar();
-        
+
         final long endFdrPSMPar = System.currentTimeMillis();
-        
-        System.out.println("FalseDiscoveryRateGlobal.computeFDRusingJonesMethod() takes " + (endFdrPSMSeq - startFdrPSMSeq) + " Millis.\n");
-        
-        System.out.println("FalseDiscoveryRateGlobal.computeFDRusingJonesMethodPar() takes " + (endFdrPSMPar - startFdrPSMPar) + " Millis.\n");
-        
-        System.out.println("Speedup is: " + (double) (endFdrPSMSeq - startFdrPSMSeq) / (double) (endFdrPSMPar - startFdrPSMPar) + ".\n");
-        
-        
+
+        System.out.println(
+                "FalseDiscoveryRateGlobal.computeFDRusingJonesMethod() takes "
+                + (endFdrPSMSeq - startFdrPSMSeq) + " Millis.\n");
+
+        System.out.println(
+                "FalseDiscoveryRateGlobal.computeFDRusingJonesMethodPar() takes "
+                + (endFdrPSMPar - startFdrPSMPar) + " Millis.\n");
+
+        System.out.println("Speedup is: " + (double) (endFdrPSMSeq
+                - startFdrPSMSeq) / (double) (endFdrPSMPar - startFdrPSMPar)
+                + ".\n");
+
         fdrPep
                 = new FalseDiscoveryRateGlobal(testFile.getAbsolutePath(),
                                                "0.01", "REVERSED",
                                                CvConstants.XTANDEM_EXPECT.
                                                getAccession(), true, "Peptide",
                                                "PAG", "1.2");
-        
+
         fdrPep.computeFDRusingJonesMethod();
     }
 
@@ -199,7 +201,7 @@ public class FalseDiscoveryRateGlobalTest {
                 assertEquals("Doesn't contain all peptide level score:", num, 3);
             }
         }
-        
+
         System.out.println("Test PSM level");
         File tempPSMFile = File.createTempFile("fdr-psm-test", ".mzid");
         tempPSMFile.deleteOnExit();
@@ -232,8 +234,9 @@ public class FalseDiscoveryRateGlobalTest {
 
                 assertEquals(sir.getCvParam().size(), 1);
                 CvParam cvp = sir.getCvParam().get(0);
-                assertEquals(cvp.getValue(), "Adult_Adrenalgland_Gel_Velos_2_f26.499.499.1 RTINSECONDS=835.9027");
-                
+                assertEquals(cvp.getValue(),
+                             "Adult_Adrenalgland_Gel_Velos_2_f26.499.499.1 RTINSECONDS=835.9027");
+
                 // test PeptideEvidenceRef
                 assertEquals(sii.getPeptideEvidenceRef().size(), 2);
                 assertEquals(sii.getPeptideEvidenceRef().get(0).

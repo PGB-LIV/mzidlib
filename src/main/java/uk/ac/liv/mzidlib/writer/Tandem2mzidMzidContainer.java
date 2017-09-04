@@ -448,14 +448,14 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
                       boolean outFragmentation,
                       MzIdentMLVersion ver)
             throws IOException {
-        // decoyRegularExpression
+        //decoyRegularExpression
         if (decoyRegex != null && !decoyRegex.trim().isEmpty()) {
             this.decoyRegularExpression = decoyRegex;
         } else {
             this.decoyRegularExpression = null;
         }
 
-        // proteinCodeRegexPattern
+        //proteinCodeRegexPattern
         if (proteinCodeRegex != null && !proteinCodeRegex.trim().isEmpty()) {
             //this regex should ensure the protein code is parsed from the longer 
             //string that X!Tandem is currently making of this. 
@@ -471,14 +471,14 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
             this.proteinCodeRegexPattern = null;
         }
 
-        // outputFragementation
+        //outputFragementation
         this.outputFragmentation = outFragmentation;
 
         this.tandemParams = xfile.getPerformParameters();
         this.tandemVersion = tandemParams.getProcVersion();
         this.dbName = tandemParams.getSequenceSourceDescription_1();
         this.dbLocation = tandemParams.getSequenceSource_1();
-        // databaseFileFormatId
+        //databaseFileFormatId
         if (dbFileFormatId != null) {
             this.databaseFileFormatId = dbFileFormatId;
             this.databaseFileFormatName = getCvName(databaseFileFormatId);
@@ -488,7 +488,7 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
             this.databaseFileFormatName = cvIdAndName[1];
         }
 
-        // massSpecFileFormatId
+        //massSpecFileFormatId
         if (msFileFormatId != null) {
             this.massSpecFileFormatId = msFileFormatId;
             this.massSpecFileFormatName = getCvName(massSpecFileFormatId);
@@ -511,7 +511,7 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
             this.massSpecFileFormatName = cvIdAndName[1];
         }
 
-        // isMs2SpectrumIdStartingAtZero
+        //isMs2SpectrumIdStartingAtZero
         if (isMs2SpecIdStartingAtZero == null) {
             //if file format is mzML (MS:1000584), then spectrum starts at 0, 
             //otherwise it starts at 1
@@ -521,18 +521,18 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
             this.isMs2SpectrumIdStartingAtZero = isMs2SpecIdStartingAtZero;
         }
 
-        // MzIdentMLVersion
+        //MzIdentMLVersion
         if (null == ver) {
             this.version = MzIdentMLVersion.Version_1_1;
         } else {
             this.version = ver;
         }
 
-        // docOwner
+        //docOwner
         docOwner = createDocOwner("firstName", "secondName", "address");
 
-        // analysisSoftwareXtandem
-        analysisSoftwareXtandem = createAnalysisSoftware("xtandem",
+        //analysisSoftwareXtandem
+        analysisSoftwareXtandem = MzidLibUtils.createAnalysisSoftware("xtandem",
                                                          ANALYSIS_SOFT_ID,
                                                          CvConstants.XTANDEM,
                                                          this.tandemVersion);
@@ -550,19 +550,6 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
                                                          address));
 
         return person;
-    }
-
-    private AnalysisSoftware createAnalysisSoftware(String name, String id,
-                                                    CvParam cp,
-                                                    String softVersion) {
-        AnalysisSoftware analysisSoftware = new AnalysisSoftware();
-        analysisSoftware.setName(name);
-        analysisSoftware.setId(id);
-        Param tempParam = new Param();
-        tempParam.setParam(cp);
-        analysisSoftware.setSoftwareName(tempParam);
-        analysisSoftware.setVersion(softVersion);
-        return analysisSoftware;
     }
 
     private boolean isMonoFragment(InputParams inputParams) {
@@ -1060,7 +1047,7 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
                                         IonType ion = new IonType();
                                         ion.setCharge(entryCharge.getKey());
                                         ion.setCvParam(MzidLibUtils
-                                                .getFragmentCVParam(entryType
+                                                .getFragmentCvParam(entryType
                                                         .getKey()));
                                         List<Integer> ionIndexList = ion
                                                 .getIndex();

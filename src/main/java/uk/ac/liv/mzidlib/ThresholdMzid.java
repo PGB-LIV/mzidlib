@@ -204,7 +204,7 @@ public class ThresholdMzid {
                     + dateFormat.format(date));
             Param param = new Param();
 
-            psiCV = MzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+            psiCV = MzidLibUtils.getpsiCv(mzIdentMLUnmarshaller);
             param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib",
                                                     psiCV));
             analysisSoftware.setSoftwareName(param);

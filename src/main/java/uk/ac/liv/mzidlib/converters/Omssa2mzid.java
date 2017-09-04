@@ -1018,7 +1018,7 @@ public class Omssa2mzid {
         localCvList.add(unitCV);
     }
 
-    public void handleAnalysisSoftware(String version) {
+    public void handleAnalysisSoftware(String softVersion) {
         analysisSoftwareList = new AnalysisSoftwareList();
         List<AnalysisSoftware> analysisSoftwares = analysisSoftwareList.
                 getAnalysisSoftware();
@@ -1030,7 +1030,7 @@ public class Omssa2mzid {
                 makeCvParam("MS:1001475", "OMSSA", psiCV));
         analysisSoftware.setSoftwareName(tempParam);
         analysisSoftware.setId(analysisSoftID);
-        analysisSoftware.setVersion(version);
+        analysisSoftware.setVersion(softVersion);
 
         /*
          * TO DO - need to work out how to use Param CvParam cvParam = new

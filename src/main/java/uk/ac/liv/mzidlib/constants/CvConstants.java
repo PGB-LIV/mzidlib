@@ -78,6 +78,10 @@ public class CvConstants {
     public static final CvParam OMSSA_EVALUE = makeCvParam("MS:1001328",
                                                            "OMSSA:evalue",
                                                            PSI_CV);
+    public static final CvParam OMSSA_PVALUE = makeCvParam("MS:1001329",
+                                                           "OMSSA:pvalue",
+                                                           PSI_CV);
+
     public static final CvParam PROTEINPROSPECTOR_EXPECTATION_VALUE
             = makeCvParam("MS:1002045", "ProteinProspector:expectation value",
                           PSI_CV);
@@ -103,6 +107,9 @@ public class CvConstants {
 
     public static final CvParam XTANDEM
             = makeCvParam("MS:1001476", "X\\!Tandem", PSI_CV);
+    public static final CvParam OMSSA = makeCvParam("MS:1001475", "OMSSA",
+                                                    PSI_CV);
+
     public static final CvParam MS_MS_SEARCH = makeCvParam("MS:1001083",
                                                            "ms-ms search",
                                                            PSI_CV);

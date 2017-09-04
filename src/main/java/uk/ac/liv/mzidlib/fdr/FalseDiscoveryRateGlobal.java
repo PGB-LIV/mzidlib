@@ -1,8 +1,6 @@
 
 package uk.ac.liv.mzidlib.fdr;
 
-import static uk.ac.liv.mzidlib.constants.CvConstants.*;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -60,12 +58,12 @@ public class FalseDiscoveryRateGlobal {
     private String decoy;
 
     //TODO: Make this as an array of possible values than a long string
-    private String allowedEvalues = XTANDEM_EXPECT.getAccession() + ";"
-            + MASCOT_EXPECTATION_VALUE.getAccession() + ";"
-            + SEQUEST_EXPECTATION_VALUE.getAccession() + ";"
-            + OMSSA_EVALUE.getAccession() + ";"
-            + PROTEINPROSPECTOR_EXPECTATION_VALUE.getAccession() + ";"
-            + MSGF_EVALUE.getAccession();
+    private String allowedEvalues = CvConstants.XTANDEM_EXPECT.getAccession() + ";"
+            + CvConstants.MASCOT_EXPECTATION_VALUE.getAccession() + ";"
+            + CvConstants.SEQUEST_EXPECTATION_VALUE.getAccession() + ";"
+            + CvConstants.OMSSA_EVALUE.getAccession() + ";"
+            + CvConstants.PROTEINPROSPECTOR_EXPECTATION_VALUE.getAccession() + ";"
+            + CvConstants.MSGF_EVALUE.getAccession();
     private boolean betterScoresAreLower = true;
 
     /*
@@ -375,7 +373,7 @@ public class FalseDiscoveryRateGlobal {
             analysisSoftware.setId(this.getClass().getSimpleName() + "_"
                     + dateFormat.format(date));
             Param param = new Param();
-            Cv psiCV = MzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+            Cv psiCV = MzidLibUtils.getpsiCv(mzIdentMLUnmarshaller);
             param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib",
                                                     psiCV));
             analysisSoftware.setSoftwareName(param);
@@ -553,7 +551,7 @@ public class FalseDiscoveryRateGlobal {
                         CvParam cvParamestimated_qvalue = new CvParam();
                         CvParam cvParamfdrscore = new CvParam();
                         String[] sii_arr = sortedValue.split(":");
-                        Cv cv = MzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+                        Cv cv = MzidLibUtils.getpsiCv(mzIdentMLUnmarshaller);
 
                         cvParamestimated_simpleFDR.setAccession("MS:1002351");
                         cvParamestimated_simpleFDR.
@@ -596,7 +594,7 @@ public class FalseDiscoveryRateGlobal {
                         CvParam cvParamestimated_qvalue = new CvParam();
                         CvParam cvParamfdrscore = new CvParam();
                         String[] sii_arr = sortedValue.split(":");
-                        Cv cv = MzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+                        Cv cv = MzidLibUtils.getpsiCv(mzIdentMLUnmarshaller);
 
                         cvParamestimated_simpleFDR.setAccession("MS:1002359");
                         cvParamestimated_simpleFDR.setName(
@@ -677,7 +675,7 @@ public class FalseDiscoveryRateGlobal {
                                         = new CvParam();
                                 CvParam cvParamestimated_qvalue = new CvParam();
                                 String[] sii_arr = sortedValue.split(":");
-                                Cv cv = MzidLibUtils.getpsiCV(
+                                Cv cv = MzidLibUtils.getpsiCv(
                                         mzIdentMLUnmarshaller);
                                 cvParamestimated_simpleFDR.setAccession(
                                         "MS:1002370");

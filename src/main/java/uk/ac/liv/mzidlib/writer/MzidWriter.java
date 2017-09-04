@@ -81,7 +81,8 @@ public class MzidWriter {
             }
 
             if (mc.getAnalysisSampleCollection() != null) {
-                marshaller.marshal(mc.getAnalysisSampleCollection(), writer);     //TODO - complete this part
+                //TODO - complete this part
+                marshaller.marshal(mc.getAnalysisSampleCollection(), writer);
                 writer.write("\n");
             }
 
@@ -123,7 +124,7 @@ public class MzidWriter {
             writer.write(marshaller.createDataCollectionClosingTag() + "\n");
 
             writer.write(marshaller.createMzIdentMLClosingTag());
-            
+
             writer.close();
 
         } catch (IOException ex) {

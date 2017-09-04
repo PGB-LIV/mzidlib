@@ -7,9 +7,11 @@ import java.util.List;
 import de.proteinms.xtandemparser.xtandem.Domain;
 import de.proteinms.xtandemparser.xtandem.FragmentIon;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
+import uk.ac.ebi.jmzidml.model.mzidml.AnalysisSoftware;
 import uk.ac.ebi.jmzidml.model.mzidml.Cv;
 import uk.ac.ebi.jmzidml.model.mzidml.CvParam;
 import uk.ac.ebi.jmzidml.model.mzidml.Modification;
+import uk.ac.ebi.jmzidml.model.mzidml.Param;
 import uk.ac.ebi.jmzidml.model.mzidml.SubstitutionModification;
 import uk.ac.ebi.jmzidml.model.mzidml.UserParam;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
@@ -18,11 +20,21 @@ import uk.ac.liv.mzidlib.converters.ReadUnimod;
 import uk.ac.liv.unimod.ModT;
 
 /**
+ * MzidLibUtils.
  *
  * @author jonesar
  */
 public class MzidLibUtils {
 
+    /**
+     * Helper method to create a CvParam.
+     *
+     * @param accession accession of the CvParam
+     * @param name      name of the CvParam
+     * @param cv        Cv term of the CvParam
+     *
+     * @return CvParam
+     */
     public static CvParam makeCvParam(String accession, String name, Cv cv) {
         CvParam cvParam = new CvParam();
         cvParam.setAccession(accession);
@@ -31,25 +43,54 @@ public class MzidLibUtils {
         return cvParam;
     }
 
+    /**
+     * Helper method to create a CvParam.
+     *
+     * @param accession accession of the CvParam
+     * @param name      name of the CvParam
+     * @param cv        Cv term of the CvParam
+     * @param value     value of the CvParam
+     *
+     * @return CvParam
+     */
     public static CvParam makeCvParam(String accession, String name, Cv cv,
                                       String value) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
+        CvParam cvParam = makeCvParam(accession, name, cv);
         cvParam.setValue(value);
         return cvParam;
     }
 
-    public static Cv makeCv(String id, String uri, String name, String version) {
-        Cv retCv = new Cv();
-        retCv.setId(id);
-        retCv.setFullName(name);
-        retCv.setUri(uri);
-        retCv.setVersion(version);
-        return retCv;
+    /**
+     * Helper method to create a CvParam.
+     *
+     * @param accession       accession of the CvParam
+     * @param name            name of the CvParam
+     * @param cv              Cv term of the CvParam
+     * @param unitAccession   unit accession of the CvParam
+     * @param unitName        unit name of the CvParam
+     * @param alternateUnitCv alternate unit Cv term of the CvParam
+     *
+     * @return CvParam
+     */
+    public static CvParam makeCvParam(String accession, String name, Cv cv,
+                                      String unitAccession, String unitName,
+                                      Cv alternateUnitCv) {
+        CvParam cvParam = makeCvParam(accession, name, cv);
+        cvParam.setUnitAccession(unitAccession);
+        cvParam.setUnitCv(alternateUnitCv);
+        cvParam.setUnitName(unitName);
+        return cvParam;
     }
 
+    /**
+     * Helper method to create a Cv term.
+     *
+     * @param id   id of the Cv term
+     * @param uri  URI of the Cv term
+     * @param name name of the Cv term
+     *
+     * @return Cv term
+     */
     public static Cv makeCv(String id, String uri, String name) {
         Cv retCv = new Cv();
         retCv.setId(id);
@@ -58,19 +99,30 @@ public class MzidLibUtils {
         return retCv;
     }
 
-    public static CvParam makeCvParam(String accession, String name, Cv cv,
-                                      String unitAccession, String unitName,
-                                      Cv alternateUnitCv) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
-        cvParam.setUnitAccession(unitAccession);
-        cvParam.setUnitCv(alternateUnitCv);
-        cvParam.setUnitName(unitName);
-        return cvParam;
+    /**
+     * Helper method to create a Cv term.
+     *
+     * @param id      id of the Cv term
+     * @param uri     URI of the Cv term
+     * @param name    name of the Cv term
+     * @param version version of the Cv term
+     *
+     * @return Cv term
+     */
+    public static Cv makeCv(String id, String uri, String name, String version) {
+        Cv retCv = makeCv(id, uri, name);
+        retCv.setVersion(version);
+        return retCv;
     }
 
+    /**
+     * Helper method to create a userParam.
+     *
+     * @param name  name of the userParam
+     * @param value value of the userParam
+     *
+     * @return UserParam
+     */
     public static UserParam makeUserParam(String name, String value) {
         UserParam userParam = new UserParam();
         userParam.setName(name);
@@ -78,7 +130,14 @@ public class MzidLibUtils {
         return userParam;
     }
 
-    public static Cv getpsiCV(MzIdentMLUnmarshaller unmarshaller) {
+    /**
+     * Helper method to extract PSI Cv term from the mzid unmarshaller.
+     *
+     * @param unmarshaller mzid unmarshaller
+     *
+     * @return PSI Cv term
+     */
+    public static Cv getpsiCv(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 
         Iterator<Cv> iterCv = unmarshaller.unmarshalCollectionFromXpath(
@@ -93,7 +152,14 @@ public class MzidLibUtils {
         return cv1;
     }
 
-    public static Cv getUnimod(MzIdentMLUnmarshaller unmarshaller) {
+    /**
+     * Helper method to extract Unimod Cv term from the mzid unmarshaller.
+     *
+     * @param unmarshaller mzid unmarshaller
+     *
+     * @return Unimod Cv term
+     */
+    public static Cv getUnimodCv(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 
         Iterator<Cv> iterCv = unmarshaller.unmarshalCollectionFromXpath(
@@ -108,7 +174,13 @@ public class MzidLibUtils {
         return cv1;
     }
 
-    public static Cv getUnit(MzIdentMLUnmarshaller unmarshaller) {
+    /**
+     *
+     * @param unmarshaller
+     *
+     * @return
+     */
+    public static Cv getUnitCv(MzIdentMLUnmarshaller unmarshaller) {
         Cv cv1 = null;
 
         Iterator<Cv> iterCv = unmarshaller.unmarshalCollectionFromXpath(
@@ -123,18 +195,32 @@ public class MzidLibUtils {
         return cv1;
     }
 
-    public static int safeLongToInt(long l) {
-        if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException(l
+    /**
+     * Helper method to safely cast Long to Integer.
+     *
+     * @param lint input long
+     *
+     * @return integer
+     */
+    public static int safeLongToInt(long lint) {
+        if (lint < Integer.MIN_VALUE || lint > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException(lint
                     + " cannot be cast to int without changing its value.");
         }
-        return (int) l;
+        return (int) lint;
     }
 
+    /**
+     *
+     * @param isDaltonUnit
+     *
+     * @return
+     */
     public static CvParam getCvParamWithMassUnits(boolean isDaltonUnit) {
         CvParam cvParam = new CvParam();
 
-        //<cvParam accession="MS:1001413" name="search tolerance minus value" value="0.5" cvRef="PSI-MS" unitAccession="UO:0000221" unitName="dalton" unitCvRef="UO" />
+        //<cvParam accession="MS:1001413" name="search tolerance minus value" value="0.5" 
+        //cvRef="PSI-MS" unitAccession="UO:0000221" unitName="dalton" unitCvRef="UO" />
         cvParam.setCv(CvConstants.PSI_CV);
         cvParam.setUnitCv(CvConstants.UNIT_CV);
 
@@ -148,10 +234,19 @@ public class MzidLibUtils {
         return cvParam;
     }
 
+    /**
+     *
+     * @param reportedMod
+     * @param domain
+     * @param fragmentIsMono
+     * @param unimodMassError
+     *
+     * @return
+     */
     public static Modification translateToMzidModification(
             de.proteinms.xtandemparser.interfaces.Modification reportedMod,
             Domain domain, boolean fragmentIsMono, double unimodMassError) {
-        ReadUnimod unimodDoc = new ReadUnimod();
+
         Modification mzidMod = new Modification();
         double mass = reportedMod.getMass();
         int loc = Integer.parseInt(reportedMod.getLocation());
@@ -164,25 +259,29 @@ public class MzidLibUtils {
             mzidMod.setAvgMassDelta(mass);
         }
 
-        int pepLoc = loc - domain.getDomainStart(); //location in Tandem is given as location within the whole protein
+        //location in Tandem is given as location within the whole protein
+        int pepLoc = loc - domain.getDomainStart();
         char reportedAminoAcid = domain.getDomainSequence().charAt(pepLoc);
-        mzidMod.setLocation(pepLoc + 1);        //mzid starts counting from 1, except for NTerm/CTerm mods which are 0 
+
+        //mzid starts counting from 1, except for NTerm/CTerm mods which are 0 
+        mzidMod.setLocation(pepLoc + 1);
         List<String> residueList = mzidMod.getResidues();
         residueList.add("" + reportedAminoAcid);
 
-        //check if we can find a known modification type that matches what is reported in the given mass and aminoAcid, within
-        //a given mass error tolerance: 
+        ReadUnimod unimodDoc = new ReadUnimod();
+        //check if we can find a known modification type that matches what is reported 
+        //in the given mass and aminoAcid, within a given mass error tolerance: 
         ModT unimod = unimodDoc.getModByMass(mass, unimodMassError,
                                              fragmentIsMono, reportedAminoAcid);
 
         //Part below is needed because it is not clear in XTandem output what are N or C-term mods, 
         //these have the same location as mods on the first aa or last aa in the peptide.
-        //So if no unimod was found above, perhaps this is because it is really a N or C-term modification. 
+        //So if no unimod was found above, perhaps this is because it is really a N or 
+        //C-term modification. 
         //Below we try to see if it fits a known N or C-term modification:
         if (unimod == null && pepLoc == 0) {
             //See if this is a possible N-terminal mod
 
-            //System.out.println("\tModification not found in Unimod, so look to see if it is N-terminal\n");            
             unimod = unimodDoc.getModByMass(mass, unimodMassError,
                                             fragmentIsMono, '[');
             mzidMod.setLocation(0);
@@ -195,7 +294,8 @@ public class MzidLibUtils {
             mzidMod.setLocation(0); //also 0?
         }
 
-        //Set the found details to modParam. If no unimod record was found, set the modification as "unknown" 
+        //Set the found details to modParam. If no unimod record was found, 
+        //set the modification as "unknown" 
         if (unimod != null) {
             modParam.setAccession("UNIMOD:" + unimod.getRecordId());
             modParam.setCv(CvConstants.UNIMOD_CV);
@@ -211,6 +311,14 @@ public class MzidLibUtils {
         return mzidMod;
     }
 
+    /**
+     *
+     * @param reportedMod
+     * @param domain
+     * @param fragmentIsMono
+     *
+     * @return
+     */
     public static SubstitutionModification translateToMzidSubstitution(
             de.proteinms.xtandemparser.interfaces.Modification reportedMod,
             Domain domain, boolean fragmentIsMono) {
@@ -218,7 +326,8 @@ public class MzidLibUtils {
 
         int loc = Integer.parseInt(reportedMod.getLocation());
 
-        int pepLoc = loc - domain.getDomainStart(); //location in Tandem is given as location within the whole protein
+        //location in Tandem is given as location within the whole protein
+        int pepLoc = loc - domain.getDomainStart();
         mzidSubs.setLocation(pepLoc + 1);
 
         //Note: in X!Tandem, like in mzIdentML: sequence reported is the original:
@@ -229,9 +338,9 @@ public class MzidLibUtils {
 
         //TODO - the current storing of the modification mass in either
         //setMonoisotopicMassDelta or setAvgMassDelta seems wrong as the massDelta is 
-        //a delta on the parent ion mass which is always monoisotopic in xtandem. On the other hand, 
-        //a modification has to have one or more matching fragments as well which all are 
-        //shifted by x, x being the modification mass.
+        //a delta on the parent ion mass which is always monoisotopic in xtandem. 
+        //On the other hand, a modification has to have one or more matching fragments 
+        //as well which all are shifted by x, x being the modification mass.
         //So check with X!Tandem developer whether the modification (and substitution) masses 
         //follow the fragment mass type or the parent mass type.
         double mass = reportedMod.getMass();
@@ -246,7 +355,13 @@ public class MzidLibUtils {
 
     }
 
-    public static CvParam getFragmentCVParam(int iontype) {
+    /**
+     *
+     * @param iontype
+     *
+     * @return CvParam
+     */
+    public static CvParam getFragmentCvParam(int iontype) {
 
         CvParam cvParam = new CvParam();
         cvParam.setCv(CvConstants.PSI_CV);
@@ -313,10 +428,35 @@ public class MzidLibUtils {
                 cvParam.setAccession("MS:1001521");
                 cvParam.setName("frag: precursor ion - H2O");
                 break;
+            default:
+                return null;
         }
 
         return cvParam;
 
+    }
+
+    /**
+     * Helper method to create AnalysisSoftware.
+     *
+     * @param name    name of the software
+     * @param id      id of the software
+     * @param cp      CvParam of the software
+     * @param version version of the software
+     *
+     * @return AnalysisSoftware
+     */
+    public static AnalysisSoftware createAnalysisSoftware(String name, String id,
+                                                          CvParam cp,
+                                                          String version) {
+        AnalysisSoftware analysisSoftware = new AnalysisSoftware();
+        analysisSoftware.setName(name);
+        analysisSoftware.setId(id);
+        Param tempParam = new Param();
+        tempParam.setParam(cp);
+        analysisSoftware.setSoftwareName(tempParam);
+        analysisSoftware.setVersion(version);
+        return analysisSoftware;
     }
 
 }
