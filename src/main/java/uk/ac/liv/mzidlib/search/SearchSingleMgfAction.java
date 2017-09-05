@@ -41,6 +41,7 @@ import uk.ac.liv.mzidlib.SearchGUICLI;
 import uk.ac.liv.mzidlib.constants.CvConstants;
 import uk.ac.liv.mzidlib.converters.Convert2MzidTask;
 import uk.ac.liv.mzidlib.util.Utils;
+import uk.ac.liv.mzidlib.writer.Omssa2mzidMzidContainer;
 import uk.ac.liv.mzidlib.writer.Tandem2mzidMzidContainer;
 
 /**
@@ -71,16 +72,21 @@ public class SearchSingleMgfAction extends RecursiveAction {
         String omssaFileName = "";
         String tandemFileName = "";
         String msgfFileName = "";
-        for (String fn : outputListFiles) {
-            if (fn.endsWith(".omx")) {
-                omssaFileName = newOutput + File.separator + fn;
-            } else if (fn.endsWith(".t.xml")) {
-                tandemFileName = newOutput + File.separator + fn;
-            } else if (fn.endsWith(".msgf.mzid")) {
-                msgfFileName = newOutput + File.separator + fn;
+
+        if (outputListFiles != null) {
+            for (String fn : outputListFiles) {
+                if (fn.endsWith(".omx")) {
+                    omssaFileName = newOutput + File.separator + fn;
+                } else if (fn.endsWith(".t.xml")) {
+                    tandemFileName = newOutput + File.separator + fn;
+                } else if (fn.endsWith(".msgf.mzid")) {
+                    msgfFileName = newOutput + File.separator + fn;
+                }
             }
         }
 
+        File tandemMzidFile;
+        File omssaMzidFile;
         try {
             if (!tandemFileName.isEmpty()) {
                 Tandem2mzidMzidContainer tandemContainer
@@ -95,14 +101,30 @@ public class SearchSingleMgfAction extends RecursiveAction {
                 String tandemOut = tandemFileName.substring(0, tandemFileName
                                                             .lastIndexOf("."))
                         + "_tandem.mzid";
-                Convert2MzidTask convertTandemTask = new Convert2MzidTask(
-                        tandemOut, tandemContainer);
+                Convert2MzidTask convertTandemTask = new Convert2MzidTask(tandemOut,
+                                                         tandemContainer);
                 convertTandemTask.fork();
+                tandemMzidFile = convertTandemTask.join();
             }
 
             if (!omssaFileName.isEmpty()) {
-
+                Omssa2mzidMzidContainer omssaContainer
+                        = new Omssa2mzidMzidContainer(omssaFileName,
+                                                      Boolean.FALSE,
+                                                      "REVERSED",
+                                                      null,
+                                                      null,
+                                                      MzIdentMLVersion.Version_1_2);
+                String omssaOut = omssaFileName.substring(0, omssaFileName
+                                                          .lastIndexOf("."))
+                        + "_omssa.mzid";
+                Convert2MzidTask convertOmssaTask
+                        = new Convert2MzidTask(omssaOut, omssaContainer);
+                convertOmssaTask.fork();
+                omssaMzidFile = convertOmssaTask.join();
             }
+            
+            
         } catch (SAXException ex) {
             Logger.getLogger(SearchSingleMgfAction.class.getName())
                     .log(Level.SEVERE, null, ex);

@@ -28,15 +28,16 @@ import uk.ac.liv.mzidlib.writer.MzidContainer;
 import uk.ac.liv.mzidlib.writer.MzidWriter;
 
 /**
+ * Convert file to mzid task.
  *
  * @author Da Qi
  * @institute University of Liverpool
  * @time 01-Sep-2017 10:01:04
  */
-public class Convert2MzidTask extends RecursiveTask {
+public class Convert2MzidTask extends RecursiveTask<File> {
 
-    private String outputFileName;
-    private MzidContainer mzidContainer;
+    private final String outputFileName;
+    private final MzidContainer mzidContainer;
 
     public Convert2MzidTask(String out, MzidContainer mc) {
         this.outputFileName = out;
