@@ -143,7 +143,7 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
     private static final String SOURCE_FILE_ID = "SourceFile_1";
     private static final String SEARCH_DB_ID = "SearchDB_1";
     private static final String SPECTRA_DATA_ID = "SID_1";
-    private static final String SPECT_IDENT_ID = "SpectIdent_1";
+    private static final String SPEC_IDENT_ID = "SpectIdent_1";
     private static final String SI_LIST_ID = "SI_List_1";
     private static final String MEASURE_MZ_ID = "Measure_MZ";
     private static final String MEASURE_INT_ID = "Measure_Int";
@@ -254,7 +254,7 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
     public AnalysisCollection getAnalysisCollection() {
 
         SpectrumIdentification specIdent = new SpectrumIdentification();
-        specIdent.setId(SPECT_IDENT_ID);
+        specIdent.setId(SPEC_IDENT_ID);
         specIdent.setSpectrumIdentificationList(siList);
         specIdent.setSpectrumIdentificationProtocol(siProtocol);
         List<SearchDatabaseRef> searchDbRefList = specIdent

@@ -1,3 +1,4 @@
+
 package uk.ac.liv.mzidlib.converters;
 
 import java.io.InputStream;
@@ -31,7 +32,8 @@ public class ReadUnimod {
             //inside the .jar file which simplifies usage of the solution as no extra 
             //classpath or path configurations are needed to let the code below find
             //the unimod.xml file: 
-            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(inputUnimod);
+            InputStream stream = ClassLoader.getSystemClassLoader()
+                    .getResourceAsStream(inputUnimod);
             UnimodT unimod = unmarshal(UnimodT.class, stream);
 
             ModificationsT mods = unimod.getModifications();
@@ -39,39 +41,44 @@ public class ReadUnimod {
             modList = mods.getMod();
 
             /*
-             for (ModT mod : modList) {
-
-            
-             Long id = mod.getRecordId();
-             String modName  = mod.getTitle();
-
-             CompositionT comp = mod.getDelta();
-             double mass = comp.getMonoMass();
-
-
-             System.out.println(id + " " + modName + " " + mass);
-
-             }
+             * for (ModT mod : modList) {
+             *
+             *
+             * Long id = mod.getRecordId();
+             * String modName = mod.getTitle();
+             *
+             * CompositionT comp = mod.getDelta();
+             * double mass = comp.getMonoMass();
+             *
+             *
+             * System.out.println(id + " " + modName + " " + mass);
+             *
+             * }
              */
         } catch (JAXBException ex) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1]
+                    .getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + ex.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + ex
+                    .getMessage() + "."
                     + "\nPlease see the reference guide at 04 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
 
     }
 
-    public ModT getModByMass(double testMass, double massError, boolean isMono, char res) {
+    public ModT getModByMass(double testMass, double massError, boolean isMono,
+                             char res) {
 
-        List<String> residues = new ArrayList<String>();
+        List<String> residues = new ArrayList<>();
         residues.add("" + res);
         return getModByMass(testMass, massError, isMono, residues);
 
     }
 
-    public ModT getModByMass(double testMass, double massError, boolean isMono, List<String> residues) {
+    public ModT getModByMass(double testMass, double massError, boolean isMono,
+                             List<String> residues) {
 
         ModT foundMod = null;
         boolean isFound = false;
@@ -114,7 +121,8 @@ public class ReadUnimod {
                 }
             }
 
-            if (mass < testMass + massError && mass > testMass - massError && siteMatch) {
+            if (mass < testMass + massError && mass > testMass - massError
+                    && siteMatch) {
                 //Choose smallest mass difference
                 if (Math.abs(mass - testMass) < diffFound) {
                     //System.out.println("Error: Multiple mods found with same mass, choosi: " + testMass);
@@ -137,9 +145,9 @@ public class ReadUnimod {
             throws JAXBException {
         String packageName = docClass.getPackage().getName();
         JAXBContext jc = JAXBContext.newInstance(packageName);
-        Unmarshaller u = jc.createUnmarshaller();
+        Unmarshaller um = jc.createUnmarshaller();
         @SuppressWarnings("unchecked")
-        JAXBElement<T> doc = (JAXBElement<T>) u.unmarshal(inputStream);
+        JAXBElement<T> doc = (JAXBElement<T>) um.unmarshal(inputStream);
         return doc.getValue();
     }
 
