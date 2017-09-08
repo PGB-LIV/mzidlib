@@ -129,7 +129,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
     private String decoyRegularExpression;
     private AnalysisSoftware analysisSoftwareOmssa;
     private SequenceCollection sequenceCollection;
-    private SpectrumIdentificationList spectrumIdList;
+    private SpectrumIdentificationList spectrumIdentList;
     private SearchDatabase searchDatabase;
     private FragmentationTable fragmentationTable;
     private SpectraData spectraData;
@@ -142,7 +142,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
     private static final String SOURCE_FILE_ID = "SourceFile_1";
     private static final String SEARCH_DB_ID = "SearchDB_1";
     private static final String SPECTRA_DATA_ID = "SID_1";
-    private static final String SPEC_IDENT_ID = "SpectIdent_1";
+    private static final String SPEC_IDENT_ID = "SpecIdent_1";
     private static final String SI_LIST_ID = "SI_List_1";
     private static final String MEASURE_MZ_ID = "Measure_MZ";
     private static final String MEASURE_INT_ID = "Measure_Int";
@@ -291,7 +291,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
         SpectrumIdentification specIdent = new SpectrumIdentification();
         specIdent.setId(SPEC_IDENT_ID);
-        specIdent.setSpectrumIdentificationList(spectrumIdList);
+        specIdent.setSpectrumIdentificationList(spectrumIdentList);
         specIdent.setSpectrumIdentificationProtocol(
                 this.spectrumIdentificationProtocol);
         List<SearchDatabaseRef> searchDbRefList = specIdent
@@ -430,14 +430,14 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
     @Override
     public SpectrumIdentificationList getSpectrumIdentificationList() {
-        return this.spectrumIdList;
+        return this.spectrumIdentList;
     }
 
     private void init() {
 
         //analysisSoftwareXtandem
         this.analysisSoftwareOmssa = MzidLibUtils.createAnalysisSoftware(
-                "xtandem",
+                "OMSSA",
                 ANALYSIS_SOFT_ID,
                 CvConstants.OMSSA,
                 "");
@@ -1332,12 +1332,13 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
         pepEvidLookup = new HashMap<>();
         uniquePeps = new HashMap<>();
 
-        SpectrumIdentificationList siList = new SpectrumIdentificationList();
-        siList.setId(SI_LIST_ID);
+        spectrumIdentList = new SpectrumIdentificationList();
+        spectrumIdentList.setId(SI_LIST_ID);
 
-        siList.setFragmentationTable(this.fragmentationTable);
+        spectrumIdentList.setFragmentationTable(this.fragmentationTable);
 
-        List<SpectrumIdentificationResult> specIdentResults = siList
+        sequenceCollection = new SequenceCollection();
+        List<SpectrumIdentificationResult> specIdentResults = spectrumIdentList
                 .getSpectrumIdentificationResult();
         List<PeptideEvidence> peptideEvidenceList = sequenceCollection
                 .getPeptideEvidence();
