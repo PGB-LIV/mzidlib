@@ -47,58 +47,58 @@ import uk.ac.liv.mzidlib.constants.CvConstants;
  */
 public class FalseDiscoveryRateGlobalTest {
 
-    private final FalseDiscoveryRateGlobal fdrPSMSeq;
-    private final FalseDiscoveryRateGlobal fdrPSMPar;
+    private final FalseDiscoveryRateGlobal fdrPsmSeq;
+    private final FalseDiscoveryRateGlobal fdrPsmPar;
     private final FalseDiscoveryRateGlobal fdrPep;
-    private final double DIFF = 0.000001;
+    private final double diff = 0.000001;
 
     public FalseDiscoveryRateGlobalTest() {
 
         File testFile = FileUtils.getFile("src", "test", "data",
                                           "Adult_Adrenalgland_Gel_Velos_2_f26.t_tandem.mzid");
 
-        fdrPSMSeq
+        fdrPsmSeq
                 = new FalseDiscoveryRateGlobal(testFile.getAbsolutePath(),
                                                "0.01", "REVERSED",
-                                               CvConstants.XTANDEM_EXPECT.
-                                               getAccession(), true, "PSM",
+                                               CvConstants.XTANDEM_EXPECT
+                                               .getAccession(), true, "PSM",
                                                "PAG", "1.2");
-        final long startFdrPSMSeq = System.currentTimeMillis();
+        final long startFdrPsmSeq = System.currentTimeMillis();
 
-        fdrPSMSeq.computeFDRusingJonesMethod();
+        fdrPsmSeq.computeFDRusingJonesMethod();
 
-        final long endFdrPSMSeq = System.currentTimeMillis();
+        final long endFdrPsmSeq = System.currentTimeMillis();
 
-        fdrPSMPar
+        fdrPsmPar
                 = new FalseDiscoveryRateGlobal(testFile.getAbsolutePath(),
                                                "0.01", "REVERSED",
-                                               CvConstants.XTANDEM_EXPECT.
-                                               getAccession(), true, "PSM",
+                                               CvConstants.XTANDEM_EXPECT
+                                               .getAccession(), true, "PSM",
                                                "PAG", "1.2");
 
-        final long startFdrPSMPar = System.currentTimeMillis();
+        final long startFdrPsmPar = System.currentTimeMillis();
 
-        fdrPSMPar.computeFDRusingJonesMethodPar();
+        fdrPsmPar.computeFDRusingJonesMethodPar();
 
-        final long endFdrPSMPar = System.currentTimeMillis();
+        final long endFdrPsmPar = System.currentTimeMillis();
 
         System.out.println(
                 "FalseDiscoveryRateGlobal.computeFDRusingJonesMethod() takes "
-                + (endFdrPSMSeq - startFdrPSMSeq) + " Millis.\n");
+                + (endFdrPsmSeq - startFdrPsmSeq) + " Millis.\n");
 
         System.out.println(
                 "FalseDiscoveryRateGlobal.computeFDRusingJonesMethodPar() takes "
-                + (endFdrPSMPar - startFdrPSMPar) + " Millis.\n");
+                + (endFdrPsmPar - startFdrPsmPar) + " Millis.\n");
 
-        System.out.println("Speedup is: " + (double) (endFdrPSMSeq
-                - startFdrPSMSeq) / (double) (endFdrPSMPar - startFdrPSMPar)
+        System.out.println("Speedup is: " + (double) (endFdrPsmSeq
+                - startFdrPsmSeq) / (double) (endFdrPsmPar - startFdrPsmPar)
                 + ".\n");
 
         fdrPep
                 = new FalseDiscoveryRateGlobal(testFile.getAbsolutePath(),
                                                "0.01", "REVERSED",
-                                               CvConstants.XTANDEM_EXPECT.
-                                               getAccession(), true, "Peptide",
+                                               CvConstants.XTANDEM_EXPECT
+                                               .getAccession(), true, "Peptide",
                                                "PAG", "1.2");
 
         fdrPep.computeFDRusingJonesMethod();
@@ -146,9 +146,9 @@ public class FalseDiscoveryRateGlobalTest {
         MzIdentMLUnmarshaller pepUm = new MzIdentMLUnmarshaller(tempPepFile);
 
         AnalysisData ad = pepUm.unmarshal(MzIdentMLElement.AnalysisData);
-        List<SpectrumIdentificationResult> sirList = ad.
-                getSpectrumIdentificationList().get(0).
-                getSpectrumIdentificationResult();
+        List<SpectrumIdentificationResult> sirList = ad
+                .getSpectrumIdentificationList().get(0)
+                .getSpectrumIdentificationResult();
         for (SpectrumIdentificationResult sir : sirList) {
             if (sir.getId().equals("SIR_650")) {
 
@@ -158,11 +158,10 @@ public class FalseDiscoveryRateGlobalTest {
                 assertEquals(sir.getSpectrumIdentificationItem().size(), 1);
 
                 // test SpectrumIdentificationItem attributes
-                SpectrumIdentificationItem sii = sir.
-                        getSpectrumIdentificationItem().
-                        get(0);
-                assertEquals(436.897851, sii.getCalculatedMassToCharge(), DIFF);
-                assertEquals(437.237152, sii.getExperimentalMassToCharge(), DIFF);
+                SpectrumIdentificationItem sii = sir
+                        .getSpectrumIdentificationItem().get(0);
+                assertEquals(436.897851, sii.getCalculatedMassToCharge(), diff);
+                assertEquals(437.237152, sii.getExperimentalMassToCharge(), diff);
                 assertEquals(sii.getPeptideRef(), "GLGSIFGSVGGETK___");
                 assertEquals(sii.getRank(), 1);
                 assertEquals(sii.getChargeState(), 3);
@@ -171,31 +170,31 @@ public class FalseDiscoveryRateGlobalTest {
 
                 // test PeptideEvidenceRef
                 assertEquals(sii.getPeptideEvidenceRef().size(), 6);
-                assertEquals(sii.getPeptideEvidenceRef().get(3).
-                        getPeptideEvidenceRef(),
+                assertEquals(sii.getPeptideEvidenceRef().get(3)
+                        .getPeptideEvidenceRef(),
                              "PE650_2_4098");
 
                 int num = 0;
                 for (CvParam cp : sii.getCvParam()) {
 
                     if (cp.getAccession().equals(
-                            CvConstants.DISTINCT_PEPTIDE_LEVEL_LOCAL_FDR.
-                            getAccession())) {
+                            CvConstants.DISTINCT_PEPTIDE_LEVEL_LOCAL_FDR
+                            .getAccession())) {
                         num++;
-                        assertEquals(53.92986698911729, Double.
-                                     parseDouble(cp.getValue()), DIFF);
+                        assertEquals(53.92986698911729, Double.parseDouble(cp
+                                     .getValue()), diff);
                     } else if (cp.getAccession().equals(
-                            CvConstants.DISTINCT_PEPTIDE_LEVEL_Q_VALUE.
-                            getAccession())) {
+                            CvConstants.DISTINCT_PEPTIDE_LEVEL_Q_VALUE
+                            .getAccession())) {
                         num++;
-                        assertEquals(53.89728096676737, Double.
-                                     parseDouble(cp.getValue()), DIFF);
+                        assertEquals(53.89728096676737, Double.parseDouble(cp
+                                     .getValue()), diff);
                     } else if (cp.getAccession().equals(
-                            CvConstants.DISTINCT_PEPTIDE_LEVEL_FDRSCORE.
-                            getAccession())) {
+                            CvConstants.DISTINCT_PEPTIDE_LEVEL_FDRSCORE
+                            .getAccession())) {
                         num++;
-                        assertEquals(53.89728096676737, Double.
-                                     parseDouble(cp.getValue()), DIFF);
+                        assertEquals(53.89728096676737, Double.parseDouble(cp
+                                     .getValue()), diff);
                     }
                 }
                 assertEquals("Doesn't contain all peptide level score:", num, 3);
@@ -203,15 +202,14 @@ public class FalseDiscoveryRateGlobalTest {
         }
 
         System.out.println("Test PSM level");
-        File tempPSMFile = File.createTempFile("fdr-psm-test", ".mzid");
-        tempPSMFile.deleteOnExit();
-        fdrPSMSeq.writeToMzIdentMLFile(tempPSMFile.getAbsolutePath());
-        MzIdentMLUnmarshaller psmUm = new MzIdentMLUnmarshaller(tempPSMFile);
+        File tempPsmFile = File.createTempFile("fdr-psm-test", ".mzid");
+        tempPsmFile.deleteOnExit();
+        fdrPsmSeq.writeToMzIdentMLFile(tempPsmFile.getAbsolutePath());
+        MzIdentMLUnmarshaller psmUm = new MzIdentMLUnmarshaller(tempPsmFile);
 
         ad = psmUm.unmarshal(MzIdentMLElement.AnalysisData);
-        sirList = ad.
-                getSpectrumIdentificationList().get(0).
-                getSpectrumIdentificationResult();
+        sirList = ad.getSpectrumIdentificationList().get(0)
+                .getSpectrumIdentificationResult();
         for (SpectrumIdentificationResult sir : sirList) {
             if (sir.getId().equals("SIR_1")) {
 
@@ -221,11 +219,10 @@ public class FalseDiscoveryRateGlobalTest {
                 assertEquals(sir.getSpectrumIdentificationItem().size(), 1);
 
                 // test SpectrumIdentificationItem attributes
-                SpectrumIdentificationItem sii = sir.
-                        getSpectrumIdentificationItem().
-                        get(0);
-                assertEquals(958.6044, sii.getCalculatedMassToCharge(), DIFF);
-                assertEquals(958.597168, sii.getExperimentalMassToCharge(), DIFF);
+                SpectrumIdentificationItem sii = sir
+                        .getSpectrumIdentificationItem().get(0);
+                assertEquals(958.6044, sii.getCalculatedMassToCharge(), diff);
+                assertEquals(958.597168, sii.getExperimentalMassToCharge(), diff);
                 assertEquals(sii.getPeptideRef(), "KVSVLKER___");
                 assertEquals(sii.getRank(), 1);
                 assertEquals(sii.getChargeState(), 1);
@@ -239,31 +236,28 @@ public class FalseDiscoveryRateGlobalTest {
 
                 // test PeptideEvidenceRef
                 assertEquals(sii.getPeptideEvidenceRef().size(), 2);
-                assertEquals(sii.getPeptideEvidenceRef().get(0).
-                        getPeptideEvidenceRef(),
+                assertEquals(sii.getPeptideEvidenceRef().get(0)
+                        .getPeptideEvidenceRef(),
                              "PE1_2_0");
 
                 int num = 0;
                 for (CvParam cp : sii.getCvParam()) {
 
                     if (cp.getAccession().equals(
-                            CvConstants.PSM_LEVEL_LOCAL_FDR.
-                            getAccession())) {
+                            CvConstants.PSM_LEVEL_LOCAL_FDR.getAccession())) {
                         num++;
-                        assertEquals(53.943044906900326, Double.
-                                     parseDouble(cp.getValue()), DIFF);
+                        assertEquals(53.943044906900326, Double.parseDouble(cp
+                                     .getValue()), diff);
                     } else if (cp.getAccession().equals(
-                            CvConstants.PSM_LEVEL_Q_VALUE.
-                            getAccession())) {
+                            CvConstants.PSM_LEVEL_Q_VALUE.getAccession())) {
                         num++;
-                        assertEquals(53.92827812756639, Double.
-                                     parseDouble(cp.getValue()), DIFF);
+                        assertEquals(53.92827812756639, Double.parseDouble(cp
+                                     .getValue()), diff);
                     } else if (cp.getAccession().equals(
-                            CvConstants.PSM_LEVEL_FDRSCORE.
-                            getAccession())) {
+                            CvConstants.PSM_LEVEL_FDRSCORE.getAccession())) {
                         num++;
-                        assertEquals(53.92827812756639, Double.
-                                     parseDouble(cp.getValue()), DIFF);
+                        assertEquals(53.92827812756639, Double.parseDouble(cp
+                                     .getValue()), diff);
                     }
                 }
                 assertEquals("Doesn't contain all PSM level score:", num, 3);
