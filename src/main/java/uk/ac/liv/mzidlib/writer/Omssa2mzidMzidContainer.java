@@ -129,7 +129,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
     private String decoyRegularExpression;
     private AnalysisSoftware analysisSoftwareOmssa;
     private SequenceCollection sequenceCollection;
-    private SpectrumIdentificationList spectrumIdList;
+    private SpectrumIdentificationList spectrumIdentList;
     private SearchDatabase searchDatabase;
     private FragmentationTable fragmentationTable;
     private SpectraData spectraData;
@@ -142,7 +142,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
     private static final String SOURCE_FILE_ID = "SourceFile_1";
     private static final String SEARCH_DB_ID = "SearchDB_1";
     private static final String SPECTRA_DATA_ID = "SID_1";
-    private static final String SPEC_IDENT_ID = "SpectIdent_1";
+    private static final String SPEC_IDENT_ID = "SpecIdent_1";
     private static final String SI_LIST_ID = "SI_List_1";
     private static final String MEASURE_MZ_ID = "Measure_MZ";
     private static final String MEASURE_INT_ID = "Measure_Int";
@@ -291,7 +291,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
         SpectrumIdentification specIdent = new SpectrumIdentification();
         specIdent.setId(SPEC_IDENT_ID);
-        specIdent.setSpectrumIdentificationList(spectrumIdList);
+        specIdent.setSpectrumIdentificationList(spectrumIdentList);
         specIdent.setSpectrumIdentificationProtocol(
                 this.spectrumIdentificationProtocol);
         List<SearchDatabaseRef> searchDbRefList = specIdent
@@ -430,14 +430,14 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
     @Override
     public SpectrumIdentificationList getSpectrumIdentificationList() {
-        return this.spectrumIdList;
+        return this.spectrumIdentList;
     }
 
     private void init() {
 
         //analysisSoftwareXtandem
         this.analysisSoftwareOmssa = MzidLibUtils.createAnalysisSoftware(
-                "xtandem",
+                "OMSSA",
                 ANALYSIS_SOFT_ID,
                 CvConstants.OMSSA,
                 "");
@@ -795,7 +795,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
         }
     }
 
-    public double[] getMatchedIon(MSSpectrum spectrum, double ionMz) {
+    private double[] getMatchedIon(MSSpectrum spectrum, double ionMz) {
 
         double[] matchedPeak = new double[2];
         MSSpectrum_mz specMz = spectrum.MSSpectrum_mz;
@@ -805,7 +805,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
         double error = 100;
 
-        int i = 0;
+        int count = 0;
         int foundPos = -1;
 
         double foundMz = -1;
@@ -816,11 +816,11 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
             if (Math.abs(tempError) < Math.abs(error)) {
                 error = tempError;
-                foundPos = i;
+                foundPos = count;
                 foundMz = mz;
             }
 
-            i++;
+            count++;
             //System.out.print(mz + "\t");
         }
 
@@ -1332,12 +1332,13 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
         pepEvidLookup = new HashMap<>();
         uniquePeps = new HashMap<>();
 
-        SpectrumIdentificationList siList = new SpectrumIdentificationList();
-        siList.setId(SI_LIST_ID);
+        spectrumIdentList = new SpectrumIdentificationList();
+        spectrumIdentList.setId(SI_LIST_ID);
 
-        siList.setFragmentationTable(this.fragmentationTable);
+        spectrumIdentList.setFragmentationTable(this.fragmentationTable);
 
-        List<SpectrumIdentificationResult> specIdentResults = siList
+        sequenceCollection = new SequenceCollection();
+        List<SpectrumIdentificationResult> specIdentResults = spectrumIdentList
                 .getSpectrumIdentificationResult();
         List<PeptideEvidence> peptideEvidenceList = sequenceCollection
                 .getPeptideEvidence();
@@ -1417,6 +1418,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
                             / hits.MSHits_charge);
 
                     double evalue = hits.MSHits_evalue;
+
                     if (evalue > maxEvalue) {
                         maxEvalue = evalue;
                     }
@@ -1425,8 +1427,17 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
                     sii.setCalculatedMassToCharge((double) theoMass / 1000);
 
                     List<CvParam> cvParamList = sii.getCvParam();
-                    cvParamList.add(CvConstants.OMSSA_EVALUE);
-                    cvParamList.add(CvConstants.OMSSA_PVALUE);
+
+                    cvParamList.add(MzidLibUtils.makeCvParam("MS:1001328",
+                                                             "OMSSA:evalue",
+                                                             CvConstants.PSI_CV,
+                                                             "" + evalue));
+
+                    double pvalue = hits.MSHits_pvalue;
+                    cvParamList.add(MzidLibUtils.makeCvParam("MS:1001329",
+                                                             "OMSSA:pvalue",
+                                                             CvConstants.PSI_CV,
+                                                             "" + pvalue));
 
                     MSHits_mods mods = hits.MSHits_mods;
 
