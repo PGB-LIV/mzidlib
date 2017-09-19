@@ -795,7 +795,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
         }
     }
 
-    public double[] getMatchedIon(MSSpectrum spectrum, double ionMz) {
+    private double[] getMatchedIon(MSSpectrum spectrum, double ionMz) {
 
         double[] matchedPeak = new double[2];
         MSSpectrum_mz specMz = spectrum.MSSpectrum_mz;
@@ -805,7 +805,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
         double error = 100;
 
-        int i = 0;
+        int count = 0;
         int foundPos = -1;
 
         double foundMz = -1;
@@ -816,11 +816,11 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
             if (Math.abs(tempError) < Math.abs(error)) {
                 error = tempError;
-                foundPos = i;
+                foundPos = count;
                 foundMz = mz;
             }
 
-            i++;
+            count++;
             //System.out.print(mz + "\t");
         }
 
@@ -1418,6 +1418,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
                             / hits.MSHits_charge);
 
                     double evalue = hits.MSHits_evalue;
+
                     if (evalue > maxEvalue) {
                         maxEvalue = evalue;
                     }
@@ -1426,8 +1427,17 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
                     sii.setCalculatedMassToCharge((double) theoMass / 1000);
 
                     List<CvParam> cvParamList = sii.getCvParam();
-                    cvParamList.add(CvConstants.OMSSA_EVALUE);
-                    cvParamList.add(CvConstants.OMSSA_PVALUE);
+
+                    cvParamList.add(MzidLibUtils.makeCvParam("MS:1001328",
+                                                             "OMSSA:evalue",
+                                                             CvConstants.PSI_CV,
+                                                             "" + evalue));
+
+                    double pvalue = hits.MSHits_pvalue;
+                    cvParamList.add(MzidLibUtils.makeCvParam("MS:1001329",
+                                                             "OMSSA:pvalue",
+                                                             CvConstants.PSI_CV,
+                                                             "" + pvalue));
 
                     MSHits_mods mods = hits.MSHits_mods;
 
