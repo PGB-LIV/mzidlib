@@ -1,6 +1,6 @@
 package uk.ac.liv.mzidlib.gff;
 
-public class CDS_Information {
+public class CdsInformation {
 
     String seqid;
     String source;
@@ -10,7 +10,7 @@ public class CDS_Information {
     String phase;
     String attribute;
 
-    public CDS_Information(String seqid, String source, long start, long end,
+    public CdsInformation(String seqid, String source, long start, long end,
             String strand, String phase, String attr) {
         this.seqid = seqid;
         this.source = source;
@@ -21,7 +21,7 @@ public class CDS_Information {
         this.attribute = attr;
     }
 
-    public String getSeqID() {
+    public String getSeqId() {
         return this.seqid;
     }
 

@@ -135,4 +135,12 @@ public class CvConstants {
     public static final CvParam MASCOT_MGF_FORMAT = makeCvParam("MS:1001062",
                                                                 "Mascot MGF format",
                                                                 PSI_CV);
+
+    public static final CvParam UNMAPPED_PROTEIN = makeCvParam("MS:1002741",
+                                                               "unmapped protein",
+                                                               PSI_CV);
+
+    public static final CvParam UNMAPPED_PEPTIDE = makeCvParam("MS:1002740",
+                                                               "unmapped peptide",
+                                                               PSI_CV);
 }

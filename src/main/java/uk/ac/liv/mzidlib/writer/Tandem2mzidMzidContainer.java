@@ -393,6 +393,11 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
     }
 
     @Override
+    public MzIdentMLVersion getMzidVersion() {
+        return this.version;
+    }
+
+    @Override
     public ProteinDetectionList getProteinDetectionList() {
         return null;
     }
@@ -533,9 +538,9 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
 
         //analysisSoftwareXtandem
         analysisSoftwareXtandem = MzidLibUtils.createAnalysisSoftware("xtandem",
-                                                         ANALYSIS_SOFT_ID,
-                                                         CvConstants.XTANDEM,
-                                                         this.tandemVersion);
+                                                                      ANALYSIS_SOFT_ID,
+                                                                      CvConstants.XTANDEM,
+                                                                      this.tandemVersion);
     }
 
     private Person createDocOwner(String firstName, String secondName,
@@ -1085,10 +1090,10 @@ public class Tandem2mzidMzidContainer implements MzidContainer {
                                                     return fragIon;
                                                 })
                                                 .map((fragIon) -> {
+                                                    //Note intensity values in Tandem 
+                                                    //do not match the source spectrum, 
+                                                    //appears that some processing happens 
                                                     intValues.add(
-                                                            //Note intensity values in Tandem 
-                                                            //do not match the source spectrum, 
-                                                            //appears that some processing happens                                                    
                                                             (float) fragIon
                                                             .getIntensity());
                                                     return fragIon;

@@ -32,7 +32,7 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
  * MzIdentML file writer class.
  *
  * @author Da Qi
- * University of Liverpool
+ * @institute University of Liverpool
  * @time 23-Aug-2017 14:24:47
  */
 public class MzidWriter {
@@ -53,7 +53,7 @@ public class MzidWriter {
 
         try (Writer writer = new OutputStreamWriter((fos),
                                                     StandardCharsets.UTF_8)) {
-            MzIdentMLMarshaller marshaller = new MzIdentMLMarshaller();
+            MzIdentMLMarshaller marshaller = new MzIdentMLMarshaller(mc.getMzidVersion());
 
             writer.write(marshaller.createXmlHeader() + "\n");
 

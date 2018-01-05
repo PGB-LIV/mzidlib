@@ -113,6 +113,7 @@ import uk.ac.liv.mzidlib.util.MzidLibUtils;
 import uk.ac.liv.unimod.ModT;
 
 /**
+ * Omssa to Mzid file container.
  *
  * @author Da Qi
  * @institute University of Liverpool
@@ -150,7 +151,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
     private static final double UNIMOD_MASS_ERROR = 0.1;
     //TODO  - current grabs protein accessions from the defline, 
     //by space - need to implement other options
-    private final String defline_regex = " ";
+    private final String deflineRegex = " ";
 
     private ReadUnimod unimodDoc;
     private MSSearchSettings settings;
@@ -179,6 +180,16 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
     private Map<MSSpectrum, MSHitSet> specToHitMap;
     private Map<MSSpectrum, MSHitSet> results;
 
+    /**
+     * Constructor.
+     *
+     * @param input             input Omssa file name
+     * @param outputFrags       flag for output fragmentation choice
+     * @param decoyRegex        decoy regular expression string
+     * @param omssaModsFile     omssa Mods file
+     * @param omssaUserModsFile omssa user Mods file
+     * @param ver               output mzid file version
+     */
     public Omssa2mzidMzidContainer(String input,
                                    Boolean outputFrags,
                                    String decoyRegex,
@@ -398,6 +409,11 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
         spectraDataList.add(spectraData);
 
         return inputs;
+    }
+
+    @Override
+    public MzIdentMLVersion getMzidVersion() {
+        return this.version;
     }
 
     @Override
@@ -668,127 +684,136 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
                 OmssaModification omod = intToModMap.get(fixedModification);
                 List<String> modifiedResidues = omod.getModResidues();
 
-                for (String modifiedResidue : modifiedResidues) {
-                    int index = pepSeq.indexOf(modifiedResidue);
+                if (modifiedResidues != null) {
+                    modifiedResidues.stream()
+                            .forEach((modifiedResidue) -> {
+                                int index = pepSeq.indexOf(modifiedResidue);
 
-                    while (index != -1) {
-                        Modification mzidmod = new Modification();
-                        mzidmod.getResidues().add(modifiedResidue);
-                        CvParam modParam = new CvParam();
-                        double monoMass = omod.getModMonoMass();
-                        mzidmod.setMonoisotopicMassDelta(monoMass);
+                                while (index != -1) {
+                                    Modification mzidmod = new Modification();
+                                    mzidmod.getResidues().add(modifiedResidue);
+                                    CvParam modParam = new CvParam();
+                                    double monoMass = omod.getModMonoMass();
+                                    mzidmod.setMonoisotopicMassDelta(monoMass);
 
-                        //If second res is modified, index would return 1, 
-                        //but mzid position should be 2
-                        mzidmod.setLocation(index + 1);
+                                    //If second res is modified, index would return 1,
+                                    //but mzid position should be 2
+                                    mzidmod.setLocation(index + 1);
+                                    boolean isMono = true;
+                                    ModT unimod = unimodDoc.getModByMass(
+                                            monoMass,
+                                            UNIMOD_MASS_ERROR,
+                                            isMono,
+                                            pepSeq
+                                            .charAt(index));
+                                    if (unimod != null) {
+                                        modParam.setAccession("UNIMOD:" + unimod
+                                                .getRecordId());
+                                        modParam.setCv(CvConstants.UNIMOD_CV);
+                                        modParam.setName(unimod.getTitle());
+                                    } else {
+                                        System.out.println(
+                                                "Error: modification with mass not recognized");
+                                        modParam.setName("unknown modification");
+                                        modParam.setCv(CvConstants.PSI_CV);
+                                        modParam.setAccession("MS:1001460");
+                                    }
+                                    List<CvParam> paramList = mzidmod
+                                            .getCvParam();
+                                    paramList.add(modParam);
+                                    allMods.add(mzidmod);
+                                    index = pepSeq.indexOf(modifiedResidue,
+                                                           index
+                                                           + 1);
+                                }
+                            });
+
+                    //Candidate N or C terminal mods
+                    if (modifiedResidues.isEmpty()) {
+
+                        boolean isPepNTerminalMod = false;
+                        boolean isPepCTerminalMod = false;
+                        boolean isProtNTerminalMod = false;
+                        boolean isProtCTerminalMod = false;
+
+                        int modType = omod.getModType();
+                        switch (modType) {
+                            case 1:
+                            case 2:
+                                isProtNTerminalMod = true;
+                                break;
+                            case 5:
+                            case 6:
+                                isPepNTerminalMod = true;
+                                break;
+                            case 3:
+                            case 4:
+                                isProtCTerminalMod = true;
+                                break;
+                            case 7:
+                            case 8:
+                                isPepCTerminalMod = true;
+                                break;
+                            default:
+                                break;
+                        }
                         boolean isMono = true;
-                        ModT unimod = unimodDoc.getModByMass(monoMass,
-                                                             UNIMOD_MASS_ERROR,
-                                                             isMono, pepSeq
-                                                             .charAt(index));
-                        if (unimod != null) {
-                            modParam.setAccession("UNIMOD:" + unimod
-                                    .getRecordId());
-                            modParam.setCv(CvConstants.UNIMOD_CV);
-                            modParam.setName(unimod.getTitle());
+                        ModT unimod = null;
+
+                        if (isPepNTerminalMod || isPepCTerminalMod) {
+
+                            Modification mzidmod = new Modification();
+
+                            CvParam modParam = new CvParam();
+                            double monoMass = intToModMap.get(fixedModification)
+                                    .getModMonoMass();
+                            mzidmod.setMonoisotopicMassDelta(monoMass);
+
+                            if (isPepNTerminalMod) {
+                                unimod = unimodDoc.getModByMass(monoMass,
+                                                                UNIMOD_MASS_ERROR,
+                                                                isMono, '[');
+                                mzidmod.setLocation(0);
+                            } else if (isPepCTerminalMod) {
+                                unimod = unimodDoc.getModByMass(monoMass,
+                                                                UNIMOD_MASS_ERROR,
+                                                                isMono, ']');
+                                mzidmod.setLocation(pepSeq.length() + 1);
+                            }
+
+                            if (unimod != null) {
+                                modParam.setAccession("UNIMOD:" + unimod
+                                        .getRecordId());
+                                modParam.setCv(CvConstants.UNIMOD_CV);
+                                modParam.setName(unimod.getTitle());
+                            } else {
+                                System.out.println(
+                                        "Error: modification with mass not recognized");
+                                modParam.setName("unknown modification");
+                                modParam.setCv(CvConstants.PSI_CV);
+                                modParam.setAccession("MS:1001460");
+                            }
+
+                            List<CvParam> paramList = mzidmod.getCvParam();
+                            paramList.add(modParam);
+                            allMods.add(mzidmod);
                         } else {
-                            System.out.println(
-                                    "Error: modification with mass not recognized");
-                            modParam.setName("unknown modification");
-                            modParam.setCv(CvConstants.PSI_CV);
-                            modParam.setAccession("MS:1001460");
+                            //TODO Fixed protein N or C terminal mods not yet supported
+                            /*
+                             * else if(isProtNTerminalMod){
+                             * paramList.add(makeCvParam("MS:1002057","modification
+                             * specificity protein N-term",psiCV)); unimod =
+                             * unimodDoc.getModByMass(monoMass, unimodMassError,
+                             * isMono, '['); mzidmod.setLocation(0); } else
+                             * if(isProtCTerminalMod){
+                             * paramList.add(makeCvParam("MS:1002058","modification
+                             * specificity protein C-term",psiCV)); unimod =
+                             * unimodDoc.getModByMass(monoMass, unimodMassError,
+                             * isMono, ']');
+                             * mzidmod.setLocation(pepSeq.length()+1);
+                             * }
+                             */
                         }
-                        List<CvParam> paramList = mzidmod.getCvParam();
-                        paramList.add(modParam);
-                        allMods.add(mzidmod);
-                        index = pepSeq.indexOf(modifiedResidue, index + 1);
-                    }
-                }
-
-                //Candidate N or C terminal mods
-                if (modifiedResidues == null || modifiedResidues.isEmpty()) {
-
-                    boolean isPepNTerminalMod = false;
-                    boolean isPepCTerminalMod = false;
-                    boolean isProtNTerminalMod = false;
-                    boolean isProtCTerminalMod = false;
-
-                    int modType = omod.getModType();
-                    switch (modType) {
-                        case 1:
-                        case 2:
-                            isProtNTerminalMod = true;
-                            break;
-                        case 5:
-                        case 6:
-                            isPepNTerminalMod = true;
-                            break;
-                        case 3:
-                        case 4:
-                            isProtCTerminalMod = true;
-                            break;
-                        case 7:
-                        case 8:
-                            isPepCTerminalMod = true;
-                            break;
-                        default:
-                            break;
-                    }
-                    boolean isMono = true;
-                    ModT unimod = null;
-
-                    if (isPepNTerminalMod || isPepCTerminalMod) {
-
-                        Modification mzidmod = new Modification();
-
-                        CvParam modParam = new CvParam();
-                        double monoMass = intToModMap.get(fixedModification)
-                                .getModMonoMass();
-                        mzidmod.setMonoisotopicMassDelta(monoMass);
-
-                        if (isPepNTerminalMod) {
-                            unimod = unimodDoc.getModByMass(monoMass,
-                                                            UNIMOD_MASS_ERROR,
-                                                            isMono, '[');
-                            mzidmod.setLocation(0);
-                        } else if (isPepCTerminalMod) {
-                            unimod = unimodDoc.getModByMass(monoMass,
-                                                            UNIMOD_MASS_ERROR,
-                                                            isMono, ']');
-                            mzidmod.setLocation(pepSeq.length() + 1);
-                        }
-
-                        if (unimod != null) {
-                            modParam.setAccession("UNIMOD:" + unimod
-                                    .getRecordId());
-                            modParam.setCv(CvConstants.UNIMOD_CV);
-                            modParam.setName(unimod.getTitle());
-                        } else {
-                            System.out.println(
-                                    "Error: modification with mass not recognized");
-                            modParam.setName("unknown modification");
-                            modParam.setCv(CvConstants.PSI_CV);
-                            modParam.setAccession("MS:1001460");
-                        }
-
-                        List<CvParam> paramList = mzidmod.getCvParam();
-                        paramList.add(modParam);
-                        allMods.add(mzidmod);
-                    } else {
-                        //TODO Fixed protein N or C terminal mods not yet supported
-                        /*
-                         * else if(isProtNTerminalMod){
-                         * paramList.add(makeCvParam("MS:1002057","modification
-                         * specificity protein N-term",psiCV)); unimod =
-                         * unimodDoc.getModByMass(monoMass, unimodMassError,
-                         * isMono, '['); mzidmod.setLocation(0); } else
-                         * if(isProtCTerminalMod){
-                         * paramList.add(makeCvParam("MS:1002058","modification
-                         * specificity protein C-term",psiCV)); unimod =
-                         * unimodDoc.getModByMass(monoMass, unimodMassError,
-                         * isMono, ']'); mzidmod.setLocation(pepSeq.length()+1);
-                         * }
-                         */
                     }
                 }
             }
@@ -898,8 +923,8 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
         if (unimod != null) {
             modParam = MzidLibUtils
-                    .makeCvParam("UNIMOD:" + unimod.getRecordId(), unimod.
-                                 getTitle(), CvConstants.UNIMOD_CV);
+                    .makeCvParam("UNIMOD:" + unimod.getRecordId(), unimod
+                                 .getTitle(), CvConstants.UNIMOD_CV);
 
         } else {
             modParam.setName("unknown modification");
@@ -930,9 +955,10 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
         }
 
         if (!residues.isEmpty()) {
-            for (String residue : residues) {
-                residueList.add(residue);
-            }
+            residues.stream()
+                    .forEach((residue) -> {
+                        residueList.add(residue);
+                    });
         } else {
             residueList.add(".");               //any chars character
         }
@@ -1048,7 +1074,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
     }
 
-    private CvParam getFileFormatCVParam(int omssaFileType) {
+    private CvParam getFileFormatCvParam(int omssaFileType) {
 
         /*
          * MSSpectrumFileType.put(new Integer(index++), "dta");
@@ -1136,7 +1162,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
         int fileType
                 = settings.MSSearchSettings_infiles.MSInFile.MSInFile_infiletype.MSSpectrumFileType;
         FileFormat ff = new FileFormat();
-        ff.setCvParam(getFileFormatCVParam(fileType));
+        ff.setCvParam(getFileFormatCvParam(fileType));
         specData.setFileFormat(ff);
 
         specData.setId(SPECTRA_DATA_ID);
@@ -1254,13 +1280,14 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
         enzymes.setIndependent(false);
         List<Enzyme> enzymeList = enzymes.getEnzyme();
         List<Integer> msEnzymeList = settings.MSSearchSettings_enzyme.MSEnzymes;
-        for (Integer msEnzyme : msEnzymeList) {
-            //OmssaEnumerators omssaEnums = new OmssaEnumerators();
-            Enzyme enzyme
-                    = getEnzyme(OmssaEnumerators.getEnzymeAsText(msEnzyme),
-                                settings.MSSearchSettings_missedcleave);
-            enzymeList.add(enzyme);
-        }
+        msEnzymeList.stream()
+                .map((msEnzyme) -> getEnzyme(OmssaEnumerators.getEnzymeAsText(
+                        msEnzyme),
+                                             settings.MSSearchSettings_missedcleave))
+                .forEach((enzyme) -> {
+                    //OmssaEnumerators omssaEnums = new OmssaEnumerators();
+                    enzymeList.add(enzyme);
+                });
 
         CvParam fragCvPlus = MzidLibUtils.getCvParamWithMassUnits(true);
         CvParam fragCvMinus = MzidLibUtils.getCvParamWithMassUnits(true);
@@ -1358,7 +1385,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
             MSHitSet_hits msHits = msHitSet.MSHitSet_hits;
 
-            /**
+            /*
              * ***********************************************
              *  *** Setup SpectrumIdentificationResult ****
              * *********************************************
@@ -1376,13 +1403,14 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
 
                 if (!specIDs.MSSpectrum_ids_E.isEmpty()) {
                     List<CvParam> sirCvParamList = specIdentRes.getCvParam();
-                    for (String id : specIDs.MSSpectrum_ids_E) {
-                        CvParam cvp = MzidLibUtils.makeCvParam("MS:1000796",
-                                                               "spectrum title",
-                                                               CvConstants.PSI_CV,
-                                                               id);
-                        sirCvParamList.add(cvp);
-                    }
+                    specIDs.MSSpectrum_ids_E.stream()
+                            .map((id) -> MzidLibUtils.makeCvParam("MS:1000796",
+                                                                  "spectrum title",
+                                                                  CvConstants.PSI_CV,
+                                                                  id))
+                            .forEach((cvp) -> {
+                                sirCvParamList.add(cvp);
+                            });
                 }
 
                 int rank = 1;
@@ -1451,25 +1479,27 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
                         sii.setFragmentation(frag);
                         ionTypeList = frag.getIonType();
 
-                        for (MSMZHit mzhit : mzhits.MSMZHit) {
-                            MSMZHit_ion ion = mzhit.MSMZHit_ion;
-                            int ionType = ion.MSIonType;
+                        mzhits.MSMZHit.stream()
+                                .forEach((mzhit) -> {
+                                    MSMZHit_ion ion = mzhit.MSMZHit_ion;
+                                    int ionType = ion.MSIonType;
 
-                            //Logic is slightly different from Tandem parser, 
-                            //since all ion types appear to be mixed up in one structure
-                            //1. Work out all the ion types we have, put in a temporary HashMap?
-                            String testString = ionType + "_" + charge;
+                                    //Logic is slightly different from Tandem parser,
+                                    //since all ion types appear to be mixed up in one structure
+                                    //1. Work out all the ion types we have, 
+                                    //put in a temporary HashMap?
+                                    String testString = ionType + "_" + charge;
 
-                            List<MSMZHit> mzHitList = null;
-                            if (mapIonsToHits.containsKey(testString)) {
-                                mzHitList = mapIonsToHits.get(testString);
-                            } else {
-                                mzHitList = new ArrayList<>();
-                                mapIonsToHits.put(testString, mzHitList);
-                            }
-                            mzHitList.add(mzhit);
-
-                        }
+                                    List<MSMZHit> mzHitList = null;
+                                    if (mapIonsToHits.containsKey(testString)) {
+                                        mzHitList = mapIonsToHits
+                                                .get(testString);
+                                    } else {
+                                        mzHitList = new ArrayList<>();
+                                        mapIonsToHits.put(testString, mzHitList);
+                                    }
+                                    mzHitList.add(mzhit);
+                                });
 
                         for (String ionKey : mapIonsToHits.keySet()) {
 
@@ -1487,14 +1517,14 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
                             List<Float> intValues = intArray.getValues();
                             List<Float> errorValues = errorArray.getValues();
 
-                            int j = 0;
+                            int flag = 0;
                             for (MSMZHit mzhit : mapIonsToHits.get(ionKey)) {
 
                                 MSMZHit_ion ion = mzhit.MSMZHit_ion;
 
                                 int ionType = ion.MSIonType;
 
-                                if (j == 0) {
+                                if (flag == 0) {
                                     int ionCharge = mzhit.MSMZHit_charge;
                                     mzidIon.setCharge(ionCharge);
                                     //System.out.println("Lookup:" + ionType);
@@ -1504,7 +1534,7 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
                                                     ionType);
                                     mzidIon.setCvParam(cvParam);
                                 }
-                                j++;
+                                flag++;
 
                                 double theoMz = (double) (mzhit.MSMZHit_mz)
                                         / responseScale;
@@ -1557,9 +1587,9 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
                         //String protObjID = pephit.MSPepHit_accession;
                         // Added By FG
                         String protAcc;
-                        if (defline.contains(defline_regex)) {
+                        if (defline.contains(deflineRegex)) {
                             protAcc = defline.substring(0, defline.indexOf(
-                                                        defline_regex));
+                                                        deflineRegex));
                         } else {
                             protAcc = defline;
                         }
@@ -1598,12 +1628,12 @@ public class Omssa2mzidMzidContainer implements MzidContainer {
                         //TODO - Wasteful of memory, since mzidPep doesn't need 
                         //to be created if this is not a unique peptide
                         boolean newPepEvid = false;
-                        String pepId = null;
+                        //String pepId = null;
 
                         if (!pepProtMap.containsKey(testPepMods)) {
 
                             //Add peptide sequence to mzid Peptide object
-                            pepId = "Peptide" + pepCounter;
+                            //pepId = "Peptide" + pepCounter;
                             pepCounter++;
                             mzidPep.setId(uniquePep);
 

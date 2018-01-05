@@ -101,8 +101,9 @@ public class SearchSingleMgfAction extends RecursiveAction {
                 String tandemOut = tandemFileName.substring(0, tandemFileName
                                                             .lastIndexOf("."))
                         + "_tandem.mzid";
-                Convert2MzidTask convertTandemTask = new Convert2MzidTask(tandemOut,
-                                                         tandemContainer);
+                Convert2MzidTask convertTandemTask = new Convert2MzidTask(
+                        tandemOut,
+                        tandemContainer);
                 convertTandemTask.fork();
                 tandemMzidFile = convertTandemTask.join();
             }
@@ -123,15 +124,9 @@ public class SearchSingleMgfAction extends RecursiveAction {
                 convertOmssaTask.fork();
                 omssaMzidFile = convertOmssaTask.join();
             }
-            
-            
-        } catch (SAXException ex) {
-            Logger.getLogger(SearchSingleMgfAction.class.getName())
-                    .log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(SearchSingleMgfAction.class.getName())
-                    .log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+
+        } catch (SAXException | ParserConfigurationException |
+                IOException ex) {
             Logger.getLogger(SearchSingleMgfAction.class.getName())
                     .log(Level.SEVERE, null, ex);
         }
@@ -139,9 +134,9 @@ public class SearchSingleMgfAction extends RecursiveAction {
     }
 
     public void runSearchGuiCli(String[] searchParamters) {
-        String searchGuiPath = getSearchGuiFile();
 
         try {
+            String searchGuiPath = getSearchGuiFile();
             System.out.println(
                     "Running SearchGUI search function using the following command:");
 
@@ -179,7 +174,8 @@ public class SearchSingleMgfAction extends RecursiveAction {
             }
             System.out.println("SearchGUI search function finished.");
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(SearchSingleMgfAction.class.getName())
+                    .log(Level.SEVERE, null, ex);
         }
     }
 
@@ -217,7 +213,8 @@ public class SearchSingleMgfAction extends RecursiveAction {
             path = matches[0].getAbsolutePath();
 
         } catch (UnsupportedEncodingException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(SearchSingleMgfAction.class.getName())
+                    .log(Level.SEVERE, null, ex);
         }
         return path;
     }

@@ -43,6 +43,16 @@ public class MzidLibUtils {
         return cvParam;
     }
 
+    public static CvParam makeCvParam(String accession, String name, String value,
+                               Cv cv) {
+        CvParam cvParam = new CvParam();
+        cvParam.setAccession(accession);
+        cvParam.setName(name);
+        cvParam.setValue(value);
+        cvParam.setCv(cv);
+        return cvParam;
+    }
+
     /**
      * Helper method to create a CvParam.
      *
