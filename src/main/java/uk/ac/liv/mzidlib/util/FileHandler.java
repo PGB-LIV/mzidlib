@@ -40,17 +40,16 @@ public class FileHandler {
      * on a network file system (specified by colon separated string). If the copy
      * operation fails for some reason (insufficient space, path doesn't exist, etc),
      * the original behaviour is retained.
-     * <p>
+     * 
      * The copied file can either be left to be purged upon JVM shutdown or can
      * manually be deleted as needed or as a whole.
-     * <p>
-     * <p>
+     * 
      * The calling method should check for null object.
      *
      * @param filePath       as {@link String} the path of the file to be processed
      * @param processLocal   decides whether the file should be copied to local drive
      * @param autoFileDelete when true the locally copied file is marked for deletion on JVM shutdown
-     *                       else the file is marked for manual deletion. Refer {@link #deleteFiles(String)}
+     *                       else the file is marked for manual deletion. Refer {@link #deleteFile(String)}
      * @return The {@link File} object to be processed
      */
 

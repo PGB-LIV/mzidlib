@@ -24,17 +24,17 @@ public class FdrAndMzIdentInformationContainer {
     FdrAndMzIdentInformationContainer() {
         xmlFileName = new String("");
         searchEngine = new String("");
-        peptideModifications = new HashMap<String, List<List<String>>>(1);
-        peptideSequence = new HashMap<String, String>(1);
-        spectrumInfo = new HashMap<String, List<List<Object>>>(1);
-        sorted_spectrumID = new ArrayList<String>(1);
-        sorted_peptideID = new ArrayList<String>(1);
-        sorted_evalues = new ArrayList<Double>(1);
-        sorted_scores = new ArrayList<Double>(1);
-        sorted_decoyornot = new ArrayList<String>(1);
-        sortedSimpleFDR = new ArrayList<Double>(1);
-        sorted_qValues = new ArrayList<Double>(1);
-        sorted_estimatedFDR = new ArrayList<Double>(1);
+        peptideModifications = new HashMap<>(1);
+        peptideSequence = new HashMap<>(1);
+        spectrumInfo = new HashMap<>(1);
+        sorted_spectrumID = new ArrayList<>(1);
+        sorted_peptideID = new ArrayList<>(1);
+        sorted_evalues = new ArrayList<>(1);
+        sorted_scores = new ArrayList<>(1);
+        sorted_decoyornot = new ArrayList<>(1);
+        sortedSimpleFDR = new ArrayList<>(1);
+        sorted_qValues = new ArrayList<>(1);
+        sorted_estimatedFDR = new ArrayList<>(1);
     }
 
     public void populateData(String xmlToRead, String searchEngine,
@@ -48,17 +48,17 @@ public class FdrAndMzIdentInformationContainer {
 
         this.xmlFileName = xmlToRead;
         this.searchEngine = searchEngine;
-        this.peptideModifications = new HashMap<String, List<List<String>>>(pepMod);
-        this.peptideSequence = new HashMap<String, String>(pepSeq);
-        this.spectrumInfo = new HashMap<String, List<List<Object>>>(specInfo);
-        this.sorted_spectrumID = new ArrayList<String>(sorted_spec);
-        this.sorted_peptideID = new ArrayList<String>(sorted_pepID);
-        this.sorted_evalues = new ArrayList<Double>(sorted_eval);
-        this.sorted_scores = new ArrayList<Double>(sorted_score);
-        this.sorted_decoyornot = new ArrayList<String>(sorted_decoy);
-        this.sortedSimpleFDR = new ArrayList<Double>(sorted_FDR);
-        this.sorted_qValues = new ArrayList<Double>(sorted_qValues);
-        this.sorted_estimatedFDR = new ArrayList<Double>(sorted_estFDR);
+        this.peptideModifications = new HashMap<>(pepMod);
+        this.peptideSequence = new HashMap<>(pepSeq);
+        this.spectrumInfo = new HashMap<>(specInfo);
+        this.sorted_spectrumID = new ArrayList<>(sorted_spec);
+        this.sorted_peptideID = new ArrayList<>(sorted_pepID);
+        this.sorted_evalues = new ArrayList<>(sorted_eval);
+        this.sorted_scores = new ArrayList<>(sorted_score);
+        this.sorted_decoyornot = new ArrayList<>(sorted_decoy);
+        this.sortedSimpleFDR = new ArrayList<>(sorted_FDR);
+        this.sorted_qValues = new ArrayList<>(sorted_qValues);
+        this.sorted_estimatedFDR = new ArrayList<>(sorted_estFDR);
     }
 
 }

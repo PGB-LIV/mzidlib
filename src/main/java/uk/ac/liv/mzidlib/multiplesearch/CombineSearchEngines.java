@@ -1,3 +1,4 @@
+
 package uk.ac.liv.mzidlib.multiplesearch;
 
 import java.io.BufferedWriter;
@@ -19,6 +20,7 @@ import java.util.Vector;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 
 import uk.ac.ebi.jmzidml.model.mzidml.*;
+import uk.ac.ebi.jmzidml.model.utils.MzIdentMLVersion;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 import uk.ac.liv.mzidlib.constants.CvConstants;
@@ -30,15 +32,17 @@ public class CombineSearchEngines {
 
     private static boolean verbose = true;
 
+    private static MzIdentMLVersion mzidVer;
     int noOfSearchEngines = 0;
-    //HashMap<String,ArrayList<ArrayList<String>>> combinedResultContainer;
+
     Map<String, List<List<Object>>> combinedResultContainer;
     FdrAndMzIdentInformationContainer[] singleFDRInformation;
     String[] searchEngineIdentifiers; // The ordered entries correspond to the array entries in singleFDRInformation[] 
     String[] shortRepresentationOfSearchEngineIdentiifers; // stores 'fdr' for 'mascot', 'o' for 'omssa', 't' for tandem
     int lineNumber = 1;
     // FG
-    private CombinedSearchEngines2Mzid combinedSearchEngines2Mzid = new CombinedSearchEngines2Mzid();
+    private CombinedSearchEngines2Mzid combinedSearchEngines2Mzid
+            = new CombinedSearchEngines2Mzid();
     private String decoyRegex = null;
     //metadata
     private FalseDiscoveryRate fdr;
@@ -67,8 +71,10 @@ public class CombineSearchEngines {
 
         noOfSearchEngines = totalSearchEngines;
         searchEngineIdentifiers = searchEngineNames.clone();
-        shortRepresentationOfSearchEngineIdentiifers = new String[totalSearchEngines];
-        singleFDRInformation = new FdrAndMzIdentInformationContainer[totalSearchEngines];
+        shortRepresentationOfSearchEngineIdentiifers
+                = new String[totalSearchEngines];
+        singleFDRInformation
+                = new FdrAndMzIdentInformationContainer[totalSearchEngines];
         for (int i = 0; i < totalSearchEngines; i++) {
             singleFDRInformation[i] = new FdrAndMzIdentInformationContainer();
         }
@@ -83,7 +89,8 @@ public class CombineSearchEngines {
                 totalContainersNeeded = 7;
                 break;
             default:
-                System.out.println("Min 2 and maximum 3 search engines allowed in the current version");
+                System.out.println(
+                        "Min 2 and maximum 3 search engines allowed in the current version");
         }
 
         String[] namesOfContainers = new String[totalContainersNeeded];
@@ -92,20 +99,26 @@ public class CombineSearchEngines {
 
         switch (totalSearchEngines) {
             case 2:
-                if ((searchEngineNames[0].equalsIgnoreCase("s1") && searchEngineNames[1].equalsIgnoreCase("s2"))
-                        || (searchEngineNames[1].equalsIgnoreCase("s1") && searchEngineNames[0].equalsIgnoreCase("s2"))) {
+                if ((searchEngineNames[0].equalsIgnoreCase("s1")
+                        && searchEngineNames[1].equalsIgnoreCase("s2"))
+                        || (searchEngineNames[1].equalsIgnoreCase("s1")
+                        && searchEngineNames[0].equalsIgnoreCase("s2"))) {
                     namesOfContainers[0] = "1";
                     namesOfContainers[1] = "2";
                     namesOfContainers[2] = "12";
                 }
-                if ((searchEngineNames[0].equalsIgnoreCase("s1") && searchEngineNames[1].equalsIgnoreCase("s3"))
-                        || (searchEngineNames[1].equalsIgnoreCase("s1") && searchEngineNames[0].equalsIgnoreCase("s3"))) {
+                if ((searchEngineNames[0].equalsIgnoreCase("s1")
+                        && searchEngineNames[1].equalsIgnoreCase("s3"))
+                        || (searchEngineNames[1].equalsIgnoreCase("s1")
+                        && searchEngineNames[0].equalsIgnoreCase("s3"))) {
                     namesOfContainers[0] = "1";
                     namesOfContainers[1] = "3";
                     namesOfContainers[2] = "13";
                 }
-                if ((searchEngineNames[0].equalsIgnoreCase("s2") && searchEngineNames[1].equalsIgnoreCase("s3"))
-                        || (searchEngineNames[1].equalsIgnoreCase("s2") && searchEngineNames[0].equalsIgnoreCase("s3"))) {
+                if ((searchEngineNames[0].equalsIgnoreCase("s2")
+                        && searchEngineNames[1].equalsIgnoreCase("s3"))
+                        || (searchEngineNames[1].equalsIgnoreCase("s2")
+                        && searchEngineNames[0].equalsIgnoreCase("s3"))) {
                     namesOfContainers[0] = "2";
                     namesOfContainers[1] = "3";
                     namesOfContainers[2] = "23";
@@ -120,11 +133,13 @@ public class CombineSearchEngines {
                 namesOfContainers[5] = "23";
                 namesOfContainers[6] = "123";
             default:
-                System.out.println("Min 2 and maximum 3 search engines allowed in the current version");
+                System.out.println(
+                        "Min 2 and maximum 3 search engines allowed in the current version");
         }
 
         for (int i = 0; i < totalContainersNeeded; i++) {
-            combinedResultContainer.put(namesOfContainers[i], new ArrayList<List<Object>>());
+            combinedResultContainer.put(namesOfContainers[i],
+                                        new ArrayList<List<Object>>());
         }
 
         for (int i = 0; i < searchEngineIdentifiers.length; i++) {
@@ -142,35 +157,60 @@ public class CombineSearchEngines {
     }
 
     public void computeFDRForSingleSearchEngine(int i, String xmlToRead,
-            String searchEngine, FdrAndMzIdentInformationContainer fdrObj, int decoyRatio, String decoyRegex, String cvterm, String betterScore) throws Exception {
+                                                String searchEngine,
+                                                FdrAndMzIdentInformationContainer fdrObj,
+                                                int decoyRatio,
+                                                String decoyRegex, String cvterm,
+                                                String betterScore)
+            throws Exception {
 
-        //fdr = new FalseDiscoveryRate(xmlToRead, searchEngine, String.valueOf(decoyRatio), decoyRegex, cvterm, Boolean.valueOf(betterScore).booleanValue());
-        fdr = new FalseDiscoveryRate(xmlToRead, String.valueOf(decoyRatio), decoyRegex, cvterm, Boolean.valueOf(betterScore));
+        fdr
+                = new FalseDiscoveryRate(new File(xmlToRead), decoyRatio,
+                                         decoyRegex, cvterm, Boolean.valueOf(
+                                                 betterScore));
 
         //FG
         this.decoyRegex = decoyRegex;
         if (searchEngine.equals("s1")) {
-            combinedSearchEngines2Mzid.setMascotDbSequenceHashMap(fdr.getdBSequenceHashMap());
-            combinedSearchEngines2Mzid.setMascotPeptideEvidenceHashMap(fdr.getPeptideEvidenceHashMap());
-            combinedSearchEngines2Mzid.setMascotPeptideHashMap(fdr.getPeptideHashMap());
-            combinedSearchEngines2Mzid.setMascotSpectrumIdentificationItemHashMap(fdr.getSpectrumIdentificationItemHashMap());
+            combinedSearchEngines2Mzid.setMascotDbSequenceHashMap(fdr.
+                    getdBSequenceHashMap());
+            combinedSearchEngines2Mzid.setMascotPeptideEvidenceHashMap(fdr.
+                    getPeptideEvidenceMap());
+            combinedSearchEngines2Mzid.setMascotPeptideHashMap(fdr.
+                    getPeptideHashMap());
+            combinedSearchEngines2Mzid.
+                    setMascotSpectrumIdentificationItemHashMap(fdr.
+                            getSpectrumIdentificationItemHashMap());
 //            combinedSearchEngines2Mzid.setMascotSpectrumIdentificationResultHashMap(fdr.getSpectrumIdentificationResultHashMap());
-            combinedSearchEngines2Mzid.getUnimodHashmap().putAll(fdr.getUnimodHashmap());
+            combinedSearchEngines2Mzid.getUnimodHashmap().putAll(fdr.
+                    getUnimodHashmap());
         } else if (searchEngine.equals("s2")) {
-            combinedSearchEngines2Mzid.setOmssaDbSequenceHashMap(fdr.getdBSequenceHashMap());
-            combinedSearchEngines2Mzid.setOmssaPeptideEvidenceHashMap(fdr.getPeptideEvidenceHashMap());
-            combinedSearchEngines2Mzid.setOmssaPeptideHashMap(fdr.getPeptideHashMap());
-            combinedSearchEngines2Mzid.setOmssaSpectrumIdentificationItemHashMap(fdr.getSpectrumIdentificationItemHashMap());
+            combinedSearchEngines2Mzid.setOmssaDbSequenceHashMap(fdr.
+                    getdBSequenceHashMap());
+            combinedSearchEngines2Mzid.setOmssaPeptideEvidenceHashMap(fdr.
+                    getPeptideEvidenceMap());
+            combinedSearchEngines2Mzid.setOmssaPeptideHashMap(fdr.
+                    getPeptideHashMap());
+            combinedSearchEngines2Mzid.
+                    setOmssaSpectrumIdentificationItemHashMap(fdr.
+                            getSpectrumIdentificationItemHashMap());
 //            combinedSearchEngines2Mzid.setOmssaSpectrumIdentificationResultHashMap(fdr.getSpectrumIdentificationResultHashMap());
-            combinedSearchEngines2Mzid.getUnimodHashmap().putAll(fdr.getUnimodHashmap());
+            combinedSearchEngines2Mzid.getUnimodHashmap().putAll(fdr.
+                    getUnimodHashmap());
 
         } else if (searchEngine.equals("s3")) {
-            combinedSearchEngines2Mzid.setTandemDbSequenceHashMap(fdr.getdBSequenceHashMap());
-            combinedSearchEngines2Mzid.setTandemPeptideEvidenceHashMap(fdr.getPeptideEvidenceHashMap());
-            combinedSearchEngines2Mzid.setTandemPeptideHashMap(fdr.getPeptideHashMap());
-            combinedSearchEngines2Mzid.setTandemSpectrumIdentificationItemHashMap(fdr.getSpectrumIdentificationItemHashMap());
+            combinedSearchEngines2Mzid.setTandemDbSequenceHashMap(fdr.
+                    getdBSequenceHashMap());
+            combinedSearchEngines2Mzid.setTandemPeptideEvidenceHashMap(fdr.
+                    getPeptideEvidenceMap());
+            combinedSearchEngines2Mzid.setTandemPeptideHashMap(fdr.
+                    getPeptideHashMap());
+            combinedSearchEngines2Mzid.
+                    setTandemSpectrumIdentificationItemHashMap(fdr.
+                            getSpectrumIdentificationItemHashMap());
 //            combinedSearchEngines2Mzid.setTandemSpectrumIdentificationResultHashMap(fdr.getSpectrumIdentificationResultHashMap());
-            combinedSearchEngines2Mzid.getUnimodHashmap().putAll(fdr.getUnimodHashmap());
+            combinedSearchEngines2Mzid.getUnimodHashmap().putAll(fdr.
+                    getUnimodHashmap());
         }
 
         fdr.computeFDRusingJonesMethod();
@@ -178,43 +218,36 @@ public class CombineSearchEngines {
 
         //m.readMzIdentMLData(xmlToRead, searchEngine);
         //m.computeFDRusingJonesMethod();
-        Map<String, List<List<String>>> pepMod = new HashMap<>(fdr.getFromXMLPeptideModificationHash());
-        Map<String, String> pepSeq = new HashMap<>(fdr.getFromXMLPeptideSequenceHash());
-        Map<String, List<List<Object>>> specInfo = new HashMap<>(fdr.getFromXMLSpectrumInfoHash());
-        List<String> sorted_spec = new ArrayList<>(fdr.getSorted_spectrumResult());
-        List<String> sorted_pepID = new ArrayList<>(fdr.getSorted_peptideNames());
+        Map<String, List<List<String>>> pepMod = new HashMap<>(fdr.
+                getFromXMLPeptideModificationHash());
+        Map<String, String> pepSeq = new HashMap<>(fdr.
+                getFromXMLPeptideSequenceHash());
+        Map<String, List<List<Object>>> specInfo = new HashMap<>(fdr.
+                getFromXMLSpectrumInfoHash());
+        List<String> sorted_spec = new ArrayList<>(fdr.
+                getSorted_spectrumResult());
+        List<String> sorted_pepID
+                = new ArrayList<>(fdr.getSorted_peptideNames());
         List<Double> sorted_evalues = new ArrayList<>(fdr.getSorted_evalues());
         List<Double> sorted_scores = new ArrayList<>(fdr.getSorted_scores());
         List<String> sorted_decoy = new ArrayList<>(fdr.getSorted_decoyOrNot());
         List<Double> sortedFDR = new ArrayList<>(fdr.getSorted_simpleFDR());
         List<Double> sorted_qValues = new ArrayList<>(fdr.getSorted_qValues());
-        List<Double> sorted_estFDR = new ArrayList<>(fdr.getSorted_estimatedFDR());
+        List<Double> sorted_estFDR = new ArrayList<>(fdr.
+                getSorted_estimatedFDR());
 
-//      String fileName= xmlToRead+"_combined.txt";
-//      BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-//        String outStr;
-//        for (int i = 0; i < sorted_evalues.size(); i++) {
-//            
-//            
-//            outStr = sorted_spec.get(i) + "\t"
-//                    + sorted_pepID.get(i) + "\t" + sorted_decoy.get(i) + "\t"
-//                    
-//                    + sortedFDR.get(i) + "\t" + sorted_qValues.get(i) + "\t"
-//                    + sorted_estFDR.get(i) + "\n";
-//            
-//            out.write(outStr);
-//        }
-//         out.close();
-//         
         // clear the data, we have all we need
         fdr.clearAllData();
 
         // Populate the FdrAndMzIdentInformationContainer object
         fdrObj.populateData(xmlToRead, searchEngine, pepMod, pepSeq,
-                specInfo, sorted_spec, sorted_pepID, sorted_evalues,
-                sorted_scores, sorted_decoy, sortedFDR, sorted_qValues, sorted_estFDR);
+                            specInfo, sorted_spec, sorted_pepID, sorted_evalues,
+                            sorted_scores, sorted_decoy, sortedFDR,
+                            sorted_qValues, sorted_estFDR);
+        // Here the codes only takes AnalysisProtocolCollection result from the first search engine result. 
         if (i == 0) {
-            analysisProtocolCollectionTandem = fdr.getAnalysisProtocolCollection();
+            analysisProtocolCollectionTandem = fdr.
+                    getAnalysisProtocolCollection();
         }
     }
 
@@ -257,72 +290,16 @@ public class CombineSearchEngines {
      * sortedFDR, sorted_qValues, sorted_estFDR); }
      */
     /**
-     * Do the container assignment with AFS values for each spectrum + sequence pair
+     * Do the container assignment with AFS values for each spectrum + sequence
+     * pair
+     *
      * @param rank Minimum peptide rank for combination.
+     *
      * @throws java.lang.Exception Exception
      */
-    public void combinePeptidesAcrossSearchEngines(int rank) throws Exception {
+    public void combinePeptidesAcrossSearchEngines(int rank)
+            throws Exception {
 
-        /*
-         * // Count total number of spectrums reported by each search engine
-         * int[] totalSpectrumIds = new int[noOfSearchEngines]; for (int i = 0;
-         * i < noOfSearchEngines; i++) { totalSpectrumIds[i] =
-         * singleFDRInformation[i].spectrumInfo.keySet().size(); }
-         *
-         *
-         * // Check if the number of spectrums in each search engine is same or
-         * not, if not, then warn // the user int searchEngineToUse = 0; for
-         * (int i = 0; i < noOfSearchEngines - 1; i++) { if (totalSpectrumIds[i]
-         * != totalSpectrumIds[i + 1]) {
-         *
-         * if (totalSpectrumIds[i] < totalSpectrumIds[i + 1]) {
-         * searchEngineToUse = i; } else { searchEngineToUse = i + 1; }
-         *
-         * System.out.println("Difference in number of spectrums in " +
-         * searchEngineIdentifiers[i] + " and " + searchEngineIdentifiers[i +
-         * 1]); System.out.println("...will use " + searchEngineIdentifiers[i] +
-         * " results to find the common spectrum IDs across the search engines.
-         * Press any key to continue...."); //System.in.read(); break; } }
-         *
-         * // Extract the common spectrum IDs found across all the search
-         * engines String[] commonSpectrumIDs =
-         * findCommonSpectrumIdsArcossSearchEngines();
-         *
-         * // Exit with error message when there are no spectrum ids are found
-         * to be common across the search engines if (commonSpectrumIDs.length
-         * == 0) { System.out.println("No Common spectrum Ids found. Multiple
-         * Search algorithm exiting"); }
-         *
-         * // for (int i = 0; i < commonSpectrumIDs.length; i++) { //
-         * System.out.println("Common IDs " + commonSpectrumIDs[i]); // }
-         *
-         *
-         * for (int i = 0; i < commonSpectrumIDs.length; i++) { // debug
-         * //if(commonSpectrumIDs[i].toString().equalsIgnoreCase("43.3409.3412.3.dta")){
-         * //	System.out.println("Processing -- " +
-         * commonSpectrumIDs[i].toString()); //}
-         *
-         * // collect the peptides above a given rank and the corresponding
-         * sequences for a given spectrum ID String[][] peptideIds =
-         * collectPeptideIdentifiersForGivenSpectrumID(commonSpectrumIDs[i].toString(),
-         * rank); // for each SE, get the peptide sequences String[][]
-         * peptideSeqs = collectPeptideSequences(peptideIds); // For each
-         * sequence, identify the SEs which report this sequence HashMap<String,
-         * Vector> sequenceSearchEngineMapping = compareSequences(peptideSeqs);
-         * // Create a 'mo', 'ot' type string representation for the above
-         * information HashMap<String, String> seqAndMultipleSeIdentifier =
-         * createMultipleSeIdentifier(sequenceSearchEngineMapping); // extract
-         * the fdr score etc information from peptideID HashMap<String, Vector>
-         * fdrRelatedInfo = extractFdrRelatedInformationForSeq(
-         * sequenceSearchEngineMapping, peptideSeqs, peptideIds); // Compute AFS
-         * score HashMap<String, Double> pepSeqAndAFS_score =
-         * computeAFS_score(fdrRelatedInfo);
-         *
-         * //HashMap<String,ArrayList<ArrayList<String>>>
-         * combinedResultContainer;
-         * addInformationToCombinedResultContainer(commonSpectrumIDs[i].toString(),
-         * seqAndMultipleSeIdentifier, fdrRelatedInfo, pepSeqAndAFS_score); }
-         */
         // RK 19-02-13
         // Extract ALL spectrum IDs found across all the search engines
         String[] allspectrumIDs = findAllSpectrumIdsFromSearchEngines();
@@ -333,31 +310,67 @@ public class CombineSearchEngines {
             //}
 
             // collect the peptides above a given rank and the corresponding sequences for a given spectrum ID	
-            String[][] peptideIds = collectPeptideIdentifiersForGivenSpectrumID(allspectrumIDs[i].toString(), rank);
+            String[][] peptideIds = collectPeptideIdentifiersForGivenSpectrumID(
+                    allspectrumIDs[i], rank);
             // for each SE, get the peptide sequences
             String[][] peptideSeqs = collectPeptideSequences(peptideIds);
             // For each sequence, identify the SEs which report this sequence
-            Map<String, List<Integer>> sequenceSearchEngineMapping = compareSequences(peptideSeqs);
+            Map<String, List<Integer>> sequenceSearchEngineMapping
+                    = compareSequences(peptideSeqs);
             // Create a 'mo', 'ot' type string representation for the above information
-            Map<String, String> seqAndMultipleSeIdentifier = createMultipleSeIdentifier(sequenceSearchEngineMapping);
+            Map<String, String> seqAndMultipleSeIdentifier
+                    = createMultipleSeIdentifier(sequenceSearchEngineMapping);
             // extract the fdr score etc information from peptideID
-            Map<String, List<List<Object>>> fdrRelatedInfo = extractFdrRelatedInformationForSeq(
-                    sequenceSearchEngineMapping, peptideSeqs, peptideIds, allspectrumIDs[i].toString());
+            Map<String, List<List<Object>>> fdrRelatedInfo
+                    = extractFdrRelatedInformationForSeq(
+                            sequenceSearchEngineMapping, peptideSeqs, peptideIds,
+                            allspectrumIDs[i]);
             // Compute AFS score
-            Map<String, Double> pepSeqAndAFS_score = computeAFS_score(fdrRelatedInfo);
+            Map<String, Double> pepSeqAndAFS_score = computeAFS_score(
+                    fdrRelatedInfo);
 
-            //HashMap<String,ArrayList<ArrayList<String>>> combinedResultContainer;
-            addInformationToCombinedResultContainer(allspectrumIDs[i].toString(),
-                    seqAndMultipleSeIdentifier, fdrRelatedInfo, pepSeqAndAFS_score);
+            addInformationToCombinedResultContainer(allspectrumIDs[i],
+                                                    seqAndMultipleSeIdentifier,
+                                                    fdrRelatedInfo,
+                                                    pepSeqAndAFS_score);
         }
 
     }
 
-    String[] findAllSpectrumIdsFromSearchEngines() throws Exception {
+    /**
+     * Update AnalysisProtocolCollection if write out mzid version 1.2.
+     * Adding CV term "consensus scoring" to the AdditionalSearchParams.
+     * Removing CV term "no special processing" if exists.
+     */
+    private void handleAnalysisProtocolCollection() {
+        List<SpectrumIdentificationProtocol> sipList
+                = this.analysisProtocolCollection.
+                getSpectrumIdentificationProtocol();
+        for (SpectrumIdentificationProtocol sip : sipList) {
+            List<CvParam> sipCvParamList = sip.getAdditionalSearchParams().
+                    getCvParam();
+            boolean flag = false; //flag of existance of the CV term "consensus scoring"
+            for (CvParam cp : sipCvParamList) {
+                if (cp.getAccession().equals(CvConstants.CONSENSUS_SCORING.
+                        getAccession())) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                sipCvParamList.remove(CvConstants.NO_SPECIAL_PROCESSING);
+                sipCvParamList.add(CvConstants.CONSENSUS_SCORING);
+            }
+        }
+    }
+
+    String[] findAllSpectrumIdsFromSearchEngines()
+            throws Exception {
         Map<String, String> tempMap = new HashMap<>();
 
         for (int i = 0; i < singleFDRInformation.length; i++) {
-            String[] specNames = singleFDRInformation[i].spectrumInfo.keySet().toArray(new String[0]);
+            String[] specNames = singleFDRInformation[i].spectrumInfo.keySet().
+                    toArray(new String[0]);
 
             for (String specID : specNames) {
                 if (!tempMap.containsKey(specID)) {
@@ -369,8 +382,10 @@ public class CombineSearchEngines {
         return tempMap.keySet().toArray(new String[0]).clone();
     }
 
-    void addInformationToCombinedResultContainer(String spectrumId, Map<String, String> seqAndMultipleSe,
-            Map<String, List<List<Object>>> fdrInfo, Map<String, Double> pepSeqAndAFS) {
+    void addInformationToCombinedResultContainer(String spectrumId,
+                                                 Map<String, String> seqAndMultipleSe,
+                                                 Map<String, List<List<Object>>> fdrInfo,
+                                                 Map<String, Double> pepSeqAndAFS) {
 
         Iterator<String> seqSet = seqAndMultipleSe.keySet().iterator();
         while (seqSet.hasNext()) {
@@ -391,14 +406,16 @@ public class CombineSearchEngines {
 
             // Finally, put everything into the global container
             //ArrayList<ArrayList<String>> storage = combinedResultContainer.get(containerKey);
-            List<List<Object>> storage = combinedResultContainer.get(containerKey);
+            List<List<Object>> storage = combinedResultContainer.get(
+                    containerKey);
 
             storage.add(infoForThisSeq);
             combinedResultContainer.put(containerKey, storage);
         }
     }
 
-    Map<String, Double> computeAFS_score(Map<String, List<List<Object>>> fdrRelatedInfo) {
+    Map<String, Double> computeAFS_score(
+            Map<String, List<List<Object>>> fdrRelatedInfo) {
 
         Map<String, Double> afs_score_hash = new HashMap<>();
 
@@ -423,7 +440,8 @@ public class CombineSearchEngines {
     }
 
     Map<String, List<List<Object>>> extractFdrRelatedInformationForSeq(
-            Map<String, List<Integer>> sequenceSearchEngineMapping, String[][] peptideSeqs, String[][] peptideIds, String spectrumId) {
+            Map<String, List<Integer>> sequenceSearchEngineMapping,
+            String[][] peptideSeqs, String[][] peptideIds, String spectrumId) {
 
         Map<String, List<List<Object>>> pepSeqAndFdrDecoyInfo = new HashMap<>();
         Iterator<String> it = sequenceSearchEngineMapping.keySet().iterator();
@@ -438,7 +456,8 @@ public class CombineSearchEngines {
                 int seIndex = seMap.get(i);
                 // get all the seq from that SE to check for the corresponding index
 
-                List<String> seqValuesForThisSe = new ArrayList<>(Arrays.asList(peptideSeqs[seIndex]));
+                List<String> seqValuesForThisSe = new ArrayList<>(Arrays.asList(
+                        peptideSeqs[seIndex]));
                 // the position of the seq within that array
                 int j = seqValuesForThisSe.indexOf(seq);
                 // the peptide ID corresponding to the sequence
@@ -448,7 +467,8 @@ public class CombineSearchEngines {
                 // We know the SE and the peptide ID. We can extract rest of the information form
                 //singleFDRInformation structure
                 //Vector allThePeptideIdFromThisSe = new Vector(Arrays.asList(singleFDRInformation[seIndex].sorted_peptideID));
-                Vector<String> allThePeptideIdFromThisSe = new Vector<>(singleFDRInformation[seIndex].sorted_peptideID);
+                Vector<String> allThePeptideIdFromThisSe = new Vector<>(
+                        singleFDRInformation[seIndex].sorted_peptideID);
 
                 //RK 19-02-13
                 // There might be repeated peptides for different Spec IDs.
@@ -459,9 +479,12 @@ public class CombineSearchEngines {
                     int idx = 0;
                     try {
                         //      System.out.println("seindex "+seIndex +"  correspondingPeptideId "+ correspondingPeptideId);
-                        idx = allThePeptideIdFromThisSe.indexOf(correspondingPeptideId, start);
+                        idx = allThePeptideIdFromThisSe.indexOf(
+                                correspondingPeptideId, start);
 
-                        String spec = singleFDRInformation[seIndex].sorted_spectrumID.get(idx);
+                        String spec
+                                = singleFDRInformation[seIndex].sorted_spectrumID.
+                                get(idx);
                         if (spec.equals(spectrumId)) {
                             found = true;
                             indexOfThisPeptideId = idx;
@@ -469,7 +492,8 @@ public class CombineSearchEngines {
                         start = idx + 1;
                     } catch (Exception e) {
 
-                        System.out.println(seIndex + "\t" + correspondingPeptideId);
+                        System.out.println(seIndex + "\t"
+                                + correspondingPeptideId);
 
                         e.printStackTrace();
                     }
@@ -480,9 +504,14 @@ public class CombineSearchEngines {
                 }
 
                 //int indexOfThisPeptideId = allThePeptideIdFromThisSe.indexOf(correspondingPeptideId);
-                double fdrEstimated = singleFDRInformation[seIndex].sorted_estimatedFDR.get(indexOfThisPeptideId);
-                double qValue = singleFDRInformation[seIndex].sorted_qValues.get(indexOfThisPeptideId);
-                String decoyOrNot = singleFDRInformation[seIndex].sorted_decoyornot.get(indexOfThisPeptideId);
+                double fdrEstimated
+                        = singleFDRInformation[seIndex].sorted_estimatedFDR.get(
+                                indexOfThisPeptideId);
+                double qValue = singleFDRInformation[seIndex].sorted_qValues.
+                        get(indexOfThisPeptideId);
+                String decoyOrNot
+                        = singleFDRInformation[seIndex].sorted_decoyornot.get(
+                                indexOfThisPeptideId);
 
                 List<Object> fdrRelatedInfo = new ArrayList<>(1);
                 fdrRelatedInfo.add(seIndex);				// The identifier SE
@@ -502,21 +531,25 @@ public class CombineSearchEngines {
         return pepSeqAndFdrDecoyInfo;
     }
 
-    Map<String, String> createMultipleSeIdentifier(Map<String, List<Integer>> sequenceSearchEngineMap) {
+    Map<String, String> createMultipleSeIdentifier(
+            Map<String, List<Integer>> sequenceSearchEngineMap) {
 
         Map<String, String> seqAndMappedSe = new HashMap<>();
 
-        Iterator<String> sequencesIterator = sequenceSearchEngineMap.keySet().iterator();
+        Iterator<String> sequencesIterator = sequenceSearchEngineMap.keySet().
+                iterator();
         while (sequencesIterator.hasNext()) {
             String seCombination = "";
             String sequence = sequencesIterator.next();
-            List<Integer> searchEnginesFound = sequenceSearchEngineMap.get(sequence);
+            List<Integer> searchEnginesFound = sequenceSearchEngineMap.get(
+                    sequence);
             int totalSe = searchEnginesFound.size();
 
             // build identifier string
             for (int k = 0; k < totalSe; k++) {
                 int index = searchEnginesFound.get(k);
-                seCombination = seCombination.concat(shortRepresentationOfSearchEngineIdentiifers[index]);
+                seCombination = seCombination.concat(
+                        shortRepresentationOfSearchEngineIdentiifers[index]);
             }
             // certain combinations need to be corrected to be recognised by the container
             if (seCombination.equalsIgnoreCase("21")) {
@@ -528,8 +561,10 @@ public class CombineSearchEngines {
             if (seCombination.equalsIgnoreCase("31")) {
                 seCombination = "13";
             }
-            if (seCombination.equalsIgnoreCase("132") || seCombination.equalsIgnoreCase("213")
-                    || seCombination.equalsIgnoreCase("231") || seCombination.equalsIgnoreCase("312")
+            if (seCombination.equalsIgnoreCase("132") || seCombination.
+                    equalsIgnoreCase("213")
+                    || seCombination.equalsIgnoreCase("231") || seCombination.
+                    equalsIgnoreCase("312")
                     || seCombination.equalsIgnoreCase("321")) {
                 seCombination = "123";
             }
@@ -539,14 +574,16 @@ public class CombineSearchEngines {
         return seqAndMappedSe;
     }
 
-    String[][] collectPeptideIdentifiersForGivenSpectrumID(String specID, int rank) {
+    String[][] collectPeptideIdentifiersForGivenSpectrumID(String specID,
+                                                           int rank) {
 
         String[][] peptideIds = new String[noOfSearchEngines][];
 
         try {
             for (int i = 0; i < noOfSearchEngines; i++) {
                 //System.out.println("::Debug - " + searchEngineIdentifiers[i] + "\t" + specID);
-                List<List<Object>> dataForThisSpectrumID = singleFDRInformation[i].spectrumInfo.get(specID);
+                List<List<Object>> dataForThisSpectrumID
+                        = singleFDRInformation[i].spectrumInfo.get(specID);
 
                 // RK - 19-02-13, if this spec is not identified by the SE, put a null
                 if (dataForThisSpectrumID == null) {
@@ -559,17 +596,23 @@ public class CombineSearchEngines {
                 for (int j = 0; j < dataForThisSpectrumID.size(); j++) {
                     //System.out.println("::Debug 2 - " + dataForThisSpectrumID.get(j).get(1).toString() + "\t" +dataForThisSpectrumID.get(j).get(2).toString() + "\t" + dataForThisSpectrumID.get(j).get(3).toString());
 
-                    if (Integer.parseInt(dataForThisSpectrumID.get(j).get(2).toString()) <= rank) {
-                        pepId.add(dataForThisSpectrumID.get(j).get(1).toString().trim());
+                    if (Integer.parseInt(dataForThisSpectrumID.get(j).get(2).
+                            toString()) <= rank) {
+                        pepId.add(
+                                dataForThisSpectrumID.get(j).get(1).toString().
+                                trim());
                     }
                 }
                 peptideIds[i] = new String[pepId.size()];
                 peptideIds[i] = pepId.toArray(new String[0]);
             }
         } catch (NullPointerException n) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + n.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + n.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 06 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
@@ -592,16 +635,20 @@ public class CombineSearchEngines {
 
                 List<String> seqs = new ArrayList<>(1);
                 for (int j = 0; j < peptideId[i].length; j++) {
-                    seqs.add(singleFDRInformation[i].peptideSequence.get(peptideId[i][j]).trim());
+                    seqs.add(singleFDRInformation[i].peptideSequence.get(
+                            peptideId[i][j]).trim());
                 }
                 peptideSequences[i] = new String[seqs.size()];
                 peptideSequences[i] = seqs.toArray(new String[0]);
             }
 
         } catch (NullPointerException n) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + n.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + n.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 06 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
@@ -659,7 +706,8 @@ public class CombineSearchEngines {
         return sequenceMap;
     }
 
-    public void writeToFileForDiagnostics(String fileName) throws Exception {
+    public void writeToFileForDiagnostics(String fileName)
+            throws Exception {
 
         Writer out = new BufferedWriter(new FileWriter(fileName));
 
@@ -678,7 +726,8 @@ public class CombineSearchEngines {
         out.close();
     }
 
-    public void writeToFileForDiagnostics_singleFDRObj(String fileName) throws Exception {
+    public void writeToFileForDiagnostics_singleFDRObj(String fileName)
+            throws Exception {
 
         Writer out = new BufferedWriter(new FileWriter(fileName));
         // reassign the line number for a new file
@@ -697,7 +746,12 @@ public class CombineSearchEngines {
                 String simpleFDR = fdrInfo.sortedSimpleFDR.get(k).toString();
                 String estFDR = fdrInfo.sorted_estimatedFDR.get(k).toString();
 
-                String csvDescription = retrieveInformationToWriteInCsvFile(i, peptideId, specId, simpleFDR, estFDR, "");
+                String csvDescription = retrieveInformationToWriteInCsvFile(i,
+                                                                            peptideId,
+                                                                            specId,
+                                                                            simpleFDR,
+                                                                            estFDR,
+                                                                            "");
                 out.write(csvDescription);
             }
 
@@ -708,17 +762,20 @@ public class CombineSearchEngines {
     void computeSortedIndicesForSingleContainer(String key) {
 
         //ArrayList<ArrayList<String>> content = (ArrayList<ArrayList<String>>) combinedResultContainer.get(key);
-        List<List<Object>> content = (List<List<Object>>) combinedResultContainer.get(key);
+        List<List<Object>> content
+                = (List<List<Object>>) combinedResultContainer.get(key);
 
         List<Double> afs_values = new ArrayList<>(1);
         for (int i = 0; i < content.size(); i++) //afs_values.add( Double.parseDouble(content.get(i).get(content.get(i).size() - 1)));
         {
-            afs_values.add(Double.parseDouble(content.get(i).get(content.get(i).size() - 1).toString()));
+            afs_values.add(Double.parseDouble(content.get(i).get(content.get(i).
+                    size() - 1).toString()));
         }
 
         // Call the sorting routine to find the indices of sorted evalues
         TreeSortForIndices sortClass = new TreeSortForIndices();
-        Integer[] sortOrderForEvalues = sortClass.sortTheValueColumn(afs_values.toArray(new Double[0]), true);
+        Integer[] sortOrderForEvalues = sortClass.sortTheValueColumn(afs_values.
+                toArray(new Double[0]), true);
 
         List<List<Object>> sort_content = new ArrayList<>();
 
@@ -745,7 +802,8 @@ public class CombineSearchEngines {
         List<List<Object>> content = combinedResultContainer.get(key);
 
         List<Object> lastRec = content.get(content.size() - 1);
-        Double lastAfs = Double.parseDouble(lastRec.get(lastRec.size() - 1).toString());
+        Double lastAfs = Double.parseDouble(lastRec.get(lastRec.size() - 1).
+                toString());
         Double fakeAfs = new Double(lastAfs + epsilon_afs);
 
         //create a fake data-structure
@@ -801,12 +859,14 @@ public class CombineSearchEngines {
         int falsePositiveCount = 0;
 
         for (int i = 0; i < combinedResultContainer.get(key).size(); i++) {
-            List<Object> vec = (List<Object>) combinedResultContainer.get(key).get(i).get(1);
+            List<Object> vec = (List<Object>) combinedResultContainer.get(key).
+                    get(i).get(1);
             if (vec.get(4).toString().equals("true")) {
                 falsePositiveCount++;
             }
 
-            combinedResultContainer.get(key).get(i).add((double) falsePositiveCount / (double) (i + 1));
+            combinedResultContainer.get(key).get(i).add(
+                    (double) falsePositiveCount / (double) (i + 1));
             combinedResultContainer.get(key).get(i).add((double) 0);
         }
     }
@@ -824,24 +884,30 @@ public class CombineSearchEngines {
             return;
         }
 
-        int indexForFdrValue = combinedResultContainer.get(key).get(0).size() - 2;
+        int indexForFdrValue = combinedResultContainer.get(key).get(0).size()
+                - 2;
         int indexForQValue = combinedResultContainer.get(key).get(0).size() - 1;
 
         Double immediateMinFdr = 0.0;
         //try{
-        immediateMinFdr = (Double) combinedResultContainer.get(key).get(combinedResultContainer.get(key).size() - 1).get(indexForFdrValue);
-        combinedResultContainer.get(key).get(combinedResultContainer.get(key).size() - 1).set(indexForQValue, immediateMinFdr);
+        immediateMinFdr = (Double) combinedResultContainer.get(key).get(
+                combinedResultContainer.get(key).size() - 1).get(
+                indexForFdrValue);
+        combinedResultContainer.get(key).get(combinedResultContainer.get(key).
+                size() - 1).set(indexForQValue, immediateMinFdr);
         //}catch(Exception e){
         //	e.printStackTrace();
         //}
         for (int i = combinedResultContainer.get(key).size() - 1; i > 0; i--) {
-            Double currentFDR = (Double) combinedResultContainer.get(key).get(i - 1).get(indexForFdrValue);
+            Double currentFDR = (Double) combinedResultContainer.get(key).get(i
+                    - 1).get(indexForFdrValue);
 
             if (currentFDR < immediateMinFdr) {
                 immediateMinFdr = currentFDR;
             }
 
-            combinedResultContainer.get(key).get(i - 1).set(indexForQValue, immediateMinFdr);
+            combinedResultContainer.get(key).get(i - 1).set(indexForQValue,
+                                                            immediateMinFdr);
         }
     }
 
@@ -865,14 +931,16 @@ public class CombineSearchEngines {
             return;
         }
 
-        int indexForAFSValue = combinedResultContainer.get(key).get(0).size() - 3;
-        int indexForFdrValue = combinedResultContainer.get(key).get(0).size() - 2;
+        int indexForAFSValue = combinedResultContainer.get(key).get(0).size()
+                - 3;
+        int indexForFdrValue = combinedResultContainer.get(key).get(0).size()
+                - 2;
         int indexForQValue = combinedResultContainer.get(key).get(0).size() - 1;
 
 //		for (int i = 0 ; i < combinedResultContainer.get(key).size(); i++){
 //			combinedResultContainer.get(key).get(i).add((Double)0);
 //		}
-		/*
+        /*
          * RK -22-10-10 double prev_afsvalue =
          * (Double)combinedResultContainer.get(key).get(0).get(indexForAFSValue);
          * double prev_qvalue =
@@ -889,8 +957,10 @@ public class CombineSearchEngines {
         //int i = 1 ;
         int i = 0; // RK 22-10-10
         for (; i < combinedResultContainer.get(key).size(); i++) {
-            double current_afsvalue = (Double) combinedResultContainer.get(key).get(i).get(indexForAFSValue);
-            double current_qvalue = (Double) combinedResultContainer.get(key).get(i).get(indexForQValue);
+            double current_afsvalue = (Double) combinedResultContainer.get(key).
+                    get(i).get(indexForAFSValue);
+            double current_qvalue = (Double) combinedResultContainer.get(key).
+                    get(i).get(indexForQValue);
 
             if (current_qvalue > prev_qvalue) {
 
@@ -899,10 +969,12 @@ public class CombineSearchEngines {
 
                 int id = 0;
                 if (current_afsvalue != prev_afsvalue) {
-                    slope = (current_qvalue - prev_qvalue) / (current_afsvalue - prev_afsvalue);
+                    slope = (current_qvalue - prev_qvalue) / (current_afsvalue
+                            - prev_afsvalue);
                     id = 1; //RK 22-10-10
                 } else {
-                    slope = (current_qvalue - prev_qvalue) / (current_afsvalue - prev_prev_afsvalue);
+                    slope = (current_qvalue - prev_qvalue) / (current_afsvalue
+                            - prev_prev_afsvalue);
                     id = 2; //RK 22-10-10
                 }
                 //RK 22-10-10 - Tells us which co-ordinates to use for calculating intercepts.
@@ -915,11 +987,14 @@ public class CombineSearchEngines {
                 if (counter_backwardStep > 0) { // compute the FDR score for flat q-value region
                     for (int k = 0; k <= counter_backwardStep; k++) {
                         int index = i - counter_backwardStep + k;
-                        double fdrScore = slope * ((Double) combinedResultContainer.get(key).get(index).get(indexForAFSValue)) + intercept;
+                        double fdrScore = slope
+                                * ((Double) combinedResultContainer.get(key).
+                                get(index).get(indexForAFSValue)) + intercept;
                         if (Double.isNaN(fdrScore)) {
                             System.out.print(fdrScore);
                         }
-                        combinedResultContainer.get(key).get(index).add(fdrScore);
+                        combinedResultContainer.get(key).get(index).
+                                add(fdrScore);
                         //System.out.println("i = " + i + "Count = " + counter_backwardStep +  " k = " + k + " index::1 = " + index + " slope = " + slope + " intercept = " + intercept + " e-val = " + ((Double)combinedResultContainer.get(key).get(index).get(indexForAFSValue)) + " FDR = " + fdrScore);
                     }
                 } else { 							// In case an immediate increment in q value is found
@@ -950,13 +1025,15 @@ public class CombineSearchEngines {
         }
     }
 
-    public void prepareTheCSVFileForMzIdentMLParser(String fileName) throws Exception {
+    public void prepareTheCSVFileForMzIdentMLParser(String fileName)
+            throws Exception {
 
         Writer out = new BufferedWriter(new FileWriter(fileName));
         // reassign the line number for a new file
         this.lineNumber = 1;
 
-        Iterator<String> seComboKeys = combinedResultContainer.keySet().iterator();
+        Iterator<String> seComboKeys = combinedResultContainer.keySet().
+                iterator();
 
         while (seComboKeys.hasNext()) {
             String key = seComboKeys.next();
@@ -965,8 +1042,11 @@ public class CombineSearchEngines {
 
             for (int i = 0; i < combinedResultContainer.get(key).size(); i++) {
 
-                String specID = combinedResultContainer.get(key).get(i).get(0).toString();
-                Double estFDR_value = (Double) combinedResultContainer.get(key).get(i).get(combinedResultContainer.get(key).get(i).size() - 1);
+                String specID = combinedResultContainer.get(key).get(i).get(0).
+                        toString();
+                Double estFDR_value = (Double) combinedResultContainer.get(key).
+                        get(i).get(combinedResultContainer.get(key).get(i).
+                        size() - 1);
                 //String estFDR = combinedResultContainer.get(key).get(i).get(combinedResultContainer.get(key).get(i).combinedResultContainer.get(key).get(i).get(combinedResultContainer.get(key).get(i).size() - 1)size() - 1).toString();
                 String estFDR = Double.toString(estFDR_value);
                 if (Double.valueOf(estFDR).isNaN()) {
@@ -980,11 +1060,19 @@ public class CombineSearchEngines {
                     //System.out.println(i + " <-> " + k  );
                     //System.out.println(	" -- " + ((Vector)combinedResultContainer.get(key).get(i).get(k)).toString());
 
-                    int seIndex = (Integer) ((List<Object>) combinedResultContainer.get(key).get(i).get(k)).get(0);
+                    int seIndex
+                            = (Integer) ((List<Object>) combinedResultContainer.
+                            get(key).get(i).get(k)).get(0);
 
-                    String pepId = ((List<Object>) combinedResultContainer.get(key).get(i).get(k)).get(1).toString();
-                    String simpleFDR = ((List<Object>) combinedResultContainer.get(key).get(i).get(k)).get(2).toString();
-                    String toWrite = retrieveInformationToWriteInCsvFile(seIndex, pepId, specID, simpleFDR, estFDR, key);
+                    String pepId = ((List<Object>) combinedResultContainer.get(
+                            key).get(i).get(k)).get(1).toString();
+                    String simpleFDR = ((List<Object>) combinedResultContainer.
+                            get(key).get(i).get(k)).get(2).toString();
+                    String toWrite
+                            = retrieveInformationToWriteInCsvFile(seIndex, pepId,
+                                                                  specID,
+                                                                  simpleFDR,
+                                                                  estFDR, key);
 
                     out.write(toWrite);
                 }
@@ -1008,18 +1096,27 @@ public class CombineSearchEngines {
      *
      * @return the comma separated string with the above information
      */
-    String retrieveInformationToWriteInCsvFile(int searchEngineIndex, String pepId, String spectrumID,
-            String simpleFDR, String estFDR, String key) throws Exception {
+    String retrieveInformationToWriteInCsvFile(int searchEngineIndex,
+                                               String pepId, String spectrumID,
+                                               String simpleFDR, String estFDR,
+                                               String key)
+            throws Exception {
 
         String outString = new String();
 
         //System.out.println(pepId + "\t " + singleFDRInformation[searchEngineIndex].peptideModifications.containsKey(pepId));
-        List<List<String>> modArray = singleFDRInformation[searchEngineIndex].peptideModifications.get(pepId);
+        List<List<String>> modArray
+                = singleFDRInformation[searchEngineIndex].peptideModifications.
+                get(pepId);
         String modStr = createModString(modArray);
 
-        String pepSequence = singleFDRInformation[searchEngineIndex].peptideSequence.get(pepId);
+        String pepSequence
+                = singleFDRInformation[searchEngineIndex].peptideSequence.get(
+                        pepId);
 
-        List<List<Object>> specInfo = singleFDRInformation[searchEngineIndex].spectrumInfo.get(spectrumID);
+        List<List<Object>> specInfo
+                = singleFDRInformation[searchEngineIndex].spectrumInfo.get(
+                        spectrumID);
 
         List<Object> relevantPepInfo = new ArrayList<>();
         for (int i = 0; i < specInfo.size(); i++) {
@@ -1030,7 +1127,8 @@ public class CombineSearchEngines {
         }
 
         if (relevantPepInfo.size() < 5) {
-            System.out.println("Wrong peptide info : " + searchEngineIndex + " " + pepId + " " + spectrumID);
+            System.out.println("Wrong peptide info : " + searchEngineIndex + " "
+                    + pepId + " " + spectrumID);
             //System.in.read();
             return "\n ";
         }
@@ -1047,24 +1145,33 @@ public class CombineSearchEngines {
             peptideEvd = (List<List<Object>>) relevantPepInfo.get(8);
             for (int i = 0; i < peptideEvd.size(); i++) {
                 outString = outString
-                        + this.lineNumber + "," + spectrumID + "," + pepSequence + ","
-                        + estFDR + "," + calcMass + "," + "GROUP_ID" + "," + peptideEvd.get(i).get(3).toString()
+                        + this.lineNumber + "," + spectrumID + "," + pepSequence
+                        + ","
+                        + estFDR + "," + calcMass + "," + "GROUP_ID" + ","
+                        + peptideEvd.get(i).get(3).toString()
                         + "," + peptideEvd.get(i).get(0).toString() + ","
-                        + peptideEvd.get(i).get(1).toString() + "," + simpleFDR + "," + modStr
+                        + peptideEvd.get(i).get(1).toString() + "," + simpleFDR
+                        + "," + modStr
                         + "," + charge + "," + expMAss + "\n";
                 String proteinAccession = peptideEvd.get(i).get(3).toString();
-                int start = Integer.parseInt(peptideEvd.get(i).get(0).toString());
+                int start = Integer.
+                        parseInt(peptideEvd.get(i).get(0).toString());
                 int end = Integer.parseInt(peptideEvd.get(i).get(1).toString());
                 // Added by FG 09/5/2014 Missing pre post
                 String pre = peptideEvd.get(i).get(4).toString();
                 String post = peptideEvd.get(i).get(5).toString();
                 //Added by FG 13/8/2014 fixing multiple spectra ref
                 String location = peptideEvd.get(i).get(6).toString();
-                String improvedPSMString = spectrumID + "," + pepSequence + "," + peptideEvd.get(i).get(0).toString() + "," + peptideEvd.get(i).get(1).toString() + "," + proteinAccession;
+                String improvedPSMString = spectrumID + "," + pepSequence + ","
+                        + peptideEvd.get(i).get(0).toString() + ","
+                        + peptideEvd.get(i).get(1).toString() + ","
+                        + proteinAccession;
 
                 if (!improvedPSM.contains(improvedPSMString) && !key.equals("")) {
 
-                    createPSM(spectrumID, proteinAccession, pepSequence, modStr, modArray, start, end, charge, expMAss, calcMass, estFDR, key, pre, post, location);
+                    createPSM(spectrumID, proteinAccession, pepSequence, modStr,
+                              modArray, start, end, charge, expMAss, calcMass,
+                              estFDR, key, pre, post, location);
                     improvedPSM.add(improvedPSMString);
                 }
 
@@ -1084,10 +1191,13 @@ public class CombineSearchEngines {
         cvList = fdr.getCvList();
         analysisCollection = fdr.getAnalysisCollection();
         //analysisCollection.getSpectrumIdentification().get(0).getInputSpectra().clear();
-        List<SpectrumIdentification> spectrumIdentificationList = analysisCollection.getSpectrumIdentification();
+        List<SpectrumIdentification> spectrumIdentificationList
+                = analysisCollection.getSpectrumIdentification();
         for (int i = 0; i < spectrumIdentificationList.size(); i++) {
-            SpectrumIdentification spectrumIdentification = spectrumIdentificationList.get(i);
-            List<InputSpectra> inputSpectraList = spectrumIdentification.getInputSpectra();
+            SpectrumIdentification spectrumIdentification
+                    = spectrumIdentificationList.get(i);
+            List<InputSpectra> inputSpectraList = spectrumIdentification.
+                    getInputSpectra();
             for (int j = 0; j < inputSpectraList.size(); j++) {
                 InputSpectra inputSpectra = inputSpectraList.get(j);
                 String ref = inputSpectra.getSpectraDataRef();
@@ -1109,13 +1219,22 @@ public class CombineSearchEngines {
         inputs.getSpectraData().addAll(spectraDataHashMap.values());
     }
 
-    public void createPSM(String spectrumID, String proteinAccession, String pepSequence, String modStr, List<List<String>> modArray, int start, int end,
-            String charge, String expMAss, String calcMass, String estFDR, String key, String pre, String post, String location) throws IOException {
+    public void createPSM(String spectrumID, String proteinAccession,
+                          String pepSequence, String modStr,
+                          List<List<String>> modArray, int start, int end,
+                          String charge, String expMAss, String calcMass,
+                          String estFDR, String key, String pre, String post,
+                          String location)
+            throws IOException {
         //FG
 
         SpectrumIdentificationResult sir;
-        if (combinedSearchEngines2Mzid.getCombinedSpectrumIdentificationResultHashMap().containsKey(spectrumID)) {
-            sir = combinedSearchEngines2Mzid.getCombinedSpectrumIdentificationResultHashMap().get(spectrumID);
+        if (combinedSearchEngines2Mzid.
+                getCombinedSpectrumIdentificationResultHashMap().containsKey(
+                        spectrumID)) {
+            sir = combinedSearchEngines2Mzid.
+                    getCombinedSpectrumIdentificationResultHashMap().get(
+                            spectrumID);
         } else {
             sir = new SpectrumIdentificationResult();
             sir.setId("SIR_" + sirCounter);
@@ -1130,37 +1249,47 @@ public class CombineSearchEngines {
             if (sd != null) {
                 sir.setSpectraData(sd);
             } else {
-                throw new RuntimeException("Spectra data is missing for location: " + sd);
+                throw new RuntimeException(
+                        "Spectra data is missing for location: " + sd);
             }
 
-            combinedSearchEngines2Mzid.getCombinedSpectrumIdentificationResultHashMap().put(spectrumID, sir);
+            combinedSearchEngines2Mzid.
+                    getCombinedSpectrumIdentificationResultHashMap().put(
+                            spectrumID, sir);
         }
 
         DBSequence dbSequence = null;
         String newDBsequenceID = proteinAccession;//proteinAccession
 
-        if (combinedSearchEngines2Mzid.getCombinedDbSequenceHashMap().containsKey(newDBsequenceID)) {
-            dbSequence = combinedSearchEngines2Mzid.getCombinedDbSequenceHashMap().get(newDBsequenceID);
+        if (combinedSearchEngines2Mzid.getCombinedDbSequenceHashMap().
+                containsKey(newDBsequenceID)) {
+            dbSequence = combinedSearchEngines2Mzid.
+                    getCombinedDbSequenceHashMap().get(newDBsequenceID);
         } else {
             dbSequence = new DBSequence();
             dbSequence.setId("dbseq_" + newDBsequenceID);
             dbSequence.setAccession(newDBsequenceID);
             if (fdr.getInputs().getSearchDatabase().get(0) != null) {
-                dbSequence.setSearchDatabase(fdr.getInputs().getSearchDatabase().get(0));
+                dbSequence.setSearchDatabase(
+                        fdr.getInputs().getSearchDatabase().get(0));
             }
-            combinedSearchEngines2Mzid.getCombinedDbSequenceHashMap().put(newDBsequenceID, dbSequence);
+            combinedSearchEngines2Mzid.getCombinedDbSequenceHashMap().put(
+                    newDBsequenceID, dbSequence);
         }
 
         Peptide pep;
         String pepID = pepSequence + "_" + modStr;
 
-        if (combinedSearchEngines2Mzid.getCombinedPeptideHashMap().containsKey(pepID)) {
-            pep = combinedSearchEngines2Mzid.getCombinedPeptideHashMap().get(pepID);
+        if (combinedSearchEngines2Mzid.getCombinedPeptideHashMap().containsKey(
+                pepID)) {
+            pep = combinedSearchEngines2Mzid.getCombinedPeptideHashMap().get(
+                    pepID);
         } else {
             pep = new Peptide();
             pep.setPeptideSequence(pepSequence);
             pep.setId(pepID);
-            combinedSearchEngines2Mzid.getCombinedPeptideHashMap().put(pepID, pep);
+            combinedSearchEngines2Mzid.getCombinedPeptideHashMap().put(pepID,
+                                                                       pep);
             List<Modification> modList = pep.getModification();
             //System.out.println("New pep:" + pepSeq + modString);
 
@@ -1169,7 +1298,8 @@ public class CombineSearchEngines {
                 Boolean foundOkay = true;
                 mzidMod.setLocation(Integer.valueOf(modArray.get(z).get(0)));
                 if (modArray.get(z).get(2) != null) {
-                    mzidMod.setMonoisotopicMassDelta(Double.valueOf(modArray.get(z).get(2)));
+                    mzidMod.setMonoisotopicMassDelta(Double.valueOf(modArray.
+                            get(z).get(2)));
                 } else {
                     foundOkay = false;
                 }
@@ -1180,7 +1310,8 @@ public class CombineSearchEngines {
                 }
                 if (modArray.get(z).get(3) != null && foundOkay) {
                     CvParam modParam = new CvParam();
-                    String accession = combinedSearchEngines2Mzid.getUnimodHashmap().get(modArray.get(z).get(3));
+                    String accession = combinedSearchEngines2Mzid.
+                            getUnimodHashmap().get(modArray.get(z).get(3));
                     modParam.setAccession(accession);
 
                     modParam.setName(modArray.get(z).get(3));
@@ -1202,7 +1333,8 @@ public class CombineSearchEngines {
 
                     modParam.setName("unknown modification");
                     Cv psiCV = new Cv();
-                    psiCV.setUri("https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo");
+                    psiCV.setUri(
+                            "https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo");
                     psiCV.setId("PSI-MS");
 //                    psiCV.setVersion("2.25.0");
                     psiCV.setFullName("PSI-MS");
@@ -1214,11 +1346,14 @@ public class CombineSearchEngines {
 
         }
 
-        String pepEvidID = pepSequence + "_" + newDBsequenceID + "_" + start + "_" + end;
+        String pepEvidID = pepSequence + "_" + newDBsequenceID + "_" + start
+                + "_" + end;
 
         PeptideEvidence peptideEvidence = null;
-        if (combinedSearchEngines2Mzid.getCombinedPeptideEvidenceHashMap().containsKey(pepEvidID)) {
-            peptideEvidence = combinedSearchEngines2Mzid.getCombinedPeptideEvidenceHashMap().get(pepEvidID);
+        if (combinedSearchEngines2Mzid.getCombinedPeptideEvidenceHashMap().
+                containsKey(pepEvidID)) {
+            peptideEvidence = combinedSearchEngines2Mzid.
+                    getCombinedPeptideEvidenceHashMap().get(pepEvidID);
 
         } else {
             peptideEvidence = new PeptideEvidence();
@@ -1240,11 +1375,13 @@ public class CombineSearchEngines {
                 }
             }
 
-            combinedSearchEngines2Mzid.getCombinedPeptideEvidenceHashMap().put(pepEvidID, peptideEvidence);
+            combinedSearchEngines2Mzid.getCombinedPeptideEvidenceHashMap().put(
+                    pepEvidID, peptideEvidence);
 
         }
 
-        List<SpectrumIdentificationItem> siiList = sir.getSpectrumIdentificationItem();
+        List<SpectrumIdentificationItem> siiList = sir.
+                getSpectrumIdentificationItem();
 
         /*
          * Cases: If PepID is the same, then this is another PeptideEvidence,
@@ -1270,11 +1407,16 @@ public class CombineSearchEngines {
             sii.setPeptide(pep);
             List<CvParam> cvParamList = sii.getCvParam();
 
-            cvParamList.add(combinedSearchEngines2Mzid.makeCvParam("MS:1002356", "PSM-level combined FDRScore", estFDR));
+            cvParamList.add(combinedSearchEngines2Mzid.makeCvParam("MS:1002356",
+                                                                   "PSM-level combined FDRScore",
+                                                                   estFDR));
 
             Boolean orderLowToHigh = true;
 
-            combinedSearchEngines2Mzid.addSIIToListAndSetRank(siiList, sii, "MS:1002356", orderLowToHigh, sir.getId());
+            combinedSearchEngines2Mzid.addSIIToListAndSetRank(siiList, sii,
+                                                              "MS:1002356",
+                                                              orderLowToHigh,
+                                                              sir.getId());
             UserParam e = new UserParam();
             e.setName("search engines identifying PSM");
             e.setValue(key);
@@ -1283,12 +1425,15 @@ public class CombineSearchEngines {
         }
         PeptideEvidenceRef pepEvidRef = new PeptideEvidenceRef();
         pepEvidRef.setPeptideEvidence(peptideEvidence);
-        List<PeptideEvidenceRef> peptideEvidenceRefList = sii.getPeptideEvidenceRef();
+        List<PeptideEvidenceRef> peptideEvidenceRefList = sii.
+                getPeptideEvidenceRef();
         boolean peptideEvidenceRefBool = false;
         for (int i = 0; i < peptideEvidenceRefList.size(); i++) {
-            PeptideEvidenceRef peptideEvidenceRef = peptideEvidenceRefList.get(i);
+            PeptideEvidenceRef peptideEvidenceRef = peptideEvidenceRefList.
+                    get(i);
 
-            if (peptideEvidenceRef.getPeptideEvidenceRef().equals(pepEvidRef.getPeptideEvidenceRef())) {
+            if (peptideEvidenceRef.getPeptideEvidenceRef().equals(pepEvidRef.
+                    getPeptideEvidenceRef())) {
                 peptideEvidenceRefBool = true;
                 break;
             }
@@ -1315,9 +1460,11 @@ public class CombineSearchEngines {
         for (int i = 0; i < modArray.size(); i++) {
             String forThisMod = new String();
             if (modArray.get(i).get(3).equals("unknown modification")) {
-                forThisMod = modArray.get(i).get(2) + "_" + modArray.get(i).get(1) + ":" + modArray.get(i).get(0);
+                forThisMod = modArray.get(i).get(2) + "_" + modArray.get(i).get(
+                        1) + ":" + modArray.get(i).get(0);
             } else {
-                forThisMod = modArray.get(i).get(3) + "(" + modArray.get(i).get(1) + "):" + modArray.get(i).get(0);
+                forThisMod = modArray.get(i).get(3) + "(" + modArray.get(i).get(
+                        1) + "):" + modArray.get(i).get(0);
             }
 
 //            forThisMod = forThisMod.replaceAll("&gt;", "_");
@@ -1333,24 +1480,9 @@ public class CombineSearchEngines {
         return modString;
     }
 
-    public static void runTwoSearchEngines(String[] args) throws Exception {
+    public static void runTwoSearchEngines(String[] args)
+            throws Exception {
 
-        /*
-         * newArgs[0] = Utils.getCmdParameter(args, "firstFile", true);
-         * newArgs[1] = Utils.getCmdParameter(args, "firstSearchEngine", true);
-         * newArgs[2] = Utils.getCmdParameter(args, "firstcvTerm", true);
-         * newArgs[3] = Utils.getCmdParameter(args, "firstbetterScoresAreLower",
-         * true); newArgs[4] = Utils.getCmdParameter(args, "secondFile", true);
-         * newArgs[5] = Utils.getCmdParameter(args, "secondSearchEngine", true);
-         * newArgs[6] = Utils.getCmdParameter(args, "secondcvTerm", true);
-         * newArgs[7] = Utils.getCmdParameter(args,
-         * "secondbetterScoresAreLower", true); newArgs[8] =
-         * Utils.getCmdParameter(args, "rank", true); newArgs[9] =
-         * Utils.getCmdParameter(args, "decoyRatio", true); newArgs[10] =
-         * Utils.getCmdParameter(args, "outputFile", true); newArgs[11] =
-         * Utils.getCmdParameter(args, "debugFile", true); newArgs[12] =
-         * Utils.getCmdParameter(args, "decoyRegex", true);
-         */
         String file_2 = args[0];
         String searchEngine_2 = args[1];
         String secondcvTerm = args[2];
@@ -1375,23 +1507,30 @@ public class CombineSearchEngines {
         String[] searchEngine = {searchEngine_3, searchEngine_2};
         String[] inputFiles = {file_3, file_2};
         String[] cvTerms = {thirdcvTerm, secondcvTerm};
-        String[] betterScoresAreLower = {thirdbetterScoresAreLower, secondbetterScoresAreLower};
+        String[] betterScoresAreLower = {thirdbetterScoresAreLower,
+            secondbetterScoresAreLower};
 
         CombineSearchEngines C = new CombineSearchEngines(searchEngine);
         // Added by FG 8/10/2014
         C.checkInputFiles(inputFiles);
         String decoyRegex = args[12];
+        mzidVer = MzIdentMLVersion.getVersion(args[13]);
         long startTime;
         long stopTime;
         long elapsedTime;
         // Perform algorithm 1 and fill all the values in FdrAndMzIdentInformationContainer of C
         for (int i = 0; i < searchEngine.length; i++) {
             startTime = System.currentTimeMillis();
-            C.computeFDRForSingleSearchEngine(i, inputFiles[i], searchEngine[i], C.singleFDRInformation[i], decoyRatio, decoyRegex, cvTerms[i], betterScoresAreLower[i]);
+            C.computeFDRForSingleSearchEngine(i, inputFiles[i], searchEngine[i],
+                                              C.singleFDRInformation[i],
+                                              decoyRatio, decoyRegex, cvTerms[i],
+                                              betterScoresAreLower[i]);
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                System.out.println("computeFDRForSingleSearchEngine time for " + searchEngine[i] + " " + elapsedTime / 1000 + " Seconds");
+                System.out.println("computeFDRForSingleSearchEngine time for "
+                        + searchEngine[i] + " " + elapsedTime / 1000
+                        + " Seconds");
             }
 
             System.out.println("Done - " + searchEngine[i]);
@@ -1403,7 +1542,9 @@ public class CombineSearchEngines {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                System.out.println("writeToFileForDiagnostics_singleFDRObj time " + +elapsedTime / 1000 + " Seconds");
+                System.out.println(
+                        "writeToFileForDiagnostics_singleFDRObj time "
+                        + +elapsedTime / 1000 + " Seconds");
             }
 
         }
@@ -1413,7 +1554,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("combinePeptidesAcrossSearchEngines time " + +elapsedTime / 1000 + " Seconds");
+            System.out.println("combinePeptidesAcrossSearchEngines time "
+                    + +elapsedTime / 1000 + " Seconds");
         }
 
         // do the sorting according to afs value
@@ -1423,7 +1565,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("sortWholeCombinedResultContainer time " + +elapsedTime / 1000 + " Seconds");
+            System.out.println("sortWholeCombinedResultContainer time "
+                    + +elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1431,7 +1574,9 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("insertFakeDecoyInWholeCombinedResultContainer time " + +elapsedTime / 1000 + " Seconds");
+            System.out.println(
+                    "insertFakeDecoyInWholeCombinedResultContainer time "
+                    + +elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1440,7 +1585,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("simpleFdrForWholeCombinedResultContainer time " + +elapsedTime / 1000 + " Seconds");
+            System.out.println("simpleFdrForWholeCombinedResultContainer time "
+                    + +elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1449,7 +1595,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("qValueForWholeCombinedResultContainer time " + +elapsedTime / 1000 + " Seconds");
+            System.out.println("qValueForWholeCombinedResultContainer time "
+                    + +elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1458,7 +1605,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("estFDRForWholeCombinedResultContainer time " + +elapsedTime / 1000 + " Seconds");
+            System.out.println("estFDRForWholeCombinedResultContainer time "
+                    + +elapsedTime / 1000 + " Seconds");
         }
         startTime = System.currentTimeMillis();
 
@@ -1466,7 +1614,9 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("removeFakeDecoyFromWholeCombinedResultContainer time " + +elapsedTime / 1000 + " Seconds");
+            System.out.println(
+                    "removeFakeDecoyFromWholeCombinedResultContainer time "
+                    + +elapsedTime / 1000 + " Seconds");
         }
 
         // if(args[7] != null)
@@ -1477,17 +1627,21 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("prepareTheCSVFileForMzIdentMLParser time " + +elapsedTime / 1000 + " Seconds");
+            System.out.println("prepareTheCSVFileForMzIdentMLParser time "
+                    + +elapsedTime / 1000 + " Seconds");
         }
     }
 
     /**
      * FG The method to call the pipeline from other java programs, in case if
      * we want to tinker around in main()
+     *
      * @param args Input arguments
+     *
      * @throws java.lang.Exception Exception
      */
-    public static void runThreeSearchEngines(String[] args) throws Exception {
+    public static void runThreeSearchEngines(String[] args)
+            throws Exception {
 
         /**
          * newArgs[0] = Utils.getCmdParameter(args, "firstFile", true);
@@ -1538,7 +1692,8 @@ public class CombineSearchEngines {
         String[] searchEngine = {searchEngine_1, searchEngine_2, searchEngine_3};
         String[] inputFiles = {file_1, file_2, file_3};
         String[] cvTerms = {firstcvTerm, secondcvTerm, thirdcvTerm};
-        String[] betterScoresAreLower = {firstbetterScoresAreLower, secondbetterScoresAreLower, thirdbetterScoresAreLower};
+        String[] betterScoresAreLower = {firstbetterScoresAreLower,
+            secondbetterScoresAreLower, thirdbetterScoresAreLower};
 
         CombineSearchEngines C = new CombineSearchEngines(searchEngine);
         long startTime;
@@ -1547,15 +1702,21 @@ public class CombineSearchEngines {
         // Added by FG 8/10/2014
         C.checkInputFiles(inputFiles);
         String decoyRegex = args[16];
+        mzidVer = MzIdentMLVersion.getVersion(args[17]);
         for (int i = 0; i < searchEngine.length; i++) {
             startTime = System.currentTimeMillis();
 
-            C.computeFDRForSingleSearchEngine(i, inputFiles[i], searchEngine[i], C.singleFDRInformation[i], decoyRatio, decoyRegex, cvTerms[i], betterScoresAreLower[i]);
+            C.computeFDRForSingleSearchEngine(i, inputFiles[i], searchEngine[i],
+                                              C.singleFDRInformation[i],
+                                              decoyRatio, decoyRegex, cvTerms[i],
+                                              betterScoresAreLower[i]);
 
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                System.out.println("computeFDRForSingleSearchEngine time for " + searchEngine[i] + " " + elapsedTime / 1000 + " Seconds");
+                System.out.println("computeFDRForSingleSearchEngine time for "
+                        + searchEngine[i] + " " + elapsedTime / 1000
+                        + " Seconds");
             }
 
             System.out.println("Done - " + searchEngine[i]);
@@ -1567,7 +1728,9 @@ public class CombineSearchEngines {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             if (verbose) {
-                System.out.println("writeToFileForDiagnostics_singleFDRObj time " + elapsedTime / 1000 + " Seconds");
+                System.out.println(
+                        "writeToFileForDiagnostics_singleFDRObj time "
+                        + elapsedTime / 1000 + " Seconds");
             }
 
         }
@@ -1578,7 +1741,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("combinePeptidesAcrossSearchEngines time " + elapsedTime / 1000 + " Seconds");
+            System.out.println("combinePeptidesAcrossSearchEngines time "
+                    + elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1587,7 +1751,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("sortWholeCombinedResultContainer time " + elapsedTime / 1000 + " Seconds");
+            System.out.println("sortWholeCombinedResultContainer time "
+                    + elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1596,7 +1761,9 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("insertFakeDecoyInWholeCombinedResultContainer time " + elapsedTime / 1000 + " Seconds");
+            System.out.println(
+                    "insertFakeDecoyInWholeCombinedResultContainer time "
+                    + elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1604,7 +1771,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("simpleFdrForWholeCombinedResultContainer time " + elapsedTime / 1000 + " Seconds");
+            System.out.println("simpleFdrForWholeCombinedResultContainer time "
+                    + elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1612,7 +1780,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("qValueForWholeCombinedResultContainer time " + elapsedTime / 1000 + " Seconds");
+            System.out.println("qValueForWholeCombinedResultContainer time "
+                    + elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1621,7 +1790,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("estFDRForWholeCombinedResultContainer time " + elapsedTime / 1000 + " Seconds");
+            System.out.println("estFDRForWholeCombinedResultContainer time "
+                    + elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1631,7 +1801,9 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("removeFakeDecoyFromWholeCombinedResultContainer time " + elapsedTime / 1000 + " Seconds");
+            System.out.println(
+                    "removeFakeDecoyFromWholeCombinedResultContainer time "
+                    + elapsedTime / 1000 + " Seconds");
         }
 
         startTime = System.currentTimeMillis();
@@ -1640,7 +1812,8 @@ public class CombineSearchEngines {
         stopTime = System.currentTimeMillis();
         elapsedTime = stopTime - startTime;
         if (verbose) {
-            System.out.println("prepareTheCSVFileForMzIdentMLParser time " + elapsedTime / 1000 + " Seconds");
+            System.out.println("prepareTheCSVFileForMzIdentMLParser time "
+                    + elapsedTime / 1000 + " Seconds");
         }
 
     }
@@ -1655,7 +1828,6 @@ public class CombineSearchEngines {
 //        }
 //
 //    }
-
     public void writeMzidFile() {
 
         try {
@@ -1665,8 +1837,12 @@ public class CombineSearchEngines {
             }
             Writer writer = new FileWriter(outFile);
 
+            if (mzidVer == null) {
+                mzidVer = MzIdentMLVersion.Version_1_2;
+            }
+
             MzIdentMLMarshaller marshaller;
-            marshaller = new MzIdentMLMarshaller();
+            marshaller = new MzIdentMLMarshaller(mzidVer);
 
             writer.write(marshaller.createXmlHeader() + "\n");
 
@@ -1679,11 +1855,15 @@ public class CombineSearchEngines {
 
             AnalysisSoftware analysisSoftware = new AnalysisSoftware();
             Date date = new Date();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
-            analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
+            SimpleDateFormat dateFormat = new SimpleDateFormat(
+                    "yyyy-MM-dd HH-mm-ss");
+            analysisSoftware.setName(this.getClass().getSimpleName() + "_"
+                    + dateFormat.format(date));
+            analysisSoftware.setId(this.getClass().getSimpleName() + "_"
+                    + dateFormat.format(date));
             Param param = new Param();
-            param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib", CvConstants.PSI_CV));
+            param.setParam(MzidLibUtils.makeCvParam("MS:1002237", "mzidLib",
+                                                    CvConstants.PSI_CV));
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
             marshaller.marshal(analysisSoftwareList, writer);
@@ -1700,7 +1880,9 @@ public class CombineSearchEngines {
             writer.write("\n");
 
             SequenceCollection sequenceCollection = new SequenceCollection();
-            Iterator<Entry<String, DBSequence>> itDbSeq = combinedSearchEngines2Mzid.getCombinedDbSequenceHashMap().entrySet().iterator();
+            Iterator<Entry<String, DBSequence>> itDbSeq
+                    = combinedSearchEngines2Mzid.getCombinedDbSequenceHashMap().
+                    entrySet().iterator();
             List<DBSequence> dbSeqList = new ArrayList<>();
             while (itDbSeq.hasNext()) {
                 Entry<String, DBSequence> pairs = itDbSeq.next();
@@ -1708,7 +1890,9 @@ public class CombineSearchEngines {
                 itDbSeq.remove();
             }
 
-            Iterator<Entry<String, Peptide>> itPeptide = combinedSearchEngines2Mzid.getCombinedPeptideHashMap().entrySet().iterator();
+            Iterator<Entry<String, Peptide>> itPeptide
+                    = combinedSearchEngines2Mzid.getCombinedPeptideHashMap().
+                    entrySet().iterator();
             List<Peptide> peptideList = new ArrayList<>();
             while (itPeptide.hasNext()) {
                 Entry<String, Peptide> pairs = itPeptide.next();
@@ -1716,7 +1900,9 @@ public class CombineSearchEngines {
                 itPeptide.remove();
             }
 
-            Iterator<Entry<String, PeptideEvidence>> itPeptideEvidence = combinedSearchEngines2Mzid.getCombinedPeptideEvidenceHashMap().entrySet().iterator();
+            Iterator<Entry<String, PeptideEvidence>> itPeptideEvidence
+                    = combinedSearchEngines2Mzid.
+                    getCombinedPeptideEvidenceHashMap().entrySet().iterator();
             List<PeptideEvidence> peptideEvidenceList = new ArrayList<>();
             while (itPeptideEvidence.hasNext()) {
                 Entry<String, PeptideEvidence> pairs = itPeptideEvidence.next();
@@ -1728,9 +1914,9 @@ public class CombineSearchEngines {
             sequenceCollection.getPeptideEvidence().addAll(peptideEvidenceList);
             sequenceCollection.getDBSequence().addAll(dbSeqList);
             sequenceCollection.getPeptide().addAll(peptideList);
-            if (sequenceCollection != null) {
-                marshaller.marshal(sequenceCollection, writer);
-            }
+
+            marshaller.marshal(sequenceCollection, writer);
+
             writer.write("\n");
             SpectrumIdentificationList siList;
             siList = new SpectrumIdentificationList();
@@ -1745,9 +1931,11 @@ public class CombineSearchEngines {
             siList.getCvParam().add(cvParam);
 
             if (analysisCollection != null) {
-                List<SpectrumIdentification> spectrumIdentificationList = analysisCollection.getSpectrumIdentification();
+                List<SpectrumIdentification> spectrumIdentificationList
+                        = analysisCollection.getSpectrumIdentification();
                 for (int i = 0; i < spectrumIdentificationList.size(); i++) {
-                    SpectrumIdentification spectrumIdentification = spectrumIdentificationList.get(i);
+                    SpectrumIdentification spectrumIdentification
+                            = spectrumIdentificationList.get(i);
                     spectrumIdentification.setSpectrumIdentificationList(siList);
 
                 }
@@ -1756,6 +1944,9 @@ public class CombineSearchEngines {
             writer.write("\n");
 
             if (analysisProtocolCollection != null) {
+                if (mzidVer.equals(MzIdentMLVersion.Version_1_2)) {
+                    handleAnalysisProtocolCollection();
+                }
                 marshaller.marshal(analysisProtocolCollection, writer);
             }
             writer.write("\n");
@@ -1771,25 +1962,36 @@ public class CombineSearchEngines {
 
             writer.write(marshaller.createAnalysisDataStartTag() + "\n");
 
-            Iterator<Entry<String, SpectrumIdentificationResult>> itSpectrumIdentificationResult = combinedSearchEngines2Mzid.getCombinedSpectrumIdentificationResultHashMap().entrySet().iterator();
-            List<SpectrumIdentificationResult> spectrumIdentificationResultList = new ArrayList<>();
+            Iterator<Entry<String, SpectrumIdentificationResult>> itSpectrumIdentificationResult
+                    = combinedSearchEngines2Mzid.
+                    getCombinedSpectrumIdentificationResultHashMap().entrySet().
+                    iterator();
+            List<SpectrumIdentificationResult> spectrumIdentificationResultList
+                    = new ArrayList<>();
             while (itSpectrumIdentificationResult.hasNext()) {
-                Entry<String, SpectrumIdentificationResult> pairs = itSpectrumIdentificationResult.next();
-                SpectrumIdentificationResult spectrumIdentificationResult = (SpectrumIdentificationResult) pairs.getValue();
-                String spectrumID = spectrumIdentificationResult.getSpectrumID().split(";")[0];
+                Entry<String, SpectrumIdentificationResult> pairs
+                        = itSpectrumIdentificationResult.next();
+                SpectrumIdentificationResult spectrumIdentificationResult
+                        = (SpectrumIdentificationResult) pairs.getValue();
+                String spectrumID
+                        = spectrumIdentificationResult.getSpectrumID().
+                        split(";")[0];
                 // 2015-7-20 by Bo Wen: fixed the bug of spectraData mapping
-                String location = spectrumIdentificationResult.getSpectrumID().split(";")[1];
-                spectrumIdentificationResult.setSpectraData(spectraDataHashMap.get(location));
+                String location = spectrumIdentificationResult.getSpectrumID().
+                        split(";")[1];
+                spectrumIdentificationResult.setSpectraData(spectraDataHashMap.
+                        get(location));
                 spectrumIdentificationResult.setSpectrumID(spectrumID);
-                spectrumIdentificationResultList.add(spectrumIdentificationResult);
+                spectrumIdentificationResultList.add(
+                        spectrumIdentificationResult);
                 itSpectrumIdentificationResult.remove();
             }
 
-            siList.getSpectrumIdentificationResult().addAll(spectrumIdentificationResultList);
+            siList.getSpectrumIdentificationResult().addAll(
+                    spectrumIdentificationResultList);
 
-            if (siList != null) {
-                marshaller.marshal(siList, writer);
-            }
+            marshaller.marshal(siList, writer);
+
             writer.write("\n");
             // Update by Fawaz Ghali 17/02/2015 for mzid 1.2 valdiation
             // writer.write(marshaller.createProteinDetectionListStartTag("PDL_1", null) + "\n");
@@ -1804,21 +2006,26 @@ public class CombineSearchEngines {
             System.out.println("Output written to " + outFile);
 
         } catch (IOException e) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + e.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + e.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
     }
 
     private void checkInputFiles(String[] inputFiles) {
-        System.out.println("Check if the input files have the same spectra data");
+        System.out.
+                println("Check if the input files have the same spectra data");
         for (int i = 0; i < inputFiles.length; i++) {
             String string = inputFiles[i];
-            MzIdentMLUnmarshaller mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(new File(string));
-            Inputs inputs = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Inputs);
-            List<SpectraData> spectraDataList = inputs.getSpectraData();
+            MzIdentMLUnmarshaller mzIdentMLUnmarshaller
+                    = new MzIdentMLUnmarshaller(new File(string));
+            Inputs in = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Inputs);
+            List<SpectraData> spectraDataList = in.getSpectraData();
             if (i == 0) {
                 for (int j = 0; j < spectraDataList.size(); j++) {
                     SpectraData spectraData = spectraDataList.get(j);
@@ -1840,8 +2047,10 @@ public class CombineSearchEngines {
                         SpectraData spectraData = spectraDataList.get(j);
                         File msFile = new File(spectraData.getLocation());
                         // 2015-7-20 by Bo Wen: save the spectraID for other mzid files
-                        spectraIDLocation.put(spectraData.getId(), msFile.getName());
-                        if (!spectraDataHashMap.keySet().contains(msFile.getName())) {
+                        spectraIDLocation.put(spectraData.getId(), msFile.
+                                              getName());
+                        if (!spectraDataHashMap.keySet().contains(msFile.
+                                getName())) {
                             identical = false;
 
                             break;
@@ -1853,11 +2062,13 @@ public class CombineSearchEngines {
                 }
 
                 if (!identical) {
-                    throw new RuntimeException("The input files do not have same spectra data.");
+                    throw new RuntimeException(
+                            "The input files do not have same spectra data.");
                 }
 
             }
 
         }
     }
+
 }

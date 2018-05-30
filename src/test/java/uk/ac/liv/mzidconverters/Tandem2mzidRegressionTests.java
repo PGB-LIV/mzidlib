@@ -16,6 +16,7 @@ import uk.ac.ebi.jmzidml.model.mzidml.SequenceCollection;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationItem;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationList;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationResult;
+import uk.ac.ebi.jmzidml.model.utils.MzIdentMLVersion;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 import uk.ac.liv.mzidlib.converters.Tandem2mzid;
 
@@ -40,7 +41,7 @@ public class Tandem2mzidRegressionTests extends TestCase {
     public void test_basic_55merge_tandem_file() throws Exception {
         String xTandemFile = "src/test/data/55merge_tandem.xml";
         String resultFile = "src/test/out/55merge_tandem.xml.mzid";
-        new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1001062", false, true);
+        new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1001062", false, true, MzIdentMLVersion.Version_1_1);
 
         //===================================================================================
         //========================= Checks /assertions section :=============================
@@ -149,7 +150,7 @@ public class Tandem2mzidRegressionTests extends TestCase {
     public void test_debug_File() throws Exception {
         String xTandemFileFromGalaxyStep = "src/test/data/DEBUG_MSMS_XTANDEM.bioml";
         String outMzid = "src/test/out/DEBUG_MSMS_XTANDEM.bioml.mzid";
-        new Tandem2mzid(xTandemFileFromGalaxyStep, outMzid, "MS:1001348", "MS:1000584", false, true);
+        new Tandem2mzid(xTandemFileFromGalaxyStep, outMzid, "MS:1001348", "MS:1000584", false, true, MzIdentMLVersion.Version_1_1);
 
         //===================================================================================
         //========================= Checks /assertions section :=============================
@@ -234,7 +235,7 @@ public class Tandem2mzidRegressionTests extends TestCase {
         String xTandemFile = "src/test/data/S2_depl_spiked_6.mzML_xtandemOut.bioml";
         String resultFile = "src/test/out/S2_depl_spiked_6.mzML_xtandemOut.bioml.mzid";
         boolean isMs2SpectrumIdStartingAtZero = true;
-        new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1000584", isMs2SpectrumIdStartingAtZero, true);
+        new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1000584", isMs2SpectrumIdStartingAtZero, true, MzIdentMLVersion.Version_1_1);
 
         //===================================================================================
         //========================= Checks /assertions section :=============================
@@ -339,7 +340,7 @@ public class Tandem2mzidRegressionTests extends TestCase {
         //based on extension names found in file:
         String xTandemFile = "src/test/data/55merge_tandem.xml";
         String resultFile = "src/test/out/55merge_tandem.xml.mzid";
-        new Tandem2mzid(xTandemFile, resultFile);
+        new Tandem2mzid(xTandemFile, resultFile, MzIdentMLVersion.Version_1_1);
 
         //===================================================================================
         //========================= Checks /assertions section :=============================
@@ -370,7 +371,7 @@ public class Tandem2mzidRegressionTests extends TestCase {
 
         //Overrule with custom codes and check:
         resultFile = resultFile + "_dummy.mzid";
-        new Tandem2mzid(xTandemFile, resultFile, "MS:1001349", "MS:1000566", false, true);
+        new Tandem2mzid(xTandemFile, resultFile, "MS:1001349", "MS:1000566", false, true, MzIdentMLVersion.Version_1_1);
 
         unmarshaller = new MzIdentMLUnmarshaller(new File(resultFile));
 
@@ -387,7 +388,7 @@ public class Tandem2mzidRegressionTests extends TestCase {
     public void test_NTERM_modifications() throws Exception {
         String xTandemFile = "src/test/data/55merge_tandem_NTERM_MODIF.xml";
         String resultFile = "src/test/out/55merge_tandem_NTERM_MODIF.xml.mzid";
-        new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1001062", false, true);
+        new Tandem2mzid(xTandemFile, resultFile, "MS:1001348", "MS:1001062", false, true, MzIdentMLVersion.Version_1_1);
 
         //===================================================================================
         //========================= Checks /assertions section :=============================

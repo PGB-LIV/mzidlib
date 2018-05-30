@@ -1,3 +1,4 @@
+
 package uk.ac.liv.mzidlib.gff;
 
 /**
@@ -10,20 +11,22 @@ package uk.ac.liv.mzidlib.gff;
  */
 public class ProteinResults {
 
-    private String accession;
-    private boolean decoyOrNot;
-    private long start;
-    private long end;
-    private String peptideEvidenceID;
-    private String fdrScore;
-    private String peptideSeq;
+    private final String accession;
+    private final boolean decoyOrNot;
+    private final long start;
+    private final long end;
+    private final String peptideEvidenceId;
+    private final String fdrScore;
+    private final String peptideSeq;
 
-    public ProteinResults(String accession, boolean decoyOrNot, long start, long end, String peptideEvidenceID, String fdrScore, String peptideSeq) {
+    public ProteinResults(String accession, boolean decoyOrNot, long start,
+                          long end, String peptideEvidenceId, String fdrScore,
+                          String peptideSeq) {
         this.accession = accession;
         this.decoyOrNot = decoyOrNot;
         this.start = start;
         this.end = end;
-        this.peptideEvidenceID = peptideEvidenceID;
+        this.peptideEvidenceId = peptideEvidenceId;
         this.peptideSeq = peptideSeq;
         this.fdrScore = fdrScore;
     }
@@ -52,7 +55,8 @@ public class ProteinResults {
         return this.end;
     }
 
-    public String getPeptideEvidenceID() {
-        return peptideEvidenceID;
+    public String getPeptideEvidenceId() {
+        return peptideEvidenceId;
     }
+
 }

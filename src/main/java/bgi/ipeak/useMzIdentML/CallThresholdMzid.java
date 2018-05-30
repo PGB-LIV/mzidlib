@@ -40,6 +40,6 @@ public class CallThresholdMzid {
 
     public void Use_mzidlib2threshold() {
         @SuppressWarnings("unused")
-        ThresholdMzid thresholdMzid = new ThresholdMzid(mzid2threshold, output_mzid, isPSMThreshold, cvAccessionForScoreThreshold, threshValue, betterScoresAreLower, deleteUnderThreshold, "PDH");
+        ThresholdMzid thresholdMzid = new ThresholdMzid(mzid2threshold, output_mzid, isPSMThreshold, cvAccessionForScoreThreshold, threshValue, betterScoresAreLower, deleteUnderThreshold, "PDH", "1.1");
     }
 }

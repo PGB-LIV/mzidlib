@@ -149,56 +149,6 @@ public class FalseDiscoveryRate {
         }
     }
 
-//    public FalseDiscoveryRate(String mzid, String searchEngine, String decoyRatio, String decoy, String cvTerm, boolean betterScore) {
-//        this.decoyRatio = Integer.valueOf(decoyRatio);
-//        this.decoy = decoy;
-//        
-//        this.searchEngine = searchEngine;
-//        this.cvTerm = cvTerm;
-//        
-//        if(!cvTerm.equals("") && cvTerm!=null){
-//            allowedEvalues = cvTerm;            
-//        }
-//this.betterScoresAreLower =betterScore;
-//        
-//        if (decoy == null || decoy.equals("")) {
-//            usingFileDecoyAttribute = true;
-//        }
-//        
-//        if (searchEngine.equals("mascot")) {
-//            searchEngineIdentifierExpectation = "Mascot:expectation value";
-//            searchEngineIdentifierScore = "Mascot:score";
-//            mascotDecoyTag = null;
-//        } else if (searchEngine.equals("omssa")) {
-//            searchEngineIdentifierExpectation = "OMSSA:evalue";
-//            searchEngineIdentifierScore = "OMSSA:pvalue";
-//            mascotDecoyTag = null;
-//        } else if (searchEngine.equals("X!Tandem")) {
-//            searchEngineIdentifierExpectation = "X\\!Tandem:expect";
-//            searchEngineIdentifierScore = "X\\!Tandem:hyperscore";
-//            mascotDecoyTag = null;
-//        }else{
-//            searchEngineIdentifierScore = cvTerm;
-//        }
-//        
-//        try {
-//            mzIdentMLUnmarshaller = new MzIdentMLUnmarshaller(new File(mzid));
-//            //mzIdentML = (MzIdentML) mzIdentMLUnmarshaller.unmarshal(MzIdentML.class);
-//
-//            
-//            readMzIdentML();
-//            System.out.println(cvTerm);
-//            
-//            
-//        } catch (OutOfMemoryError error) {
-//            String methodName =Thread.currentThread().getStackTrace()[1].getMethodName();
-//             String className = this.getClass().getName();
-//             String message= "The task \""+methodName +  "\" in the class \""+ className + "\" was not completed because of "+ error.getMessage()+"."+
-//                "\nPlease see the reference guide at 05 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
-//             System.out.println (message);
-//        } 
-//    }
-
     private void readMzIdentML() {
         long startTime = System.currentTimeMillis();
         try {
@@ -214,25 +164,22 @@ public class FalseDiscoveryRate {
             peptideHashMap.clear();
             peptideEvidenceHashMap.clear();
             spectrumIdentificationItemHashMap.clear();
-//            spectrumIdentificationResultHashMap.clear();
             getUnimodHashmap().clear();
-            //cvList = mzIdentML.getCvList();
             cvList = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.CvList);
-            //analysisSoftwareList = mzIdentML.getAnalysisSoftwareList();
             analysisSoftwareList = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisSoftwareList);
-            //auditCollection = mzIdentML.getAuditCollection();
+
             auditCollection = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AuditCollection);
-            //provider = mzIdentML.getProvider();
+
             provider = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Provider);
-            // analysisProtocolCollection = mzIdentML.getAnalysisProtocolCollection();
+
             analysisProtocolCollection = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisProtocolCollection);
-            //analysisCollection = mzIdentML.getAnalysisCollection();
+
             analysisCollection = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.AnalysisCollection);
-            //inputs = mzIdentML.getDataCollection().getInputs();
+
             inputs = mzIdentMLUnmarshaller.unmarshal(MzIdentMLElement.Inputs);
 
             //Stores SpectraData id and location attribute (one to one).
-            HashMap<String, String> spectraDataHaspMap = new HashMap<>();
+            Map<String, String> spectraDataHaspMap = new HashMap<>();
             List<SpectraData> spectraDataList = inputs.getSpectraData();
             for (int i = 0; i < spectraDataList.size(); i++) {
                 SpectraData spectraData = spectraDataList.get(i);
@@ -587,8 +534,6 @@ public class FalseDiscoveryRate {
         // Arrange the values in the order determined by the sorting operation, such that, each index an arraylist can be map to
         // the entries in other arraylists for the "same" index
         for (int index : sortOrderForEvalues) {
-//            if(spectrumResult.get(index).equals("index=2945"))
-//                System.out.println("index=2945");
             sorted_spectrumResult.add(spectrumResult.get(index));
             sorted_spectrumItem.add(spectrumItem.get(index));
             sorted_peptideNames.add(peptideNames.get(index));
@@ -675,7 +620,7 @@ public class FalseDiscoveryRate {
             analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
             Param param = new Param();
-            Cv psiCV = mzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+            Cv psiCV = mzidLibUtils.getpsiCv(mzIdentMLUnmarshaller);
             param.setParam(mzidLibUtils.makeCvParam("MS:1002237", "mzidLib", psiCV));
             analysisSoftware.setSoftwareName(param);
             analysisSoftwareList.getAnalysisSoftware().add(analysisSoftware);
@@ -712,9 +657,8 @@ public class FalseDiscoveryRate {
                 sequenceCollection.getPeptideEvidence().add(pe);
             }
 
-            if (sequenceCollection != null) {
-                marshaller.marshal(sequenceCollection, writer);
-            }
+            marshaller.marshal(sequenceCollection, writer);
+
             writer.write("\n");
 
             if (analysisCollection != null) {
@@ -775,7 +719,7 @@ public class FalseDiscoveryRate {
                     String sii_temp = sii_stringMap.get(sii.getId());
                     if (sii_temp != null) {
                         String[] sii_arr = sii_temp.split(":");
-                        Cv cv = mzidLibUtils.getpsiCV(mzIdentMLUnmarshaller);
+                        Cv cv = mzidLibUtils.getpsiCv(mzIdentMLUnmarshaller);
 
                         cvParamestimated_simpleFDR.setAccession("MS:1002351");
                         cvParamestimated_simpleFDR.setName("PSM-level local FDR");
@@ -1098,7 +1042,7 @@ public class FalseDiscoveryRate {
         this.decoy = decoy;
         this.cvTerm = cvTerm;
 
-        if (!cvTerm.equals("") && cvTerm != null) {
+        if (cvTerm != null && !cvTerm.equals("")) {
             allowedEvalues = cvTerm;
         }
 

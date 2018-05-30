@@ -1,3 +1,4 @@
+
 package uk.ac.liv.mzidlib.converters;
 
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLMarshaller;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import uk.ac.ebi.jmzidml.model.mzidml.*;
+import uk.ac.liv.mzidlib.util.MzidLibUtils;
 
 /**
  *
@@ -31,9 +33,11 @@ public class Csv2mzid {
     private String outFile = "temp.mzid";
     //private static String inputCsvFile = "example_files/Toxo_1D_Slice43_omssa.csv";
     private String parser_params = "example_files/toxo_omssa_params.csv";
-    private String inputCsvFile = "example_files/Toxo_1D_Slice43_omssa_fiddle_ranks_for_testing.csv";
+    private String inputCsvFile
+            = "example_files/Toxo_1D_Slice43_omssa_fiddle_ranks_for_testing.csv";
     //private URL configFile =  this.getClass().getResource("/resources/csv_config_file.csv");
-    private InputStream inputConfigFile = ClassLoader.getSystemClassLoader().getResourceAsStream("csv_config_file.csv");
+    private InputStream inputConfigFile = ClassLoader.getSystemClassLoader().
+            getResourceAsStream("csv_config_file.csv");
     private Map<String, String> dataTypeMap = new HashMap<>();         //mapping for config file from internal datatypes to datatypes specified by each Software
     private String softwareName = "";
     //These will be set after reading the config file - 
@@ -43,8 +47,10 @@ public class Csv2mzid {
     private String cvNameForPvalue = "";
     private String cvScoreToOrderBy = "MS:1001328";     //This is a default only
     private Map<String, Peptide> peptideIDToPeptideMap = new HashMap<>();
-    private Map<String, PeptideEvidence> idToPeptideEvidenceMap = new HashMap<>();
-    private Map<String, SpectrumIdentificationResult> spectrumIDToSIRMap = new HashMap<>();
+    private Map<String, PeptideEvidence> idToPeptideEvidenceMap
+            = new HashMap<>();
+    private Map<String, SpectrumIdentificationResult> spectrumIDToSIRMap
+            = new HashMap<>();
     //Param	cvTerm	Accession	Value  (structure of the parameter file containing search metadata)
     private Map<String, String> paramToCvParamName = new HashMap<>();
     private Map<String, String> paramToCvParamValue = new HashMap<>();
@@ -56,7 +62,8 @@ public class Csv2mzid {
     private Map<String, String> modNameToPosition = new HashMap<>();
     private Map<String, Boolean> modNameToIsFixed = new HashMap<>();
     private Map<String, Float> modNameToMassDelta = new HashMap<>();
-    private Map<String, DBSequence> accessionToDBSequenceHashMap = new HashMap<>();
+    private Map<String, DBSequence> accessionToDBSequenceHashMap
+            = new HashMap<>();
     static String decoyRegex = null;
     ReadUnimod unimodDoc;
     static String siiListID = "SII_LIST_1";
@@ -114,24 +121,31 @@ public class Csv2mzid {
         this.init();
     }
 
-    public Csv2mzid(String inputfile, String outputfile, String paramsFile, String cvParamAccForRankingPSMs, String decoyRegularExpression, boolean addFixedModificationsBasedOnSearchParams) {
+    public Csv2mzid(String inputfile, String outputfile, String paramsFile,
+                    String cvParamAccForRankingPSMs,
+                    String decoyRegularExpression,
+                    boolean addFixedModificationsBasedOnSearchParams) {
         decoyRegex = decoyRegularExpression;
         this.inputCsvFile = inputfile;
         this.outFile = outputfile;
         this.parser_params = paramsFile;
         this.cvScoreToOrderBy = cvParamAccForRankingPSMs;
-        this.addFixedModsBasedOnSearchParams = addFixedModificationsBasedOnSearchParams;
+        this.addFixedModsBasedOnSearchParams
+                = addFixedModificationsBasedOnSearchParams;
 
         this.init();
     }
 
-    public Csv2mzid(String inputfile, String outputfile, String paramsFile, String cvParamAccForRankingPSMs, boolean addFixedModificationsBasedOnSearchParams) {
+    public Csv2mzid(String inputfile, String outputfile, String paramsFile,
+                    String cvParamAccForRankingPSMs,
+                    boolean addFixedModificationsBasedOnSearchParams) {
         this.inputCsvFile = inputfile;
         this.outFile = outputfile;
         this.parser_params = paramsFile;
 
         this.cvScoreToOrderBy = cvParamAccForRankingPSMs;
-        this.addFixedModsBasedOnSearchParams = addFixedModificationsBasedOnSearchParams;
+        this.addFixedModsBasedOnSearchParams
+                = addFixedModificationsBasedOnSearchParams;
         this.init();
 
     }
@@ -156,7 +170,8 @@ public class Csv2mzid {
 
     private void readConfigFile() {
         try {
-            CSVReader reader = new CSVReader(new InputStreamReader(inputConfigFile));
+            CSVReader reader = new CSVReader(new InputStreamReader(
+                    inputConfigFile));
             String[] nextLine;
 
             int lineCounter = 0;
@@ -176,26 +191,27 @@ public class Csv2mzid {
                             }
                         }
                         if (softwareColumn == -1) {
-                            System.out.println("No valid software mapping found from params file \"Software Name\":" + softwareName + " value to config file column header, exiting...");
+                            System.out.println(
+                                    "No valid software mapping found from params file \"Software Name\":"
+                                    + softwareName
+                                    + " value to config file column header, exiting...");
                         }
                     } else if (firstCell.equals("CV mappings")) {     //Reached the part of the file that deals with the mods
                         mappingCVTerms = true;
-                    } else {
-                        if (!mappingCVTerms) {
-                            //Just grab the column with the correct software name
-                            dataTypeMap.put(nextLine[0], nextLine[softwareColumn]);
+                    } else if (!mappingCVTerms) {
+                        //Just grab the column with the correct software name
+                        dataTypeMap.put(nextLine[0], nextLine[softwareColumn]);
 
-                        } else {
-                            if (!firstCell.equals("Data type")) {
+                    } else if (!firstCell.equals("Data type")) {
 
-                                if (nextLine[0].equals("evalue") && nextLine[3].equals(softwareName)) {
-                                    cvAccForEvalue = nextLine[2];
-                                    cvNameForEvalue = nextLine[1];
-                                } else if (nextLine[0].equals("pvalue") && nextLine[3].equals(softwareName)) {
-                                    cvAccForPvalue = nextLine[2];
-                                    cvNameForPvalue = nextLine[1];
-                                }
-                            }
+                        if (nextLine[0].equals("evalue") && nextLine[3].equals(
+                                softwareName)) {
+                            cvAccForEvalue = nextLine[2];
+                            cvNameForEvalue = nextLine[1];
+                        } else if (nextLine[0].equals("pvalue") && nextLine[3].
+                                equals(softwareName)) {
+                            cvAccForPvalue = nextLine[2];
+                            cvNameForPvalue = nextLine[1];
                         }
                     }
                     lineCounter++;
@@ -203,15 +219,23 @@ public class Csv2mzid {
             }
             reader.close();
 
-            if (cvAccForEvalue.equals("") || cvAccForPvalue.equals("") || cvNameForPvalue.equals("") || cvNameForEvalue.equals("")) {
-                System.out.println("Error - not recognized e or p-value equivalent from config file");
+            if (cvAccForEvalue.equals("") || cvAccForPvalue.equals("")
+                    || cvNameForPvalue.equals("") || cvNameForEvalue.equals("")) {
+                System.out.println(
+                        "Error - not recognized e or p-value equivalent from config file");
             }
 
-            System.out.println("From params file and config file, two PSM data types set as: " + cvAccForEvalue + " and " + cvAccForPvalue + "\nIf these are not present in your data file, an error will result");
+            System.out.println(
+                    "From params file and config file, two PSM data types set as: "
+                    + cvAccForEvalue + " and " + cvAccForPvalue
+                    + "\nIf these are not present in your data file, an error will result");
         } catch (IOException ex) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + ex.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + ex.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
@@ -237,24 +261,24 @@ public class Csv2mzid {
                         //ignore headers
                     } else if (firstCell.equals("Mods results name")) {     //Reached the part of the file that deals with the mods
                         parsingMods = true;
+                    } else if (!parsingMods) {
+                        paramToCvParamName.put(nextLine[0], nextLine[1]);
+                        paramToCvParamAcc.put(nextLine[0], nextLine[2]);
+                        paramToCvParamValue.put(nextLine[0], nextLine[3]);
+                        //System.out.println("Read param: " + nextLine[0] + " " + nextLine[1] + " " + nextLine[2] + " " + nextLine[3]);
+                    } else if (nextLine.length > 6) {
+                        modNameToUnimodName.put(nextLine[0], nextLine[1]);
+                        modNameToUnimodID.put(nextLine[0], nextLine[2]);
+                        modNameToResidue.put(nextLine[0], nextLine[3]);
+                        modNameToPosition.put(nextLine[0], nextLine[4]);
+                        modNameToIsFixed.put(nextLine[0], Boolean.parseBoolean(
+                                             nextLine[5]));
+                        modNameToMassDelta.put(nextLine[0], Float.parseFloat(
+                                               nextLine[6]));
                     } else {
-                        if (!parsingMods) {
-                            paramToCvParamName.put(nextLine[0], nextLine[1]);
-                            paramToCvParamAcc.put(nextLine[0], nextLine[2]);
-                            paramToCvParamValue.put(nextLine[0], nextLine[3]);
-                            //System.out.println("Read param: " + nextLine[0] + " " + nextLine[1] + " " + nextLine[2] + " " + nextLine[3]);
-                        } else {
-                            if (nextLine.length > 6) {
-                                modNameToUnimodName.put(nextLine[0], nextLine[1]);
-                                modNameToUnimodID.put(nextLine[0], nextLine[2]);
-                                modNameToResidue.put(nextLine[0], nextLine[3]);
-                                modNameToPosition.put(nextLine[0], nextLine[4]);
-                                modNameToIsFixed.put(nextLine[0], Boolean.parseBoolean(nextLine[5]));
-                                modNameToMassDelta.put(nextLine[0], Float.parseFloat(nextLine[6]));
-                            } else {
-                                System.out.println("Ignoring mod line since there are not the correct number of values: " + Arrays.toString(nextLine));
-                            }
-                        }
+                        System.out.println(
+                                "Ignoring mod line since there are not the correct number of values: "
+                                + Arrays.toString(nextLine));
                     }
                     lineCounter++;
                 }
@@ -264,13 +288,17 @@ public class Csv2mzid {
 
             softwareName = paramToCvParamName.get("Software name");
             if (softwareName == null) {
-                System.out.println("Error, params file did not contain a software name - required for configuring converter. Exiting..");
+                System.out.println(
+                        "Error, params file did not contain a software name - required for configuring converter. Exiting..");
             }
 
         } catch (Exception e) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + e.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + e.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 03 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
@@ -295,21 +323,31 @@ public class Csv2mzid {
 
         System.out.print("Doing basic metadata validation...");
         String[] mandatoryCVParams = {"Software name",
-            "Parent mass type", "Fragment mass type", "Enzyme", "Fragment search tolerance plus", "Fragment search tolerance minus",
-            "Parent search tolerance plus", "Parent search tolerance minus", "PSM threshold", "Input file format", "Database file format", "Spectra data file format", "Spectrum ID format"};
+            "Parent mass type", "Fragment mass type", "Enzyme",
+            "Fragment search tolerance plus", "Fragment search tolerance minus",
+            "Parent search tolerance plus", "Parent search tolerance minus",
+            "PSM threshold", "Input file format", "Database file format",
+            "Spectra data file format", "Spectrum ID format"};
 
-        String[] otherMandatoryParams = {"Local database path", "Database name", "Searched spectrum", "Software version", "Missed cleavages", "File contact first name",
-            "File contact last name", "File contact organization name", "File contact address"};
+        String[] otherMandatoryParams = {"Local database path", "Database name",
+            "Searched spectrum", "Software version", "Missed cleavages",
+            "File contact first name",
+            "File contact last name", "File contact organization name",
+            "File contact address"};
 
         boolean passed = true;
         for (String mandatoryCVParam : mandatoryCVParams) {
             if (!paramToCvParamName.containsKey(mandatoryCVParam)) {
-                System.out.println("\nFATAL ERROR: Missing CV param in params file: " + mandatoryCVParam);
+                System.out.println(
+                        "\nFATAL ERROR: Missing CV param in params file: "
+                        + mandatoryCVParam);
                 passed = false;
             } else {
                 String cvAcc = paramToCvParamAcc.get(mandatoryCVParam);
                 if (cvAcc.equals("") || cvAcc == null || !cvAcc.contains("MS:")) {
-                    System.out.println("\nFATAL ERROR: Missing CV accession or not a real PSI-MS term for " + mandatoryCVParam);
+                    System.out.println(
+                            "\nFATAL ERROR: Missing CV accession or not a real PSI-MS term for "
+                            + mandatoryCVParam);
                     passed = false;
                 }
             }
@@ -317,19 +355,24 @@ public class Csv2mzid {
 
         for (String otherMandatoryParam : otherMandatoryParams) {
             if (!paramToCvParamName.containsKey(otherMandatoryParam)) {
-                System.out.println("\nFATAL ERROR: Missing  param in params file: " + otherMandatoryParam);
+                System.out.println(
+                        "\nFATAL ERROR: Missing  param in params file: "
+                        + otherMandatoryParam);
                 passed = false;
             } else {
                 String value = paramToCvParamValue.get(otherMandatoryParam);
                 if (value.equals("") || value == null) {
-                    System.out.println("\nFATAL ERROR: Missing value for mandatory param: " + otherMandatoryParam);
+                    System.out.println(
+                            "\nFATAL ERROR: Missing value for mandatory param: "
+                            + otherMandatoryParam);
                     passed = false;
                 }
             }
         }
 
         if (!passed) {
-            System.out.println("Exiting, due to error in params specified in the param file, please consult the help guide");
+            System.out.println(
+                    "Exiting, due to error in params specified in the param file, please consult the help guide");
         }
 
         System.out.print("...passed\n");
@@ -339,8 +382,10 @@ public class Csv2mzid {
 
         System.out.print("Doing basic validation of modifications entered...");
         boolean passed = true;
-        String[] allowedResidues = {"G", "P", "A", "V", "L", "I", "M", "C", "F", "Y", "W", "H", "K", "R", "Q", "N", "E", "D", "S", "T", "."};
-        String[] allowedPositions = {"Peptide N-term", "Protein N-term", "Peptide C-term", "Protein N-term", "Any"};
+        String[] allowedResidues = {"G", "P", "A", "V", "L", "I", "M", "C", "F",
+            "Y", "W", "H", "K", "R", "Q", "N", "E", "D", "S", "T", "."};
+        String[] allowedPositions = {"Peptide N-term", "Protein N-term",
+            "Peptide C-term", "Protein N-term", "Any"};
 
         for (String modName : modNameToUnimodName.keySet()) {
 
@@ -348,8 +393,11 @@ public class Csv2mzid {
             String residue = modNameToResidue.get(modName);
             String position = modNameToPosition.get(modName);
 
-            if (unimodID.equals("") || unimodID == null || !(unimodID.contains("UNIMOD:") || unimodID.equals("MS:1001460"))) {
-                System.out.println("\nFATAL ERROR: Bad modification ID entered in the params file: " + unimodID
+            if (unimodID.equals("") || unimodID == null || !(unimodID.contains(
+                    "UNIMOD:") || unimodID.equals("MS:1001460"))) {
+                System.out.println(
+                        "\nFATAL ERROR: Bad modification ID entered in the params file: "
+                        + unimodID
                         + ". Modification MUST be UNIMOD:[int] or \"MS:1001460\" - the term for an unknown modification");
                 passed = false;
             }
@@ -360,8 +408,11 @@ public class Csv2mzid {
                 }
             }
             if (!residueValidated) {
-                System.out.println("\nFATAL ERROR in search modifications, illegal residue entered: " + residue
-                        + " allowed residues:" + Arrays.toString(allowedResidues));
+                System.out.println(
+                        "\nFATAL ERROR in search modifications, illegal residue entered: "
+                        + residue
+                        + " allowed residues:" + Arrays.
+                        toString(allowedResidues));
                 passed = false;
             }
 
@@ -372,14 +423,18 @@ public class Csv2mzid {
                 }
             }
             if (!positionValidated) {
-                System.out.println("\nFATAL ERROR in search modifications, illegal position entered: " + position
-                        + " allowed positions:" + Arrays.toString(allowedResidues));
+                System.out.println(
+                        "\nFATAL ERROR in search modifications, illegal position entered: "
+                        + position
+                        + " allowed positions:" + Arrays.toString(
+                                allowedResidues));
                 passed = false;
             }
         }
 
         if (!passed) {
-            System.out.println("Exiting, due to error in modifications specified in the param file, please consult the help guide");
+            System.out.println(
+                    "Exiting, due to error in modifications specified in the param file, please consult the help guide");
         }
 
         System.out.print("...passed\n");
@@ -405,16 +460,18 @@ public class Csv2mzid {
      * &lt;/SoftwareName&gt;
      *
      */
-    public void handleAnalysisSoftware() {
+    private void handleAnalysisSoftware() {
         analysisSoftwareList = new AnalysisSoftwareList();
-        List<AnalysisSoftware> analysisSoftwares = analysisSoftwareList.getAnalysisSoftware();
+        List<AnalysisSoftware> analysisSoftwares = analysisSoftwareList.
+                getAnalysisSoftware();
         analysisSoftware = new AnalysisSoftware();
 
         String softwareVersion = paramToCvParamValue.get("Software version");
         analysisSoftware.setName(softwareName);
         Param tempParam = new Param();
         //tempParam.setParamGroup(makeCvParam("MS:1001475","OMSSA",psiCV));
-        tempParam.setParam(makeCvParam(paramToCvParamAcc.get("Software name"), paramToCvParamName.get("Software name"), psiCV));
+        tempParam.setParam(MzidLibUtils.makeCvParam(paramToCvParamAcc.get(
+                "Software name"), paramToCvParamName.get("Software name"), psiCV));
         analysisSoftware.setSoftwareName(tempParam);
         analysisSoftware.setId(analysisSoftID);
         analysisSoftware.setVersion(softwareVersion);
@@ -423,7 +480,7 @@ public class Csv2mzid {
 
     }
 
-    public void handleCVs() {
+    private void handleCVs() {
 
         //<cv id="PSI-MS" fullName="PSI-MS" URI="http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo" version="2.25.0"/>
         //<cv id="UNIMOD" fullName="UNIMOD" URI="http://www.unimod.org/obo/unimod.obo" />
@@ -431,7 +488,8 @@ public class Csv2mzid {
         cvList = new CvList();
         List<Cv> localCvList = cvList.getCv();
         psiCV = new Cv();
-        psiCV.setUri("https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo");
+        psiCV.setUri(
+                "https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo");
         psiCV.setId(psiCvID);
 //        psiCV.setVersion("2.25.0");
         psiCV.setFullName("PSI-MS");
@@ -442,7 +500,8 @@ public class Csv2mzid {
         unimodCV.setFullName("UNIMOD");
 
         unitCV = new Cv();
-        unitCV.setUri("http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo");
+        unitCV.setUri(
+                "http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo");
         unitCV.setId(unitCvID);
         unitCV.setFullName("UNIT-ONTOLOGY");
 
@@ -458,7 +517,7 @@ public class Csv2mzid {
      * &lt;/role&gt; &lt;/ContactRole&gt; &lt;/Provider&gt;
      *
      */
-    public void handleProvider() {
+    private void handleProvider() {
         provider = new Provider();
         provider.setId("PROVIDER");
 
@@ -466,29 +525,39 @@ public class Csv2mzid {
         contactRole.setContact(docOwner);
 
         Role role = new Role();
-        role.setCvParam(makeCvParam("MS:1001271", "researcher", psiCV));
+        role.setCvParam(MzidLibUtils.makeCvParam("MS:1001271", "researcher",
+                                                 psiCV));
         contactRole.setRole(role);
 
         provider.setContactRole(contactRole);
 
     }
 
-    public void handleAuditCollection() {
+    private void handleAuditCollection() {
         auditCollection = new AuditCollection();
         //List<Contact> contactList = auditCollection.getContactGroup();
-        List<AbstractContact> contactList = auditCollection.getPersonOrOrganization();
+        List<AbstractContact> contactList = auditCollection.
+                getPersonOrOrganization();
         docOwner = new Person();
         docOwner.setId("PERSON_DOC_OWNER");
 
-        docOwner.setFirstName(paramToCvParamValue.get("File contact first name"));
+        docOwner.
+                setFirstName(paramToCvParamValue.get("File contact first name"));
         docOwner.setLastName(paramToCvParamValue.get("File contact last name"));
-        docOwner.getCvParam().add(makeCvParam("MS:1000587", "contact address", psiCV, paramToCvParamValue.get("File contact address")));
+        docOwner.getCvParam().add(MzidLibUtils.makeCvParam("MS:1000587",
+                                                           "contact address",
+                                                           psiCV,
+                                                           paramToCvParamValue.
+                                                           get("File contact address")));
 
         //docOwner.setEmail(email);
         Organization org = new Organization();
         org.setId("ORG_DOC_OWNER");
         org.setName(paramToCvParamValue.get("File contact organization name"));
-        org.getCvParam().add(makeCvParam("MS:1000586", "contact name", psiCV, paramToCvParamValue.get("File contact organization name")));
+        org.getCvParam().add(MzidLibUtils.makeCvParam("MS:1000586",
+                                                      "contact name", psiCV,
+                                                      paramToCvParamValue.get(
+                                                              "File contact organization name")));
         //org.setAddress(address);
 
         List<Affiliation> affList = docOwner.getAffiliation();
@@ -506,7 +575,7 @@ public class Csv2mzid {
      *
      *
      */
-    public void handleAnalysisSampleCollection() {
+    private void handleAnalysisSampleCollection() {
         analysisSampleCollection = new AnalysisSampleCollection();
 
     }
@@ -521,14 +590,15 @@ public class Csv2mzid {
      * &lt;/AnalysisCollection&gt;
      *
      */
-    public void handleAnalysisCollection() {
+    private void handleAnalysisCollection() {
         analysisCollection = new AnalysisCollection();
         specIdentList = analysisCollection.getSpectrumIdentification();
         specIdent = new SpectrumIdentification();
         specIdent.setId(specIdentID);
         specIdent.setSpectrumIdentificationProtocol(siProtocol);
         specIdentList.add(specIdent);
-        List<SearchDatabaseRef> searchDBRefList = specIdent.getSearchDatabaseRef();
+        List<SearchDatabaseRef> searchDBRefList = specIdent.
+                getSearchDatabaseRef();
         SearchDatabaseRef searchDBRef = new SearchDatabaseRef();
         searchDBRef.setSearchDatabase(searchDB);
         searchDBRefList.add(searchDBRef);
@@ -581,9 +651,10 @@ public class Csv2mzid {
      *
      *
      */
-    public void handleAnalysisProtocolCollection() {
+    private void handleAnalysisProtocolCollection() {
         analysisProtocolCollection = new AnalysisProtocolCollection();
-        List<SpectrumIdentificationProtocol> sipList = analysisProtocolCollection.getSpectrumIdentificationProtocol();
+        List<SpectrumIdentificationProtocol> sipList
+                = analysisProtocolCollection.getSpectrumIdentificationProtocol();
 
         siProtocol = new SpectrumIdentificationProtocol();
         siProtocol.setId(siProtocolID);
@@ -591,7 +662,8 @@ public class Csv2mzid {
 
         //<cvParam accession="MS:1001083" name="ms-ms search" cvRef="PSI-MS"/>
         Param tempParam = new Param();
-        tempParam.setParam(makeCvParam("MS:1001083", "ms-ms search", psiCV));
+        tempParam.setParam(MzidLibUtils.
+                makeCvParam("MS:1001083", "ms-ms search", psiCV));
         siProtocol.setSearchType(tempParam);
 
         //List<CvParam> cvParamList = siProtocol.getAdditionalSearchCvParams();
@@ -601,36 +673,53 @@ public class Csv2mzid {
             siProtocol.setAdditionalSearchParams(paramList);
         }
         List<CvParam> cvParamList = paramList.getCvParam();
-        cvParamList.add(makeCvParam(paramToCvParamName.get("Parent mass type"), paramToCvParamAcc.get("Parent mass type"), psiCV));
-        cvParamList.add(makeCvParam(paramToCvParamName.get("Fragment mass type"), paramToCvParamAcc.get("Fragment mass type"), psiCV));
+        cvParamList.add(MzidLibUtils.makeCvParam(paramToCvParamName.get(
+                "Parent mass type"), paramToCvParamAcc.get("Parent mass type"),
+                                                 psiCV));
+        cvParamList.add(MzidLibUtils.makeCvParam(paramToCvParamName.get(
+                "Fragment mass type"), paramToCvParamAcc.get(
+                                                         "Fragment mass type"),
+                                                 psiCV));
 
         ModificationParams modParams = new ModificationParams();
-        List<SearchModification> searchModList = modParams.getSearchModification();
+        List<SearchModification> searchModList = modParams.
+                getSearchModification();
 
         for (String modName : modNameToUnimodName.keySet()) {
             SearchModification searchMod = new SearchModification();
             searchMod.setFixedMod(modNameToIsFixed.get(modName));
             List<CvParam> modCvParamList = searchMod.getCvParam();
-            modCvParamList.add(makeCvParam(modNameToUnimodID.get(modName), modNameToUnimodName.get(modName), unimodCV));
+            modCvParamList.add(MzidLibUtils.makeCvParam(modNameToUnimodID.get(
+                    modName), modNameToUnimodName.get(modName), unimodCV));
             searchMod.setMassDelta(modNameToMassDelta.get(modName));
             List<String> residueList = searchMod.getResidues();
             String modResidue = modNameToResidue.get(modName);
             residueList.add(modResidue);
 
             if (modNameToPosition.get(modName).equals("Peptide N-term")) {
-                modCvParamList.add(makeCvParam("MS:1001189", "modification specificity peptide N-term", psiCV));
+                modCvParamList.add(MzidLibUtils.makeCvParam("MS:1001189",
+                                                            "modification specificity peptide N-term",
+                                                            psiCV));
             } else if (modNameToPosition.get(modName).equals("Peptide C-term")) {
-                modCvParamList.add(makeCvParam("MS:1001190", "modification specificity peptide C-term", psiCV));
+                modCvParamList.add(MzidLibUtils.makeCvParam("MS:1001190",
+                                                            "modification specificity peptide C-term",
+                                                            psiCV));
             } else if (modNameToPosition.get(modName).equals("Protein N-term")) {
-                modCvParamList.add(makeCvParam("MS:1002057", "modification specificity protein N-term", psiCV));
+                modCvParamList.add(MzidLibUtils.makeCvParam("MS:1002057",
+                                                            "modification specificity protein N-term",
+                                                            psiCV));
 
                 if (addFixedModsBasedOnSearchParams) {
-                    System.out.println("Please note - adding fixed mods on protein N-term not yet supported");
+                    System.out.println(
+                            "Please note - adding fixed mods on protein N-term not yet supported");
                 }
             } else if (modNameToPosition.get(modName).equals("Protein C-term")) {
-                modCvParamList.add(makeCvParam("MS:1002058", "modification specificity protein C-term", psiCV));
+                modCvParamList.add(MzidLibUtils.makeCvParam("MS:1002058",
+                                                            "modification specificity protein C-term",
+                                                            psiCV));
                 if (addFixedModsBasedOnSearchParams) {
-                    System.out.println("Please note - adding fixed mods on protein N-term not yet supported");
+                    System.out.println(
+                            "Please note - adding fixed mods on protein N-term not yet supported");
                 }
             }
 
@@ -655,7 +744,8 @@ public class Csv2mzid {
         enzyme.setId("Enz1");
         enzyme.setCTermGain("OH");
         enzyme.setNTermGain("H");
-        enzyme.setMissedCleavages(Integer.parseInt(paramToCvParamValue.get("Missed cleavages")));
+        enzyme.setMissedCleavages(Integer.parseInt(paramToCvParamValue.get(
+                "Missed cleavages")));
         enzyme.setSemiSpecific(false);
         ParamList eParamList = enzyme.getEnzymeName();
         if (eParamList == null) {
@@ -663,7 +753,8 @@ public class Csv2mzid {
             enzyme.setEnzymeName(eParamList);
         }
         List<CvParam> eCvParamList = eParamList.getCvParam();
-        eCvParamList.add(makeCvParam(paramToCvParamName.get("Enzyme"), paramToCvParamAcc.get("Enzyme"), psiCV));
+        eCvParamList.add(MzidLibUtils.makeCvParam(paramToCvParamName.get(
+                "Enzyme"), paramToCvParamAcc.get("Enzyme"), psiCV));
         enzymeList.add(enzyme);
         Tolerance fragTol = new Tolerance();
         Tolerance parTol = new Tolerance();
@@ -676,8 +767,10 @@ public class Csv2mzid {
         fragCvPlus.setName("search tolerance plus value");
         fragCvMinus.setAccession("MS:1001413");
         fragCvMinus.setName("search tolerance minus value");
-        fragCvPlus.setValue(paramToCvParamValue.get("Fragment search tolerance plus"));
-        fragCvMinus.setValue(paramToCvParamValue.get("Fragment search tolerance minus"));
+        fragCvPlus.setValue(paramToCvParamValue.get(
+                "Fragment search tolerance plus"));
+        fragCvMinus.setValue(paramToCvParamValue.get(
+                "Fragment search tolerance minus"));
         fragCvList.add(fragCvPlus);
         fragCvList.add(fragCvMinus);
 
@@ -689,8 +782,10 @@ public class Csv2mzid {
         parCvPlus.setName("search tolerance plus value");
         parCvMinus.setAccession("MS:1001413");
         parCvMinus.setName("search tolerance minus value");
-        parCvPlus.setValue(paramToCvParamValue.get("Parent search tolerance plus"));
-        parCvMinus.setValue(paramToCvParamValue.get("Parent search tolerance plus"));
+        parCvPlus.setValue(paramToCvParamValue.get(
+                "Parent search tolerance plus"));
+        parCvMinus.setValue(paramToCvParamValue.get(
+                "Parent search tolerance plus"));
         parCvList.add(parCvPlus);
         parCvList.add(parCvMinus);
 
@@ -705,12 +800,13 @@ public class Csv2mzid {
         }
         cvParamList = sip_paramList.getCvParam();
 
-        cvParamList.add(makeCvParam(paramToCvParamAcc.get("PSM threshold"), paramToCvParamName.get("PSM threshold"), psiCV));
+        cvParamList.add(MzidLibUtils.makeCvParam(paramToCvParamAcc.get(
+                "PSM threshold"), paramToCvParamName.get("PSM threshold"), psiCV));
         sipList.add(siProtocol);
 
     }
 
-    public void handleInputs() {
+    private void handleInputs() {
 
         inputs = new Inputs();
         List<SearchDatabase> searchDBList = inputs.getSearchDatabase();
@@ -730,17 +826,31 @@ public class Csv2mzid {
         List<CvParam> searchDBCvParamList = searchDB.getCvParam();
 
         if (paramToCvParamName.get("Decoy database composition") != null) {
-            searchDBCvParamList.add(makeCvParam(paramToCvParamAcc.get("Decoy database composition"), paramToCvParamName.get("Decoy database composition"), psiCV));
+            searchDBCvParamList.add(MzidLibUtils.makeCvParam(paramToCvParamAcc.
+                    get("Decoy database composition"), paramToCvParamName.get(
+                                                             "Decoy database composition"),
+                                                             psiCV));
         }
         if (paramToCvParamName.get("Decoy database regex") != null) {
-            searchDBCvParamList.add(makeCvParam(paramToCvParamAcc.get("Decoy database regex"), paramToCvParamName.get("Decoy database regex"), psiCV, paramToCvParamValue.get("Decoy database regex")));
+            searchDBCvParamList.add(MzidLibUtils.makeCvParam(paramToCvParamAcc.
+                    get("Decoy database regex"), paramToCvParamName.get(
+                                                             "Decoy database regex"),
+                                                             psiCV,
+                                                             paramToCvParamValue.
+                                                             get("Decoy database regex")));
         }
         if (paramToCvParamName.get("Decoy database type") != null) {
-            searchDBCvParamList.add(makeCvParam(paramToCvParamAcc.get("Decoy database type"), paramToCvParamName.get("Decoy database type"), psiCV));
+            searchDBCvParamList.add(MzidLibUtils.makeCvParam(paramToCvParamAcc.
+                    get("Decoy database type"), paramToCvParamName.get(
+                                                             "Decoy database type"),
+                                                             psiCV));
         }
 
         FileFormat ff = new FileFormat();
-        ff.setCvParam(makeCvParam(paramToCvParamAcc.get("Database file format"), paramToCvParamName.get("Database file format"), psiCV));
+        ff.setCvParam(MzidLibUtils.makeCvParam(paramToCvParamAcc.get(
+                "Database file format"), paramToCvParamName.get(
+                                                       "Database file format"),
+                                               psiCV));
         searchDB.setFileFormat(ff);
         searchDBList.add(searchDB);
 
@@ -749,7 +859,9 @@ public class Csv2mzid {
         sourceFile.setLocation(inputCsvFile);
         sourceFile.setId(sourceFileID);
         ff = new FileFormat();
-        ff.setCvParam(makeCvParam(paramToCvParamAcc.get("Input file format"), paramToCvParamName.get("Input file format"), psiCV));
+        ff.setCvParam(MzidLibUtils.makeCvParam(paramToCvParamAcc.get(
+                "Input file format"), paramToCvParamName.
+                                               get("Input file format"), psiCV));
 
         sourceFile.setFileFormat(ff);
         sourceFileList.add(sourceFile);
@@ -758,15 +870,21 @@ public class Csv2mzid {
             List<SpectraData> spectraDataList = inputs.getSpectraData();
             spectraData = new SpectraData();
             SpectrumIDFormat sif = new SpectrumIDFormat();
-            sif.setCvParam(makeCvParam("MS:1000774", "multiple peak list nativeID format", psiCV));
+            sif.setCvParam(MzidLibUtils.makeCvParam("MS:1000774",
+                                                    "multiple peak list nativeID format",
+                                                    psiCV));
             spectraData.setSpectrumIDFormat(sif);
 
             ff = new FileFormat();
-            ff.setCvParam(makeCvParam(paramToCvParamAcc.get("Spectra data file format"), paramToCvParamName.get("Spectra data file format"), psiCV));
+            ff.setCvParam(MzidLibUtils.makeCvParam(paramToCvParamAcc.get(
+                    "Spectra data file format"), paramToCvParamName.get(
+                                                           "Spectra data file format"),
+                                                   psiCV));
             spectraData.setFileFormat(ff);
 
             spectraData.setId(spectraDataID);
-            spectraData.setLocation(paramToCvParamValue.get("Searched spectrum"));
+            spectraData.
+                    setLocation(paramToCvParamValue.get("Searched spectrum"));
             spectraDataList.add(spectraData);
         }
 
@@ -786,10 +904,12 @@ public class Csv2mzid {
             siList.setId(siiListID);
             specIdent.setSpectrumIdentificationList(siList);
             List<DBSequence> dbSequenceList = sequenceCollection.getDBSequence();
-            List<PeptideEvidence> peptideEvidenceList = sequenceCollection.getPeptideEvidence();
+            List<PeptideEvidence> peptideEvidenceList = sequenceCollection.
+                    getPeptideEvidence();
             AnalysisData analysisData = new AnalysisData();
 
-            List<SpectrumIdentificationResult> sirList = siList.getSpectrumIdentificationResult();
+            List<SpectrumIdentificationResult> sirList = siList.
+                    getSpectrumIdentificationResult();
 
             Map<String, Integer> headerToColumnMap = new HashMap<>();
             Map<Integer, String> columnToHeaderMap = new HashMap<>();
@@ -809,12 +929,15 @@ public class Csv2mzid {
                 } else {
 
                     String specUniqueID = null;
-                    String spectrumID = "index=" + nextLine[headerToColumnMap.get("Spectrum number")];
+                    String spectrumID = "index=" + nextLine[headerToColumnMap.
+                            get("Spectrum number")];
                     String spectraLocation = null;
 
                     if (dataTypeMap.get("spectrum_location") != null) {
-                        if (headerToColumnMap.get(dataTypeMap.get("spectrum_location")) != null) {
-                            spectraLocation = nextLine[headerToColumnMap.get(dataTypeMap.get("spectrum_location"))];
+                        if (headerToColumnMap.get(dataTypeMap.get(
+                                "spectrum_location")) != null) {
+                            spectraLocation = nextLine[headerToColumnMap.get(
+                                    dataTypeMap.get("spectrum_location"))];
                         }
                     }
 
@@ -836,18 +959,28 @@ public class Csv2mzid {
 
                         //If spectra Location is found in the file (not Omssa)
                         if (spectraLocation != null) {
-                            spectraData = locationToSpectraDataMap.get(spectraLocation);
+                            spectraData = locationToSpectraDataMap.get(
+                                    spectraLocation);
 
                             //Create a new spectra data object and add input spectra to the SpectrumIdentification object
                             if (spectraData == null) {
-                                List<SpectraData> spectraDataList = inputs.getSpectraData();
+                                List<SpectraData> spectraDataList = inputs.
+                                        getSpectraData();
                                 spectraData = new SpectraData();
                                 SpectrumIDFormat sif = new SpectrumIDFormat();
-                                sif.setCvParam(makeCvParam("MS:1000774", "multiple peak list nativeID format", psiCV));
+                                sif.setCvParam(MzidLibUtils.makeCvParam(
+                                        "MS:1000774",
+                                        "multiple peak list nativeID format",
+                                        psiCV));
                                 spectraData.setSpectrumIDFormat(sif);
 
                                 FileFormat ff = new FileFormat();
-                                ff.setCvParam(makeCvParam(paramToCvParamAcc.get("Spectra data file format"), paramToCvParamName.get("Spectra data file format"), psiCV));
+                                ff.setCvParam(MzidLibUtils.makeCvParam(
+                                        paramToCvParamAcc.get(
+                                                "Spectra data file format"),
+                                        paramToCvParamName.get(
+                                                "Spectra data file format"),
+                                        psiCV));
                                 spectraData.setFileFormat(ff);
 
                                 spectraDataID = "SD_" + specDataCounter;
@@ -855,12 +988,14 @@ public class Csv2mzid {
                                 spectraData.setId(spectraDataID);
                                 spectraData.setLocation(spectraLocation);
                                 spectraDataList.add(spectraData);
-                                List<InputSpectra> inputSpecList = specIdent.getInputSpectra();
+                                List<InputSpectra> inputSpecList = specIdent.
+                                        getInputSpectra();
                                 InputSpectra inputSpec = new InputSpectra();
                                 inputSpec.setSpectraData(spectraData);
                                 inputSpecList.add(inputSpec);
                                 //specIdentList.add(specIdent);
-                                locationToSpectraDataMap.put(spectraLocation, spectraData);
+                                locationToSpectraDataMap.put(spectraLocation,
+                                                             spectraData);
                             }
                         }
                         sir.setSpectraData(spectraData);
@@ -872,18 +1007,21 @@ public class Csv2mzid {
                     String defline = nextLine[headerToColumnMap.get("Defline")];
 
                     if (defline == null) {
-                        System.out.println("Error - Unable to extract protein accessions from the Defline - quitting");
+                        System.out.println(
+                                "Error - Unable to extract protein accessions from the Defline - quitting");
                     }
                     String protAcc = null;
 
-                    if (defline.indexOf(regexForExtractingAccsFromDefline) != -1) { //Set this is a regex to grab the correct accession. Omssa often fails to grab the accession but we can usually get it from the defline
-                        protAcc = defline.substring(0, defline.indexOf(regexForExtractingAccsFromDefline));
+                    if (defline.contains(regexForExtractingAccsFromDefline)) { //Set this is a regex to grab the correct accession. Omssa often fails to grab the accession but we can usually get it from the defline
+                        protAcc = defline.substring(0, defline.indexOf(
+                                                    regexForExtractingAccsFromDefline));
                     } else {
                         protAcc = defline;      //Try grabbing the whole defline
                     }
 
                     if (protAcc == null) {
-                        System.out.println("Error - Unable to extract protein accessions from the Defline - quitting");
+                        System.out.println(
+                                "Error - Unable to extract protein accessions from the Defline - quitting");
                     }
 
                     DBSequence dbSequence = null;
@@ -894,12 +1032,15 @@ public class Csv2mzid {
                         dbSequence.setId("dbseq_" + protAcc);
                         dbSequence.setAccession(protAcc);
                         dbSequenceList.add(dbSequence);
-                        dbSequence.getCvParam().add(makeCvParam("MS:1001088", "protein description", psiCV, defline));
+                        dbSequence.getCvParam().add(MzidLibUtils.makeCvParam(
+                                "MS:1001088", "protein description", psiCV,
+                                defline));
                         dbSequence.setSearchDatabase(searchDB);
                         accessionToDBSequenceHashMap.put(protAcc, dbSequence);
                     }
 
-                    String pepSeq = nextLine[headerToColumnMap.get("Peptide")].toUpperCase();
+                    String pepSeq = nextLine[headerToColumnMap.get("Peptide")].
+                            toUpperCase();
                     String modString = nextLine[headerToColumnMap.get("Mods")];
 
                     Peptide pep;
@@ -922,9 +1063,12 @@ public class Csv2mzid {
 
                     }
 
-                    int start = Integer.parseInt(nextLine[headerToColumnMap.get("Start")]);
-                    int end = Integer.parseInt(nextLine[headerToColumnMap.get("Stop")]);
-                    String pepEvidID = pepSeq + "_" + protAcc + "_" + start + "_" + end;
+                    int start = Integer.parseInt(nextLine[headerToColumnMap.get(
+                            "Start")]);
+                    int end = Integer.parseInt(nextLine[headerToColumnMap.get(
+                            "Stop")]);
+                    String pepEvidID = pepSeq + "_" + protAcc + "_" + start
+                            + "_" + end;
 
                     PeptideEvidence peptideEvidence = null;
                     if (idToPeptideEvidenceMap.containsKey(pepEvidID)) {
@@ -940,7 +1084,7 @@ public class Csv2mzid {
                         peptideEvidence.setEnd(end);
 
                         peptideEvidence.setIsDecoy(Boolean.FALSE);
-                        if (decoyRegex != null) {
+                        if (protAcc != null && decoyRegex != null) {
                             if (protAcc.contains(decoyRegex)) {
                                 peptideEvidence.setIsDecoy(Boolean.TRUE);
                             }
@@ -951,7 +1095,8 @@ public class Csv2mzid {
 
                     }
 
-                    List<SpectrumIdentificationItem> siiList = sir.getSpectrumIdentificationItem();
+                    List<SpectrumIdentificationItem> siiList = sir.
+                            getSpectrumIdentificationItem();
 
                     /*
                      * Cases: If PepID is the same, then this is another
@@ -971,14 +1116,29 @@ public class Csv2mzid {
                     //Now create a new SII
                     if (sii == null) {
                         sii = new SpectrumIdentificationItem();
-                        sii.setChargeState(Integer.parseInt(nextLine[headerToColumnMap.get("Charge")]));
-                        sii.setExperimentalMassToCharge(Double.parseDouble(nextLine[headerToColumnMap.get("Mass")]));
-                        sii.setCalculatedMassToCharge(Double.parseDouble(nextLine[headerToColumnMap.get("Theo Mass")]));
+                        sii.setChargeState(Integer.parseInt(
+                                nextLine[headerToColumnMap.get("Charge")]));
+                        sii.setExperimentalMassToCharge(Double.parseDouble(
+                                nextLine[headerToColumnMap.get("Mass")]));
+                        sii.setCalculatedMassToCharge(Double.parseDouble(
+                                nextLine[headerToColumnMap.get("Theo Mass")]));
                         List<CvParam> cvParamList = sii.getCvParam();
-                        cvParamList.add(makeCvParam(cvAccForEvalue, cvNameForEvalue, psiCV, nextLine[headerToColumnMap.get(dataTypeMap.get("evalue"))]));
-                        cvParamList.add(makeCvParam(cvAccForPvalue, cvNameForPvalue, psiCV, nextLine[headerToColumnMap.get(dataTypeMap.get("pvalue"))]));
+                        cvParamList.add(MzidLibUtils.makeCvParam(cvAccForEvalue,
+                                                                 cvNameForEvalue,
+                                                                 psiCV,
+                                                                 nextLine[headerToColumnMap.
+                                                                 get(dataTypeMap.
+                                                                         get("evalue"))]));
+                        cvParamList.add(MzidLibUtils.makeCvParam(cvAccForPvalue,
+                                                                 cvNameForPvalue,
+                                                                 psiCV,
+                                                                 nextLine[headerToColumnMap.
+                                                                 get(dataTypeMap.
+                                                                         get("pvalue"))]));
                         sii.setPeptide(pep);
-                        addSIIToListAndSetRank(siiList, sii, cvScoreToOrderBy, orderSIIRanksLowToHigh, sir.getId());
+                        addSIIToListAndSetRank(siiList, sii, cvScoreToOrderBy,
+                                               orderSIIRanksLowToHigh, sir.
+                                               getId());
                     }
                     PeptideEvidenceRef pepEvidRef = new PeptideEvidenceRef();
                     pepEvidRef.setPeptideEvidence(peptideEvidence);
@@ -988,16 +1148,22 @@ public class Csv2mzid {
             }
             reader.close();
         } catch (FileNotFoundException e) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + e.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + e.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 01 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
 
         } catch (IOException ex) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + ex.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + ex.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
@@ -1018,9 +1184,12 @@ public class Csv2mzid {
                     int location = Integer.parseInt(temp[1]);
                     Boolean foundOkay = true;
                     if (modNameToMassDelta.get(oneModString) != null) {
-                        mzidMod.setMonoisotopicMassDelta((double) modNameToMassDelta.get(oneModString));
+                        mzidMod.setMonoisotopicMassDelta(
+                                (double) modNameToMassDelta.get(oneModString));
                     } else {
-                        System.out.println("Unable to insert correct mass delta:" + oneModString);
+                        System.out.println(
+                                "Unable to insert correct mass delta:"
+                                + oneModString);
                         foundOkay = false;
                     }
 
@@ -1028,29 +1197,39 @@ public class Csv2mzid {
                     String residue = modNameToResidue.get(oneModString);
                     if (residue != null) {
                         if (residue.equals("Peptide N-term")) {
-                            mzidMod.getCvParam().add(makeCvParam("MS:1001189", "modification specificity peptide N-term", psiCV));
+                            mzidMod.getCvParam().add(MzidLibUtils.makeCvParam(
+                                    "MS:1001189",
+                                    "modification specificity peptide N-term",
+                                    psiCV));
                             //mzidMod.getResidues().add(residue); //don't set residues for terminal mods
                         } else if (residue.equals("Peptide C-term")) {
-                            mzidMod.getCvParam().add(makeCvParam("MS:1001190", "modification specificity peptide C-term", psiCV));
+                            mzidMod.getCvParam().add(MzidLibUtils.makeCvParam(
+                                    "MS:1001190",
+                                    "modification specificity peptide C-term",
+                                    psiCV));
                             //mzidMod.getResidues().add(residue);
                         } else {
                             mzidMod.getResidues().add(residue);
                         }
                     } else {
-                        System.out.println("Unable to insert correct residue for:" + oneModString);
+                        System.out.println(
+                                "Unable to insert correct residue for:"
+                                + oneModString);
                         foundOkay = false;
                     }
 
                     if (foundOkay) {
                         CvParam modParam = new CvParam();
-                        modParam.setAccession(modNameToUnimodID.get(oneModString));
+                        modParam.setAccession(modNameToUnimodID.
+                                get(oneModString));
                         modParam.setCv(unimodCV);
                         modParam.setName(modNameToUnimodName.get(oneModString));
 
                         mzidMod.getCvParam().add(modParam);
                         modList.add(mzidMod);
                     } else {
-                        mzidMod.getCvParam().add(makeCvParam("MS:1001460", "unknown modification", psiCV, mod));
+                        mzidMod.getCvParam().add(MzidLibUtils.makeCvParam(
+                                "MS:1001460", "unknown modification", psiCV, mod));
                     }
                 } else {
                     System.out.println("Incorrectly formatted mod:" + mod);
@@ -1069,7 +1248,8 @@ public class Csv2mzid {
     private void convertFixedMods(Peptide mzidPep) {
 
         String pepSeq = mzidPep.getPeptideSequence();
-        List<uk.ac.ebi.jmzidml.model.mzidml.Modification> allMods = mzidPep.getModification();
+        List<uk.ac.ebi.jmzidml.model.mzidml.Modification> allMods = mzidPep.
+                getModification();
 
         for (String modName : modNameToUnimodName.keySet()) {
 
@@ -1082,9 +1262,12 @@ public class Csv2mzid {
 
                 if (!modifiedResidue.equals(".")) {   //This char is only allowed for N or C terminal mods
                     while (index != -1) {
-                        uk.ac.ebi.jmzidml.model.mzidml.Modification mzidmod = new uk.ac.ebi.jmzidml.model.mzidml.Modification();
+                        uk.ac.ebi.jmzidml.model.mzidml.Modification mzidmod
+                                = new uk.ac.ebi.jmzidml.model.mzidml.Modification();
                         List<CvParam> paramList = mzidmod.getCvParam();
-                        CvParam modParam = makeCvParam(modNameToUnimodID.get(modName), modNameToUnimodName.get(modName), unimodCV);
+                        CvParam modParam = MzidLibUtils.makeCvParam(
+                                modNameToUnimodID.get(modName),
+                                modNameToUnimodName.get(modName), unimodCV);
                         mzidmod.setMonoisotopicMassDelta(monoMass);
                         int mzidModLocation = index + 1;              //If second res is modified, index would return 1, but mzid position should be 2
                         mzidmod.setLocation(mzidModLocation);
@@ -1095,28 +1278,37 @@ public class Csv2mzid {
                         allMods.add(mzidmod);
                         index = pepSeq.indexOf(modifiedResidue, index + 1);
                     }
-                } else {
-                    if (modNameToPosition.get(modName).equals("Peptide N-term")) {
+                } else if (modNameToPosition.get(modName).equals(
+                        "Peptide N-term")) {
 
-                        if (modifiedResidue.equals(".") || modifiedResidue.equals(pepSeq.substring(0, 1))) {
-                            uk.ac.ebi.jmzidml.model.mzidml.Modification mzidmod = new uk.ac.ebi.jmzidml.model.mzidml.Modification();
-                            List<CvParam> paramList = mzidmod.getCvParam();
-                            CvParam modParam = makeCvParam(modNameToUnimodID.get(modName), modNameToUnimodName.get(modName), unimodCV);
-                            mzidmod.setMonoisotopicMassDelta(monoMass);
-                            mzidmod.setLocation(0);
-                            paramList.add(modParam);
-                            allMods.add(mzidmod);
-                        }
-                    } else if (modNameToPosition.get(modName).equals("Peptide C-term")) {
-                        if (modifiedResidue.equals(".") || modifiedResidue.equals(pepSeq.substring(pepSeq.length() - 1, pepSeq.length()))) {
-                            uk.ac.ebi.jmzidml.model.mzidml.Modification mzidmod = new uk.ac.ebi.jmzidml.model.mzidml.Modification();
-                            List<CvParam> paramList = mzidmod.getCvParam();
-                            CvParam modParam = makeCvParam(modNameToUnimodID.get(modName), modNameToUnimodName.get(modName), unimodCV);
-                            mzidmod.setMonoisotopicMassDelta(monoMass);
-                            mzidmod.setLocation(pepSeq.length() + 1);
-                            paramList.add(modParam);
-                            allMods.add(mzidmod);
-                        }
+                    if (modifiedResidue.equals(".") || modifiedResidue.equals(
+                            pepSeq.substring(0, 1))) {
+                        uk.ac.ebi.jmzidml.model.mzidml.Modification mzidmod
+                                = new uk.ac.ebi.jmzidml.model.mzidml.Modification();
+                        List<CvParam> paramList = mzidmod.getCvParam();
+                        CvParam modParam = MzidLibUtils.makeCvParam(
+                                modNameToUnimodID.get(modName),
+                                modNameToUnimodName.get(modName), unimodCV);
+                        mzidmod.setMonoisotopicMassDelta(monoMass);
+                        mzidmod.setLocation(0);
+                        paramList.add(modParam);
+                        allMods.add(mzidmod);
+                    }
+                } else if (modNameToPosition.get(modName).equals(
+                        "Peptide C-term")) {
+                    if (modifiedResidue.equals(".") || modifiedResidue.equals(
+                            pepSeq.substring(pepSeq.length() - 1, pepSeq.
+                                             length()))) {
+                        uk.ac.ebi.jmzidml.model.mzidml.Modification mzidmod
+                                = new uk.ac.ebi.jmzidml.model.mzidml.Modification();
+                        List<CvParam> paramList = mzidmod.getCvParam();
+                        CvParam modParam = MzidLibUtils.makeCvParam(
+                                modNameToUnimodID.get(modName),
+                                modNameToUnimodName.get(modName), unimodCV);
+                        mzidmod.setMonoisotopicMassDelta(monoMass);
+                        mzidmod.setLocation(pepSeq.length() + 1);
+                        paramList.add(modParam);
+                        allMods.add(mzidmod);
                     }
                 }
 
@@ -1132,41 +1324,44 @@ public class Csv2mzid {
      * values
      *
      */
-    private void addSIIToListAndSetRank(List<SpectrumIdentificationItem> siiList, SpectrumIdentificationItem sii, String scoreCvParamNameToOrderBy, boolean orderLowToHigh, String sirID) {
+    private void addSIIToListAndSetRank(List<SpectrumIdentificationItem> siiList,
+                                        SpectrumIdentificationItem sii,
+                                        String scoreCvParamNameToOrderBy,
+                                        boolean orderLowToHigh, String sirID) {
 
-        double scoreOfNewSII = getScoreFromSII(sii, scoreCvParamNameToOrderBy);
+        //double scoreOfNewSII = getScoreFromSII(sii, scoreCvParamNameToOrderBy);
         final String cvParamScore = scoreCvParamNameToOrderBy;
         final boolean lowToHigh = orderLowToHigh;
 
         siiList.add(sii);
         Collections.sort(siiList, new Comparator<SpectrumIdentificationItem>() {
 
-            @Override
-            public int compare(SpectrumIdentificationItem sii1, SpectrumIdentificationItem sii2) {
-                double sii1Score = getScoreFromSII(sii1, cvParamScore);
-                double sii2Score = getScoreFromSII(sii2, cvParamScore);
-                int i = 0;
+                     @Override
+                     public int compare(SpectrumIdentificationItem sii1,
+                                        SpectrumIdentificationItem sii2) {
+                         double sii1Score = getScoreFromSII(sii1, cvParamScore);
+                         double sii2Score = getScoreFromSII(sii2, cvParamScore);
+                         int i = 0;
 
-                if (lowToHigh) {
-                    if (sii1Score < sii2Score) {
-                        i = -1;
-                    } else if (sii1Score > sii2Score) {
-                        i = +1;
-                    } else {
-                        i = 0;
-                    }
-                } else {
-                    if (sii2Score < sii1Score) {
-                        i = -1;
-                    } else if (sii2Score > sii1Score) {
-                        i = +1;
-                    } else {
-                        i = 0;
-                    }
-                }
-                return i;
-            }
-        });
+                         if (lowToHigh) {
+                             if (sii1Score < sii2Score) {
+                                 i = -1;
+                             } else if (sii1Score > sii2Score) {
+                                 i = +1;
+                             } else {
+                                 i = 0;
+                             }
+                         } else if (sii2Score < sii1Score) {
+                             i = -1;
+                         } else if (sii2Score > sii1Score) {
+                             i = +1;
+                         } else {
+                             i = 0;
+                         }
+                         return i;
+                     }
+
+                 });
 
         int rank = 0;
         int innerRankCounter = 2;
@@ -1174,10 +1369,10 @@ public class Csv2mzid {
 
         for (SpectrumIdentificationItem spii : siiList) {
             double score = getScoreFromSII(spii, scoreCvParamNameToOrderBy);
-            boolean sameScore = false;
+            //boolean sameScore = false;
             if (score != lastScore) { //Otherwise set the same rank as previous
                 rank++;
-                sameScore = true;
+                //sameScore = true;
                 spii.setId(sirID + "_SII_" + rank);
                 spii.setRank(rank);
                 innerRankCounter = 2;
@@ -1193,7 +1388,8 @@ public class Csv2mzid {
      * Helper method to retrive a particular score type from an SII, based on
      * the CV accession. Will return 0 if the accession is not found.
      */
-    public double getScoreFromSII(SpectrumIdentificationItem sii, String cvParamAccForScore) {
+    private double getScoreFromSII(SpectrumIdentificationItem sii,
+                                   String cvParamAccForScore) {
 
         double score = 0.0;
 
@@ -1207,86 +1403,7 @@ public class Csv2mzid {
 
     }
 
-    /**
-     * Helper method to create and return a CvParam from accession, name and CV
-     *
-     * @param accession Accession.
-     * @param name Name.
-     * @param cv CV.
-     * @return CvParam The generated CvParam.
-     */
-    public CvParam makeCvParam(String accession, String name, Cv cv) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
-        return cvParam;
-    }
-
-    /**
-     * Helper method to create and return a CvParam from accession, name and CV
-     *
-     * @param accession Accession.
-     * @param name Name.
-     * @param cv CV.
-     * @param value Value.
-     * @return CvParam The generated CvParam.
-     */
-    public CvParam makeCvParam(String accession, String name, Cv cv, String value) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
-        cvParam.setValue(value);
-        return cvParam;
-    }
-
-    /**
-     * Helper method to create and return a CvParam from accession, name, CV,
-     * unitAccession and unitName (unitCV is automatically provided)
-     *
-     * @param accession Accession.
-     * @param name Name.
-     * @param cv CV.
-     * @param unitAccession Unit accession.
-     * @param unitName Unit name.
-     * @return CvParam The generated CvParam.
-     */
-    public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
-        cvParam.setUnitAccession(unitAccession);
-        cvParam.setUnitCv(unitCV);
-        cvParam.setUnitName(unitName);
-        return cvParam;
-    }
-
-    /**
-     * Helper method to create and return a CvParam from accession, name, CV,
-     * unitAccession, unitName and unitCV
-     *
-     * @param accession Accession.
-     * @param name Name.
-     * @param cv CV.
-     * @param unitAccession Unit accession.
-     * @param unitName Unit name.
-     * @param alternateUnitCV Alternate unit CV.
-     * @return CvParam The generated CvParam.
-     */
-    public CvParam makeCvParam(String accession, String name, Cv cv, String unitAccession, String unitName, Cv alternateUnitCV) {
-        CvParam cvParam = new CvParam();
-        cvParam.setAccession(accession);
-        cvParam.setName(name);
-        cvParam.setCv(cv);
-        cvParam.setUnitAccession(unitAccession);
-        cvParam.setUnitCv(alternateUnitCV);
-        cvParam.setUnitName(unitName);
-        return cvParam;
-    }
-
-    public void writeMzidFile() {
+    private void writeMzidFile() {
 
         try {
             Writer writer = new FileWriter(outFile);
@@ -1318,34 +1435,37 @@ public class Csv2mzid {
             // mzIdentML start tag
             writer.write(marshaller.createMzIdentMLStartTag("12345") + "\n");
 
-            marshaller.marshall(cvList, writer);
+            marshaller.marshal(cvList, writer);
             writer.write("\n");
             AnalysisSoftware analysisSoftware = new AnalysisSoftware();
             Date date = new Date();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            analysisSoftware.setName(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
-            analysisSoftware.setId(this.getClass().getSimpleName() + "_" + dateFormat.format(date));
+            SimpleDateFormat dateFormat = new SimpleDateFormat(
+                    "yyyy-MM-dd HH-mm-ss");
+            analysisSoftware.setName(this.getClass().getSimpleName() + "_"
+                    + dateFormat.format(date));
+            analysisSoftware.setId(this.getClass().getSimpleName() + "_"
+                    + dateFormat.format(date));
 
-            marshaller.marshall(analysisSoftwareList, writer);
+            marshaller.marshal(analysisSoftwareList, writer);
             writer.write("\n");
 
-            marshaller.marshall(provider, writer);
+            marshaller.marshal(provider, writer);
             writer.write("\n");
 
-            marshaller.marshall(auditCollection, writer);
+            marshaller.marshal(auditCollection, writer);
             writer.write("\n");
 
-            marshaller.marshall(sequenceCollection, writer);
+            marshaller.marshal(sequenceCollection, writer);
             writer.write("\n");
 
-            marshaller.marshall(analysisCollection, writer);
+            marshaller.marshal(analysisCollection, writer);
             writer.write("\n");
 
-            marshaller.marshall(analysisProtocolCollection, writer);
+            marshaller.marshal(analysisProtocolCollection, writer);
             writer.write("\n");
 
             writer.write(marshaller.createDataCollectionStartTag() + "\n");
-            marshaller.marshall(inputs, writer);
+            marshaller.marshal(inputs, writer);
             writer.write("\n");
 
             //Inputs inputs = unmarshaller.unmarshal(MzIdentMLElement.Inputs.getXpath());
@@ -1365,11 +1485,13 @@ public class Csv2mzid {
              * SpectrumIdentificationResult specIdentRes = specResIter.next();
              * m.marshall(specIdentRes, writer); writer.write("\n"); }
              */
-            marshaller.marshall(siList, writer);
+            marshaller.marshal(siList, writer);
             writer.write("\n");
 
             // writer.write(m.createSpectrumIdentificationListClosingTag() + "\n");
-            writer.write(marshaller.createProteinDetectionListStartTag("PDL_1", null) + "\n");
+            writer.write(marshaller.createProteinDetectionListStartTag("PDL_1",
+                                                                       null)
+                    + "\n");
 
             /*
              * Iterator<ProteinAmbiguityGroup> protAmbGroupIter =
@@ -1379,7 +1501,8 @@ public class Csv2mzid {
              * writer); writer.write("\n"); }
              *
              */
-            writer.write(marshaller.createProteinDetectionListClosingTag() + "\n");
+            writer.write(marshaller.createProteinDetectionListClosingTag()
+                    + "\n");
             writer.write(marshaller.createAnalysisDataClosingTag() + "\n");
             writer.write(marshaller.createDataCollectionClosingTag() + "\n");
 
@@ -1393,9 +1516,12 @@ public class Csv2mzid {
             System.out.println("Output written to " + outFile);
 
         } catch (IOException e) {
-            String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+            String methodName = Thread.currentThread().getStackTrace()[1].
+                    getMethodName();
             String className = this.getClass().getName();
-            String message = "The task \"" + methodName + "\" in the class \"" + className + "\" was not completed because of " + e.getMessage() + "."
+            String message = "The task \"" + methodName + "\" in the class \""
+                    + className + "\" was not completed because of " + e.
+                    getMessage() + "."
                     + "\nPlease see the reference guide at 02 for more information on this error. https://code.google.com/p/mzidentml-lib/wiki/CommonErrors ";
             System.out.println(message);
         }
@@ -1406,9 +1532,10 @@ public class Csv2mzid {
      * as units
      *
      * @param isDaltonUnit Whether the unit is Da.
+     *
      * @return CvParam
      */
-    public CvParam getCvParamWithMassUnits(Boolean isDaltonUnit) {
+    private CvParam getCvParamWithMassUnits(Boolean isDaltonUnit) {
         CvParam cvParam = new CvParam();
 
         //<cvParam accession="MS:1001413" name="search tolerance minus value" value="0.5" cvRef="PSI-MS" unitAccession="UO:0000221" unitName="dalton" unitCvRef="UO" />
@@ -1424,4 +1551,5 @@ public class Csv2mzid {
         }
         return cvParam;
     }
+
 }

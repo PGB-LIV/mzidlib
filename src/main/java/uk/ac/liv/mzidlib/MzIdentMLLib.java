@@ -4,7 +4,7 @@ import uk.ac.liv.mzidlib.fasta.InsertMetaDataFromFasta;
 import uk.ac.liv.mzidlib.proteogrouper.ProteoGrouper;
 import uk.ac.liv.mzidlib.fdr.FalseDiscoveryRate;
 import uk.ac.liv.mzidlib.fdr.FalseDiscoveryRateGlobal;
-import uk.ac.liv.mzidlib.converters.MzIdentMLToMzTab;
+import uk.ac.liv.mzidlib.converters.MzIdentmlToMzTab;
 import uk.ac.liv.mzidlib.converters.MzIdentMLToCSV;
 import uk.ac.liv.mzidlib.fasta.CreateRestrictedFASTADatabase;
 import bgi.ipeak.percolator.MsgfPercolator;
@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.ac.ebi.jmzidml.model.utils.MzIdentMLVersion;
 import uk.ac.liv.mzidlib.converters.Csv2mzid;
 import uk.ac.liv.mzidlib.converters.Omssa2mzid;
 import uk.ac.liv.mzidlib.converters.Tandem2mzid;
@@ -39,25 +40,26 @@ public class MzIdentMLLib {
             + "Local FDR, Q-value and FDRScore [PMID: 19253293] and assign these to every PSM with new CV terms. You must specify the score you wish to order by, using -cvTerm [MS:XXXX] sourced from the PSI-MS CV"
             + "and whether the scores are ordered low to high or vice versa\n. ";
     final public static String fdrUsage = "FalseDiscoveryRate input.mzid output.mzid " + fdrParams + " \n\nDescription:\n" + fdrToolDescription;
-    final public static String fdrGlobalParams = "-decoyValue decoyToTargetRatio -decoyRegex decoyRegex -cvTerm cvTerm -betterScoresAreLower true|false -fdrLevel PSM|Peptide|ProteinGroup -proteinLevel PDH|PAG [-compress true|false]";
-    final public static String fdrGlobalUsageExample = " -decoyValue 0.01 -decoyRegex REVERSED -cvTerm MS:1002356 -betterScoresAreLower true -fdrLevel Peptide -proteinLevel PAG -compress true";
+    
+    final public static String fdrGlobalParams = "-decoyValue decoyToTargetRatio -decoyRegex decoyRegex -cvTerm cvTerm -betterScoresAreLower true|false -fdrLevel PSM|Peptide|ProteinGroup -proteinLevel PDH|PAG -mzidVer 1.1|1.2 [-compress true|false]";
+    final public static String fdrGlobalUsageExample = " -decoyValue 0.01 -decoyRegex REVERSED -cvTerm MS:1002356 -betterScoresAreLower true -fdrLevel Peptide -proteinLevel PAG -mzidVer 1.2 -compress true";
     final public static String fdrGlobalToolDescription = "The Global FDR module calculates the FDR on one of the three levels. 1) PSM, 2) Peptide, 3) ProteinGroup. If ProteinGroup is chosen, there are two options for protein level PAG or PDH.";
     final public static String fdrGlobalUsage = "FalseDiscoveryRateGlobal input.mzid output.mzid " + fdrGlobalParams + " \n\nDescription:\n" + fdrGlobalToolDescription;
 
-    final public static String omssa2mzidparams = "[-outputFragmentation true|false] -decoyRegex decoyRegex [-omssaModsFile pathToLocalOmssaModsFile] [-userModsFile pathToLocalUserModsFile] [-compress true|false]";
+    final public static String omssa2mzidparams = "[-outputFragmentation true|false] -decoyRegex decoyRegex [-omssaModsFile pathToLocalOmssaModsFile] [-userModsFile pathToLocalUserModsFile] -mzidVer 1.1|1.2 [-compress true|false]";
     final public static String omssa2mzidToolDescription = "This tool converts OMSSA omx (XML) files into mzid. It has optional parameters for inserting fragment ions into mzid (much larger files). If a decoy Regex is specified, the mzid attribute isDecoy will be set correctly for peptides."
             + " No protein inference is done by this tool (no protein list produced). To make valid mzid output, OMSSA must have been run with the option \"-w include spectra and search params in search results\"."
             + " Without this option, search paramaters cannot be extracted from OMSSA. In this case, the OMSSA CSV converter should be used. ";
     final public static String omssa2mzidUsage = "Omssa2mzid input.omx output.mzid " + omssa2mzidparams + " \n\nDescription:\n" + omssa2mzidToolDescription;
-    final public static String omssa2mzidUsageExample = " -outputFragmentation false -decoyRegex Rev_ -compress true";
+    final public static String omssa2mzidUsageExample = " -outputFragmentation false -decoyRegex Rev_ -mzidVer 1.2 -compress true";
 
-    final public static String tandem2mzidParams = "[-outputFragmentation (true|false)] [-decoyRegex decoyRegex] [-databaseFileFormatID (e.g. MS:1001348 is FASTA format) \"MS:100blah\"] [-massSpecFileFormatID (e.g. MS:1001062 is MGF) \"MS:100blah\"] [-idsStartAtZero (true for mzML searched, false otherwise) [true|false]] [-compress true|false]";
+    final public static String tandem2mzidParams = "[-outputFragmentation (true|false)] [-decoyRegex decoyRegex] [-databaseFileFormatID (e.g. MS:1001348 is FASTA format) \"MS:100blah\"] [-massSpecFileFormatID (e.g. MS:1001062 is MGF) \"MS:100blah\"] [-idsStartAtZero (true for mzML searched, false otherwise) [true|false]] -mzidVer 1.1|1.2 [-compress true|false]";
     final public static String tandem2mzidToolDescription = "This tool converts X!Tandem XML results files into mzid. There are several optional parameters: whether to export fragment ions (makes bigger files), "
             + " and include a decoy regular expression to set the isDecoy attribute in mzid. Valid mzid files require several pieces of metadata that are difficult to extract from mzid files, the format of the database searched and the file format of the input spectra. "
             + " If these parameters are not set, the converter attempts to guess these based on the file extension. In X!Tandem, the numbering of spectra differs dependent upon the input spectra type - the IDs start at zero for mzML files, the IDs start at one for other spectra types e.g. MGF. "
             + "This is a command line parameter which should be set to make sure that the mzid file references the correct spectrum in the source spectrum file. ";
     final public static String tandem2mzidUsage = "Tandem2mzid input_tandem.xml output.mzid " + tandem2mzidParams + " \n\nDescription:\n" + tandem2mzidToolDescription;
-    final public static String tandem2mzidUsageExample = "-outputFragmentation false -decoyRegex Rev_ -databaseFileFormatID MS:1001348 -massSpecFileFormatID MS:1001062 -idsStartAtZero false -compress true";
+    final public static String tandem2mzidUsageExample = "-outputFragmentation false -decoyRegex Rev_ -databaseFileFormatID MS:1001348 -massSpecFileFormatID MS:1001062 -idsStartAtZero false -mzidVer 1.2 -compress true";
 
     final public static String csv2mzidParams = "-paramsFile paramsFileLocation -cvAccessionForPSMOrdering (e.g. \"MS:1001328\" is OMSSA:evalue) [-applyFixedMods true|false] [-decoyRegex decoyRegex] [-compress true|false]";
     final public static String csv2mzidToolDescription = "This tool is intended for converting OMSSA CSV output in mzid. Since the CSV format does not contain any search metadata, this tool requires a separate "
@@ -72,12 +74,12 @@ public class MzIdentMLLib {
     final public static String mzid2CsvUsage = "Mzid2Csv input.mzid output.csv " + mzid2CsvParams + " \n\nDescription:\n" + mzid2CsvToolDescription;
     final public static String mzid2CsvUsageExample = " -exportType exportPSMs -verboseOutput false -compress true ";
 
-    final public static String thresholdParams = "-isPSMThreshold true|false -cvAccessionForScoreThreshold \"MS:100blah\" -threshValue doubleValue  -betterScoresAreLower true|false -deleteUnderThreshold true|false [-compress true|false]";
+    final public static String thresholdParams = "-isPSMThreshold true|false -cvAccessionForScoreThreshold \"MS:100blah\" -threshValue doubleValue  -betterScoresAreLower true|false -deleteUnderThreshold true|false -mzidVer 1.1|1.2 [-compress true|false]";
     final public static String thresholdToolDescription = "This tool can be used to set the passThreshold parameter for PSMs or proteins in an mzid file, to indicate high-quality identifications that will be used by another tool. "
             + "It can handle any type of score (sourced from the PSI-MS CV) and scores can be ordered low to high or vice versa."
             + "If deleteUnderThreshold is specified, PSMs and referenced proteins under the threshold will be removed from the file.";
     final public static String thresholdUsage = "Threshold input.mzid output.mzid " + thresholdParams + " \n\nDescription:\n" + thresholdToolDescription;
-    final public static String thresholdUsageExample = " -isPSMThreshold true -cvAccessionForScoreThreshold \"MS:1001171\" -threshValue 40 -betterScoresAreLower false -deleteUnderThreshold true -compress true";
+    final public static String thresholdUsageExample = " -isPSMThreshold true -cvAccessionForScoreThreshold \"MS:1001171\" -threshValue 40 -betterScoresAreLower false -deleteUnderThreshold true -mzidVer 1.2 -compress true";
 
     final public static String proteogrouperParams = "-requireSIIsToPassThreshold true|false -cvAccForSIIScore cvAccForSIIScore -logTransScore true|false -verboseOutput true|false [-version1_1 true|false] [-useProteoAnnotator true|false] [-compress true|false]";
     final public static String proteogrouperToolDescription = "This tool can perform sequence-based protein inference, based on a set of PSMs. It should be parameterized with the CV accession for the PSM score used to create a protein score. "
@@ -97,8 +99,8 @@ public class MzIdentMLLib {
     final public static String emPAIUsage = "AddEmpaiToMzid input.mzid output.mzid " + emPAIParams + " \n\nDescription:\n" + emPAIToolDescription;
     final public static String emPAIUsageExample = " -fastaFile example_files/TgondiiME49_ToxoDB-6_2.fasta -accessionSplitRegex \"/ /\" -verboseOutput false  -compress true";
 
-    final public static String combinedSearchParams = "-firstFile firstFile -firstcvTerm firstcvTerm -firstbetterScoresAreLower firstbetterScoresAreLower -secondFile secondFile -secondcvTerm secondcvTerm -secondbetterScoresAreLower secondbetterScoresAreLower -thirdFile thirdFile -thirdcvTerm thirdcvTerm -thirdbetterScoresAreLower thirdbetterScoresAreLower -rank rank -decoyRatio decoyRatio -outputFile outputFile -debugFile debugFile -decoyRegex decoyRegex -compress false";
-    final public static String combinedSearchUsageExample = "-firstFile iprg_omssa.mzid -firstcvTerm MS:1001328 -firstbetterScoresAreLower true -secondFile iprg_mascot.mzid -secondcvTerm MS:1001172 -secondbetterScoresAreLower true -thirdFile iprg_tandem.mzid -thirdcvTerm MS:1001330 -thirdbetterScoresAreLower true -rank 1 -decoyRatio 3 -outputFile iprg_combined.mzid -debugFile debug.txt -decoyRegex RRRR -compress false";
+    final public static String combinedSearchParams = "-firstFile firstFile -firstcvTerm firstcvTerm -firstbetterScoresAreLower firstbetterScoresAreLower -secondFile secondFile -secondcvTerm secondcvTerm -secondbetterScoresAreLower secondbetterScoresAreLower -thirdFile thirdFile -thirdcvTerm thirdcvTerm -thirdbetterScoresAreLower thirdbetterScoresAreLower -rank rank -decoyRatio decoyRatio -outputFile outputFile -debugFile debugFile -decoyRegex decoyRegex -mzidVer 1.1|1.2 -compress false";
+    final public static String combinedSearchUsageExample = "-firstFile iprg_omssa.mzid -firstcvTerm MS:1001328 -firstbetterScoresAreLower true -secondFile iprg_mascot.mzid -secondcvTerm MS:1001172 -secondbetterScoresAreLower true -thirdFile iprg_tandem.mzid -thirdcvTerm MS:1001330 -thirdbetterScoresAreLower true -rank 1 -decoyRatio 3 -outputFile iprg_combined.mzid -debugFile debug.txt -decoyRegex RRRR -mzidVer 1.2 -compress false";
     final public static String combinedSearchDescription = "This tool can be used for combining multiple search engines and can output csv as well as mzid files. This example for three search engines but can be used for two search engines as well\n";
     final public static String combinedSearchUsage = "CombineSearchEngines " + combinedSearchParams + " \n\nDescription:\n" + combinedSearchDescription;
 
@@ -128,8 +130,8 @@ public class MzIdentMLLib {
     final public static String genericFastaToolDescription = "Create a generic Fasta file to be used as an input for SearchGUI.";
     final public static String genericFastaUsage = "GenericFasta input.fasta output.fasta " + genericFastaParams + " \n\nDescription:\n" + genericFastaToolDescription;
 
-    final public static String addGenomeCoordinatesForPeptidesParams = "-inputMzid inputMzid -outputMzid outputMzid -inputGff inputGff -outputGff outputGff [-compress true|false]";
-    final public static String addGenomeCoordinatesForPeptidesUsageExample = "-inputGff input.gff -outputGff output.gff -compress true";
+    final public static String addGenomeCoordinatesForPeptidesParams = "-inputMzid inputMzid -outputMzid outputMzid -inputGff inputGff -outputGff outputGff -mzidVer 1.1|1.2[-compress true|false]";
+    final public static String addGenomeCoordinatesForPeptidesUsageExample = "-inputGff input.gff -outputGff output.gff -mzidVer 1.2 -compress true";
     final public static String addGenomeCoordinatesForPeptidesToolDescription = "Add genome coordinates for peptides from the gff file to the mzid file";
     final public static String addGenomeCoordinatesForPeptidesUsage = "AddGenomeCoordinatesForPeptides input.mzid output.mzid " + addGenomeCoordinatesForPeptidesParams + " \n\nDescription:\n" + addGenomeCoordinatesForPeptidesToolDescription;
 
@@ -168,7 +170,7 @@ public class MzIdentMLLib {
      * Init all functions hashmap
      */
     public MzIdentMLLib() {
-        allFunctions = new HashMap<String, String>();
+        allFunctions = new HashMap<>();
         allFunctions.put("FalseDiscoveryRate", fdrParams + ";@;" + fdrUsage + ";@;" + fdrUsageExample);
         allFunctions.put("FalseDiscoveryRateGlobal", fdrGlobalParams + ";@;" + fdrGlobalUsage + ";@;" + fdrGlobalUsageExample);
         allFunctions.put("Omssa2mzid", omssa2mzidparams + ";@;" + omssa2mzidUsage + ";@;" + omssa2mzidUsageExample);
@@ -275,7 +277,7 @@ public class MzIdentMLLib {
 
                 if (args[0].equals("MzIdentMLToMzTab")) {
                     if (outputFileName != null) {
-                        MzIdentMLToMzTab mzIdentMLToMzTab = new MzIdentMLToMzTab(inputFileName, outputFileName);
+                        MzIdentmlToMzTab mzIdentMLToMzTab = new MzIdentmlToMzTab(inputFileName, outputFileName);
 
                     } else {
                         guiFeedback = "Error, usage: " + mzIdentMLToMzTabUsage;
@@ -315,9 +317,9 @@ public class MzIdentMLLib {
 
                     String fdrLevel = Utils.getCmdParameter(args, "fdrLevel", true);
                     String proteinLevel = Utils.getCmdParameter(args, "proteinLevel", true);
-
+                    String mzidVerString = Utils.getCmdParameter(args, "mzidVer", true);
                     if (decoyRegex != null && decoyValue != null && fdrLevel != null) {
-                        FalseDiscoveryRateGlobal fdrGlobal = new FalseDiscoveryRateGlobal(inputFile.getAbsolutePath(), decoyValue, decoyRegex, cvTerm, Boolean.valueOf(betterScoresAreLower), fdrLevel, proteinLevel);
+                        FalseDiscoveryRateGlobal fdrGlobal = new FalseDiscoveryRateGlobal(inputFile.getAbsolutePath(), decoyValue, decoyRegex, cvTerm, Boolean.valueOf(betterScoresAreLower), fdrLevel, proteinLevel, mzidVerString);
 
                         if (outputFileName != null) {
                             fdrGlobal.computeFDRusingJonesMethod();
@@ -346,8 +348,9 @@ public class MzIdentMLLib {
                 } else if (args[0].equals("AddGenomeCoordinatesForPeptides")) {
                     String inputGff = Utils.getCmdParameter(args, "inputGff", true);
                     String outputGff = Utils.getCmdParameter(args, "outputGff", true);
+                    String mzidVerString = Utils.getCmdParameter(args, "mzidVer", true);
                     if (inputGff != null) {
-                        AddGenomeCoordinatesForPeptides addGenomeCoordinatesForPeptides = new AddGenomeCoordinatesForPeptides(inputFile.getAbsolutePath(), outputFileName, inputGff, outputGff);
+                        AddGenomeCoordinatesForPeptides addGenomeCoordinatesForPeptides = new AddGenomeCoordinatesForPeptides(inputFile.getAbsolutePath(), outputFileName, inputGff, outputGff, mzidVerString);
                         addGenomeCoordinatesForPeptides.writeMappingResults();
                     }
 
@@ -459,9 +462,10 @@ public class MzIdentMLLib {
                     Boolean scoreLowToHigh = Boolean.valueOf(Utils.getCmdParameter(args, "betterScoresAreLower", true));
                     Boolean deleteUnderThreshold = Boolean.valueOf(Utils.getCmdParameter(args, "deleteUnderThreshold", true));
                     String scoreLevel = Utils.getCmdParameter(args, "scoreLevel", false);
+                    String mzidVerString = Utils.getCmdParameter(args, "mzidVer", true);
 
-                    if (outputFileName != null && isPSMThreshold != null && cvAccForScoreThreshold != null && threshValue != null && scoreLowToHigh != null) {
-                        ThresholdMzid thresholdMzid = new ThresholdMzid(inputFile.getAbsolutePath(), outputFileName, isPSMThreshold, cvAccForScoreThreshold, threshValue, scoreLowToHigh, deleteUnderThreshold, scoreLevel);
+                    if (outputFileName != null && isPSMThreshold != null && cvAccForScoreThreshold != null && scoreLowToHigh != null) {
+                        ThresholdMzid thresholdMzid = new ThresholdMzid(inputFile.getAbsolutePath(), outputFileName, isPSMThreshold, cvAccForScoreThreshold, threshValue, scoreLowToHigh, deleteUnderThreshold, scoreLevel, mzidVerString);
                     } else {
                         System.out.println("Error in parameters\n" + "Usage: " + userFeedback + thresholdUsage);
                         guiFeedback = "Error in parameters\n" + "Usage: " + thresholdUsage;
@@ -481,10 +485,11 @@ public class MzIdentMLLib {
 
                     Boolean outputFrags = Boolean.valueOf(Utils.getCmdParameter(args, "outputFragmentation", false));
                     String decoyRegex = Utils.getCmdParameter(args, "decoyRegex", true);
-
+                    String mzidVersionString = Utils.getCmdParameter(args, "mzidVer", true);
+                    MzIdentMLVersion mzidVer = MzIdentMLVersion.getVersion(mzidVersionString);
                     String omssaModsFile = Utils.getCmdParameter(args, "omssaModsFile", false);
                     String userModsFile = Utils.getCmdParameter(args, "userModsFile", false);
-
+ 
                     if (decoyRegex != null && outputFrags != null) {
                         // Multiple conversion
                         if (inputFile.isDirectory()) {
@@ -495,13 +500,13 @@ public class MzIdentMLLib {
                                 if (file.getAbsolutePath().endsWith("omx")) {
                                     String outputName = file.getName().substring(0, file.getName().lastIndexOf('.'));
                                     String outputFileName1 = outputFileName + "\\" + outputName + ".mzid";
-                                    Omssa2mzid omssa2mzid = new Omssa2mzid(file.getAbsolutePath(), outputFileName1, outputFrags, decoyRegex, omssaModsFile, userModsFile);
+                                    Omssa2mzid omssa2mzid = new Omssa2mzid(file.getAbsolutePath(), outputFileName1, outputFrags, decoyRegex, omssaModsFile, userModsFile, mzidVer);
                                     System.out.println("Searching " + file.getName() + " for decoys containing " + decoyRegex);
                                 }
 
                             }
                         } else {
-                            new Omssa2mzid(inputFile.getAbsolutePath(), outputFileName, outputFrags, decoyRegex, omssaModsFile, userModsFile);
+                            new Omssa2mzid(inputFile.getAbsolutePath(), outputFileName, outputFrags, decoyRegex, omssaModsFile, userModsFile, mzidVer);
                             System.out.println("Searching for decoys containing " + decoyRegex);
                         }
                     } /*
@@ -547,6 +552,8 @@ public class MzIdentMLLib {
 
                     String databaseFileFormatID = Utils.getCmdParameter(args, "databaseFileFormatID", false);
                     String massSpecFileFormatID = Utils.getCmdParameter(args, "massSpecFileFormatID", false);
+                    String mzidVersionString = Utils.getCmdParameter(args, "mzidVer", true);
+                    MzIdentMLVersion mzidVer = MzIdentMLVersion.getVersion(mzidVersionString);
                     try {
                         // Multiple conversion
                         if (inputFile.isDirectory()) {
@@ -557,14 +564,14 @@ public class MzIdentMLLib {
                                 if (file.getAbsolutePath().endsWith(".t.xml")) {
                                     String outputName = file.getName().substring(0, file.getName().lastIndexOf('.'));
                                     String outputFileName1 = outputFileName + "\\" + outputName + ".mzid";
-                                    Tandem2mzid tandem2mzid = new Tandem2mzid(file.getAbsolutePath(), outputFileName1, databaseFileFormatID, massSpecFileFormatID, idsStartAtZero, decoyRegex, proteinCodeRegex, outputFrags);
+                                    Tandem2mzid tandem2mzid = new Tandem2mzid(file.getAbsolutePath(), outputFileName1, databaseFileFormatID, massSpecFileFormatID, idsStartAtZero, decoyRegex, proteinCodeRegex, outputFrags, mzidVer);
                                     System.out.println("Searching " + file.getName() + " for decoys containing " + decoyRegex);
 
                                 }
 
                             }
                         } else {
-                            Tandem2mzid tandem2mzid = new Tandem2mzid(inputFile.getAbsolutePath(), outputFileName, databaseFileFormatID, massSpecFileFormatID, idsStartAtZero, decoyRegex, proteinCodeRegex, outputFrags);
+                            Tandem2mzid tandem2mzid = new Tandem2mzid(inputFile.getAbsolutePath(), outputFileName, databaseFileFormatID, massSpecFileFormatID, idsStartAtZero, decoyRegex, proteinCodeRegex, outputFrags, mzidVer);
                         }
                     } catch (Exception e) {
                         System.out.println("Error running Tandem2mzid:" + userFeedback + tandem2mzidUsage);
@@ -592,9 +599,9 @@ public class MzIdentMLLib {
                         System.out.println("Error, usage: " + userFeedback + csv2mzidUsage);
                         guiFeedback = "Error, usage: " + csv2mzidUsage;
                     }
-                } else if (args[0].equals("CombineSearchEngines") && args.length == 25) {
+                } else if (args[0].equals("CombineSearchEngines") && args.length == 27) {
                     //String[] newArgs = new String[11];
-                    String[] newArgs = new String[13];
+                    String[] newArgs = new String[14];
                     newArgs[0] = Utils.getCmdParameter(args, "firstFile", true);
                     newArgs[1] = "s1";
                     newArgs[2] = Utils.getCmdParameter(args, "firstcvTerm", true);
@@ -608,12 +615,13 @@ public class MzIdentMLLib {
                     newArgs[10] = Utils.getCmdParameter(args, "outputFile", true);
                     newArgs[11] = Utils.getCmdParameter(args, "debugFile", true);
                     newArgs[12] = Utils.getCmdParameter(args, "decoyRegex", true);
+                    newArgs[13] = Utils.getCmdParameter(args, "mzidVer", true);
 
                     CombineSearchEngines.runTwoSearchEngines(newArgs);
 
-                } else if (args[0].equals("CombineSearchEngines") && args.length == 31) {
+                } else if (args[0].equals("CombineSearchEngines") && args.length == 33) {
                     //String[] newArgs = new String[14];
-                    String[] newArgs = new String[17];
+                    String[] newArgs = new String[18];
                     newArgs[0] = Utils.getCmdParameter(args, "firstFile", true);
                     newArgs[1] = "s1";
                     newArgs[2] = Utils.getCmdParameter(args, "firstcvTerm", true);
@@ -631,6 +639,7 @@ public class MzIdentMLLib {
                     newArgs[14] = Utils.getCmdParameter(args, "outputFile", true);
                     newArgs[15] = Utils.getCmdParameter(args, "debugFile", true);
                     newArgs[16] = Utils.getCmdParameter(args, "decoyRegex", true);
+                    newArgs[17] = Utils.getCmdParameter(args, "mzidVer", true);
                     CombineSearchEngines.runThreeSearchEngines(newArgs);
 
                 } else if (args[0].equals("AddEmpaiToMzid")) {

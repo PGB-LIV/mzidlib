@@ -10,7 +10,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib FalseDiscoveryRateGlobal E:\tobias\PXD001524_20160209\PXD001524_42142_combined_fdr_peptide_threshold.mzid E:\tobias\PXD001524_20160209\f.mzid -decoyValue "1" -decoyRegex "REVERSED" -cvTerm "MS:1002356" -betterScoresAreLower true -fdrLevel "Peptide" -proteinLevel "PAG" -compress "false"</exec.args>
+            <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib ProteoAnnotator2 -inputGFF "D:\Git\mzidlib-official\example files\pa_test\Homo_sapiens.GRCh38.77.gff3" -inputFasta "D:\Git\mzidlib-official\example files\pa_test\Homo_sapiens.GRCh38.pep.all.77.fa" -spectrum_files "D:\Git\mzidlib-official\example files\pa_test\PXD000548_sample_input" -outputFolder "D:\Git\mzidlib-official\example files\pa_test\withmsgf1" -prefix PXD000548_withmsgf_ -compress false -searchParameters "D:\Git\mzidlib-official\example files\pa_test\search_PXD000652.txt" -peptideThreshValue 0.01 -proteinThreshValue 0.01 -enableMsgf true</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>
@@ -24,7 +24,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib FalseDiscoveryRateGlobal E:\tobias\PXD001524_20160209\PXD001524_42142_combined_fdr_peptide_threshold.mzid E:\tobias\PXD001524_20160209\f.mzid -decoyValue "1" -decoyRegex "REVERSED" -cvTerm "MS:1002356" -betterScoresAreLower true -fdrLevel "Peptide" -proteinLevel "PAG" -compress "false"</exec.args>
+            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib ProteoAnnotator2 -inputGFF "D:\Git\mzidlib-official\example files\pa_test\Homo_sapiens.GRCh38.77.gff3" -inputFasta "D:\Git\mzidlib-official\example files\pa_test\Homo_sapiens.GRCh38.pep.all.77.fa" -spectrum_files "D:\Git\mzidlib-official\example files\pa_test\PXD000548_sample_input" -outputFolder "D:\Git\mzidlib-official\example files\pa_test\withmsgf1" -prefix PXD000548_withmsgf_ -compress false -searchParameters "D:\Git\mzidlib-official\example files\pa_test\search_PXD000652.txt" -peptideThreshValue 0.01 -proteinThreshValue 0.01 -enableMsgf true</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
         </properties>
@@ -39,7 +39,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib FalseDiscoveryRateGlobal E:\tobias\PXD001524_20160209\PXD001524_42142_combined_fdr_peptide_threshold.mzid E:\tobias\PXD001524_20160209\f.mzid -decoyValue "1" -decoyRegex "REVERSED" -cvTerm "MS:1002356" -betterScoresAreLower true -fdrLevel "Peptide" -proteinLevel "PAG" -compress "false"</exec.args>
+            <exec.args>-classpath %classpath uk.ac.liv.mzidlib.MzIdentMLLib ProteoAnnotator2 -inputGFF "D:\Git\mzidlib-official\example files\pa_test\Homo_sapiens.GRCh38.77.gff3" -inputFasta "D:\Git\mzidlib-official\example files\pa_test\Homo_sapiens.GRCh38.pep.all.77.fa" -spectrum_files "D:\Git\mzidlib-official\example files\pa_test\PXD000548_sample_input" -outputFolder "D:\Git\mzidlib-official\example files\pa_test\withmsgf1" -prefix PXD000548_withmsgf_ -compress false -searchParameters "D:\Git\mzidlib-official\example files\pa_test\search_PXD000652.txt" -peptideThreshValue 0.01 -proteinThreshValue 0.01 -enableMsgf true</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>
