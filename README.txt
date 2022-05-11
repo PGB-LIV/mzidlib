@@ -4,7 +4,7 @@ MzidLib - A library of routines for manipulating data in the PSI's mzIdentML sta
 ProteoAnnotator is a completely automated software pipeline for integration of mass spectrometry (MS) based proteomic evidence into genome databases. 
 
 
-To download MzidLib and ProteoAnnotator: http://www.proteoannotator.org/?q=installation
+ProteoAnnotator is now deprecated and no longer supported. If anyone would like to update or maintain the code base, please do!
 
   
 Citation:
